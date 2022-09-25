@@ -8,20 +8,22 @@ import {
   useMediaQuery,
   Center,
 } from "@chakra-ui/react";
-import QuestionInput from "./QuestionTextInput";
-import SelectImageModal from "./SelectImageModal";
-import { ImageData } from "../data/ImageData";
+import QuestionInput from "../QuestionTextInput";
+import SelectImageModal from "../SelectImageModal";
 
-function CIQuestionCard() {
+function NIQuestionCard() {
   const [selectedInputId, setSelectedInputId] = useState(1);
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>();
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
 
-  const selectedImage = ImageData.find((image) => image.id === selectedImageId);
-  const imageSelected = selectedImage !== undefined;
+  function handleImageSelection(id: string, index: number) {
+    setSelectedImageId(id)
+  }
 
   const templateRowsLg = "repeat(2, 1fr)";
   const templateColumnsLg = "150px repeat(2, 1fr)";
+
+  const imageSelected = selectedImageId !== undefined
 
   const templateRowsSm = "1fr repeat(5, 0.3fr)";
   const templateColumnsSm = "1fr";
@@ -51,27 +53,7 @@ function CIQuestionCard() {
           w="150px"
           mx="auto"
         >
-          <SelectImageModal
-            selectedImageId={selectedImageId}
-            setSelectedImageId={setSelectedImageId}
-          >
-            {!imageSelected && (
-              <Center boxSize="150px">
-                <Text>Select Image</Text>
-              </Center>
-            )}
-            {imageSelected && (
-              <Box>
-                <Image
-                  src={selectedImage.url}
-                  alt={selectedImage.alt}
-                  objectFit="cover"
-                  boxSize="150px"
-                  borderRadius="lg"
-                ></Image>
-              </Box>
-            )}
-          </SelectImageModal>
+          <SelectImageModal selectedImageId={selectedImageId} setSelectedImageId={handleImageSelection} boxSize="150px" imageIndex={undefined} />
         </GridItem>
         <GridItem colSpan={1}>
           <QuestionInput
@@ -106,4 +88,4 @@ function CIQuestionCard() {
   );
 }
 
-export default CIQuestionCard;
+export default NIQuestionCard;

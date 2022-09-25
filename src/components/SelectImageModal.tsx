@@ -17,25 +17,32 @@ import {
   Wrap,
   WrapItem,
   Image,
+  Center,
+  Text,
 } from "@chakra-ui/react";
 import { TagData } from "../data/TagData";
 import { ImageData } from "../data/ImageData";
 import { useTagContext } from "../contexts/TagContext";
 
 type ImageModalArgs = {
-  children: React.ReactNode;
   selectedImageId: string | undefined;
-  setSelectedImageId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setSelectedImageId: (id: string, index: number) => void;
+  imageIndex: number | undefined
+  boxSize: string
 };
 
 function SelectImageModal({
-  children,
   selectedImageId,
   setSelectedImageId,
+  imageIndex,
+  boxSize
 }: ImageModalArgs) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { selectedTagIds, toggleTag } = useTagContext();
   const [previewImageId, setPreviewImageId] = useState<string | undefined>();
+
+  const selectedImage = ImageData.find((image) => image.id === selectedImageId);
+  const imageSelected = selectedImage !== undefined;
 
   function isSelected(id: string) {
     return selectedTagIds.includes(id);
@@ -43,7 +50,24 @@ function SelectImageModal({
 
   return (
     <>
-      <Box onClick={onOpen}>{children}</Box>
+      <Box onClick={onOpen}>
+        {!imageSelected && (
+          <Center boxSize={boxSize}>
+            <Text>Select Image</Text>
+          </Center>
+        )}
+        {imageSelected && (
+          <Box>
+            <Image
+              src={selectedImage.url}
+              alt={selectedImage.alt}
+              objectFit="cover"
+              boxSize={boxSize}
+              borderRadius="lg"
+            ></Image>
+          </Box>
+        )}
+      </Box>
       <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent maxW="50rem">
@@ -102,7 +126,7 @@ function SelectImageModal({
             <Button
               colorScheme="blue"
               onClick={() => {
-                setSelectedImageId(previewImageId);
+                setSelectedImageId(previewImageId ?? "", imageIndex ?? -1);
                 onClose();
               }}
             >

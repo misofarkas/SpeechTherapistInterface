@@ -26,6 +26,7 @@
     "chakra-loader": "^1.0.3",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
+    "lodash": "^4.17.21",
     "react-icons": "^4.4.0",
     "react-refresh": "^0.14.0",
     "react-router-dom": "^6.4.1",

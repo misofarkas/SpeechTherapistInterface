@@ -1,0 +1,10 @@
+{
+  "alias": false,
+  "resolveExtensions": [
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx"
+  ],
+  "entryFilePath": "App.tsx"
+}

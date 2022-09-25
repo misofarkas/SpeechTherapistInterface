@@ -32,9 +32,9 @@ type Question = {
 
 function CreateExercisePage() {
   const [name, setName] = useState("");
-  const [type, setType] = useState("");
-  const [savedType, setSavedType] = useState("");
-  const [difficulty, setDifficulty] = useState("");
+  const [type, setType] = useState("Name Images");
+  const [savedType, setSavedType] = useState("Name Images");
+  const [difficulty, setDifficulty] = useState("Easy");
 
   const [questions, setQuestions] = useState<Question[]>([]);
 
@@ -65,8 +65,8 @@ function CreateExercisePage() {
                 ></Input>
                 <Text>Type</Text>
                 <Select value={type} onChange={(e) => setType(e.target.value)}>
-                  <option value="Connect Images">Connect Images</option>
                   <option value="Name Images">Name Images</option>
+                  <option value="Connect Pairs">Connect Pairs</option>
                 </Select>
                 <Text>Difficulty</Text>
                 <Select
@@ -118,7 +118,7 @@ function CreateExercisePage() {
 
             {/* Question tab */}
             <TabPanel>
-              <QuestionList questions={questions} />
+              <QuestionList questions={questions} type={savedType} />
               <Box
                 w="full"
                 h="5rem"

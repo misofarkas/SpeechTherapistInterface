@@ -1,19 +1,23 @@
 import { Box } from "@chakra-ui/react";
-import CIQuestionCard from "./CIQuestionCard";
+import NIQuestionCard from "./CreateQuestionCards/NIQuestionCard";
+import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard"
 
-type Questions = {
+type QuestionSettings = {
   questions: {
-    id: number
-  }[]
-}
+    id: number;
+  }[];
+  type: string;
+};
 
-function QuestionList({ questions }: Questions) {
+function QuestionList({ questions, type }: QuestionSettings) {
+  console.log(type)
   return (
     <>
       {questions.map((q) => {
         return (
           <Box mb="5" key={q.id}>
-            <CIQuestionCard/>
+            {type === "Name Images" && <NIQuestionCard />}
+            {type === "Connect Pairs" && <CPQuestionCard />}
           </Box>
         );
       })}
