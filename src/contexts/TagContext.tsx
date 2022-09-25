@@ -2,15 +2,11 @@ import { useContext, createContext, useState } from "react";
 
 const TagContext = createContext<any>({});
 
-type Children = {
-  children: React.ReactNode;
-};
-
 export function useTagContext() {
   return useContext(TagContext);
 }
 
-export function TagProvider({ children }: Children) {
+export function TagProvider({ children }: { children: React.ReactNode }) {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
 
   function toggleTag(id: string) {

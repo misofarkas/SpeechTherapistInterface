@@ -27,8 +27,8 @@ import { AddIcon } from "@chakra-ui/icons";
 let nextId = 0;
 
 type Question = {
-  id: number
-}
+  id: number;
+};
 
 function CreateExercisePage() {
   const [name, setName] = useState("");
@@ -81,7 +81,9 @@ function CreateExercisePage() {
                   onClick={
                     type !== savedType && questions.length !== 0
                       ? onOpen
-                      : undefined
+                      : () => {
+                          setSavedType(type);
+                        }
                   }
                 >
                   Apply

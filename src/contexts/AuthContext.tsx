@@ -1,16 +1,12 @@
-import { useContext, createContext, useState } from "react";
+import React, { useContext, createContext, useState } from "react";
 
 const AuthContext = createContext<any>({});
-
-type Children = {
-    children: React.ReactNode;
-  };
 
 export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }: Children) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState();
 
   const value = {
