@@ -66,7 +66,8 @@ function CreateExercisePage() {
                 <Text>Type</Text>
                 <Select value={type} onChange={(e) => setType(e.target.value)}>
                   <option value="Name Images">Name Images</option>
-                  <option value="Connect Pairs">Connect Pairs</option>
+                  <option value="Connect Pairs Text Image">Connect Pairs (Text - Image)</option>
+                  <option value="Connect Pairs Text Text">Connect Pairs (Text - Text)</option>
                 </Select>
                 <Text>Difficulty</Text>
                 <Select

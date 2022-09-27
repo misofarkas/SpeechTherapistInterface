@@ -17,7 +17,8 @@ function QuestionList({ questions, type }: QuestionSettings) {
         return (
           <Box mb="5" key={q.id}>
             {type === "Name Images" && <NIQuestionCard />}
-            {type === "Connect Pairs" && <CPQuestionCard />}
+            {type === "Connect Pairs Text Image" && <CPQuestionCard type="image"/>}
+            {type === "Connect Pairs Text Text" && <CPQuestionCard type="text"/>}
           </Box>
         );
       })}

@@ -7,8 +7,10 @@
     "@chakra-ui/react": "^2.3.4",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "formik": "^2.2.9",
     "framer-motion": "^6",
     "react": "^18.2.0",
+    "react-calendar": "^3.9.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
@@ -21,6 +23,7 @@
     "@chakra-ui/icons": "^2.0.10",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/react": "^18.0.21",
+    "@types/react-calendar": "^3.5.2",
     "@types/react-dom": "^18.0.6",
     "@types/react-icons": "^3.0.0",
     "babel-loader": "^8.2.5",

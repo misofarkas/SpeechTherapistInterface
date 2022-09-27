@@ -7,23 +7,27 @@ import {
   Image,
   useMediaQuery,
   Center,
+  Input,
 } from "@chakra-ui/react";
 import QuestionInput from "../QuestionTextInput";
+import { ImageData } from "../../data/ImageData";
 import SelectImageModal from "../SelectImageModal";
 
 function NIQuestionCard() {
   const [selectedInputId, setSelectedInputId] = useState(1);
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>();
+  
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
 
+  const selectedImage = ImageData.find((image) => image.id === selectedImageId);
   function handleImageSelection(id: string, index: number) {
-    setSelectedImageId(id)
+    setSelectedImageId(id);
   }
 
   const templateRowsLg = "repeat(2, 1fr)";
-  const templateColumnsLg = "150px repeat(2, 1fr)";
+  const templateColumnsLg = "0.5fr repeat(2, 1fr)";
 
-  const imageSelected = selectedImageId !== undefined
+  const imageSelected = selectedImageId !== undefined;
 
   const templateRowsSm = "1fr repeat(5, 0.3fr)";
   const templateColumnsSm = "1fr";
@@ -41,6 +45,7 @@ function NIQuestionCard() {
           isLargerThan768 ? templateColumnsLg : templateColumnsSm
         }
         gap={4}
+        textAlign="center"
       >
         <GridItem
           rowSpan={2}
@@ -53,35 +58,24 @@ function NIQuestionCard() {
           w="150px"
           mx="auto"
         >
-          <SelectImageModal selectedImageId={selectedImageId} setSelectedImageId={handleImageSelection} boxSize="150px" imageIndex={undefined} />
-        </GridItem>
-        <GridItem colSpan={1}>
-          <QuestionInput
-            id={1}
-            selectedInputId={selectedInputId}
-            setSelectedInputId={setSelectedInputId}
+          <SelectImageModal
+            selectedImageId={selectedImageId}
+            setSelectedImageId={handleImageSelection}
+            boxSize="150px"
+            imageIndex={undefined}
           />
         </GridItem>
         <GridItem colSpan={1}>
-          <QuestionInput
-            id={2}
-            selectedInputId={selectedInputId}
-            setSelectedInputId={setSelectedInputId}
-          />
+          <Input isDisabled={true}  value={selectedImage?.textAnswer} maxW="400px" borderWidth="2px" borderColor="green.400" />
         </GridItem>
         <GridItem colSpan={1}>
-          <QuestionInput
-            id={3}
-            selectedInputId={selectedInputId}
-            setSelectedInputId={setSelectedInputId}
-          />
+          <Input maxW="400px" borderWidth="1px" borderColor="gray.200" />
         </GridItem>
         <GridItem colSpan={1}>
-          <QuestionInput
-            id={4}
-            selectedInputId={selectedInputId}
-            setSelectedInputId={setSelectedInputId}
-          />
+          <Input maxW="400px" borderWidth="1px" borderColor="gray.200" />
+        </GridItem>
+        <GridItem colSpan={1}>
+          <Input maxW="400px" borderWidth="1px" borderColor="gray.200" />
         </GridItem>
       </Grid>
     </Box>

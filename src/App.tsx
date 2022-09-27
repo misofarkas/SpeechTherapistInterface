@@ -1,6 +1,6 @@
 import "./styles.css";
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
-import Calendar from "./pages/Calendar";
+import CalendarPage from "./pages/CalendarPage";
 import Patients from "./pages/Patients";
 import Exercises from "./pages/Exercises";
 import CreateExercisePage from "./pages/CreateExercisePage";
@@ -19,7 +19,7 @@ export const App = () => {
           <Sidebar />
           <Routes>
             <Route path="/" element={<Patients />} />
-            <Route path="/Calendar" element={<Calendar />} />
+            <Route path="/Calendar" element={<CalendarPage />} />
             <Route path='/Exercises' element={<Exercises/>}/>
             <Route path='/patient-profile/:id' element={<PatientProfile/>}/>
             <Route path='/Login' element={<Login/>}/>
