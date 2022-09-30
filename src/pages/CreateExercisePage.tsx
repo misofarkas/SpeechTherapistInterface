@@ -75,7 +75,6 @@ function CreateExercisePage() {
                   onChange={(e) => setDifficulty(e.target.value)}
                 >
                   <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
                   <option value="Hard">Hard</option>
                 </Select>
                 <Button
@@ -121,7 +120,7 @@ function CreateExercisePage() {
 
             {/* Question tab */}
             <TabPanel>
-              <QuestionList questions={questions} type={savedType} />
+              <QuestionList questions={questions} type={savedType} difficulty={difficulty}/>
               <Box
                 w="full"
                 h="5rem"

@@ -9,11 +9,10 @@ import {
   Center,
   Input,
 } from "@chakra-ui/react";
-import QuestionInput from "../QuestionTextInput";
 import { ImageData } from "../../data/ImageData";
 import SelectImageModal from "../SelectImageModal";
 
-function NIQuestionCard() {
+function NIQuestionCard({isEditable} : {isEditable: boolean}) {
   const [selectedInputId, setSelectedInputId] = useState(1);
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>();
   

@@ -1,5 +1,5 @@
 import { Link as RouterLink } from "react-router-dom";
-import { Flex, Link } from "@chakra-ui/react";
+import { Flex, LinkBox } from "@chakra-ui/react";
 import ExerciseCard from "./ExerciseCard";
 import { Exercise } from "../data/PatientExercisesData"
 
@@ -12,11 +12,10 @@ function ExerciseList({ exercisesData }: ExerciseData) {
     <Flex flexDirection="column" gap="2">
       {exercisesData.map((exercise) => {
         return (
-          <Link
+          <LinkBox
             as={RouterLink}
             key={exercise.id}
-            to={"#"}
-            style={{ textDecoration: "none" }}
+            to="#"
           >
             <ExerciseCard
               name={exercise.name}
@@ -24,7 +23,7 @@ function ExerciseList({ exercisesData }: ExerciseData) {
               type={exercise.type}
               difficulty={exercise.difficutly}
             />
-          </Link>
+          </LinkBox>
         );
       })}
     </Flex>

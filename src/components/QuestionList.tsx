@@ -7,18 +7,18 @@ type QuestionSettings = {
     id: number;
   }[];
   type: string;
+  difficulty: string;
 };
 
-function QuestionList({ questions, type }: QuestionSettings) {
-  console.log(type)
+function QuestionList({ questions, type, difficulty }: QuestionSettings) {
   return (
     <>
       {questions.map((q) => {
         return (
           <Box mb="5" key={q.id}>
-            {type === "Name Images" && <NIQuestionCard />}
-            {type === "Connect Pairs Text Image" && <CPQuestionCard type="image"/>}
-            {type === "Connect Pairs Text Text" && <CPQuestionCard type="text"/>}
+            {type === "Name Images" && <NIQuestionCard isEditable={difficulty === "Hard"} />}
+            {type === "Connect Pairs Text Image" && <CPQuestionCard type="image" isEditable={difficulty === "Hard"}/>}
+            {type === "Connect Pairs Text Text" && <CPQuestionCard type="text" isEditable={difficulty === "Hard"}/>}
           </Box>
         );
       })}

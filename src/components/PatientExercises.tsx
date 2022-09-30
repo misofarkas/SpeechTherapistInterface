@@ -1,9 +1,11 @@
 import { PatientExercisesData } from "../data/PatientExercisesData";
-import ExerciseList from "./ExerciseList";
+import ExerciseResultCard from "./ExerciseResultCard";
+import { LinkBox, Box } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 
 type patientId = {
-  patientId: string
-}
+  patientId: string;
+};
 
 function PatientExercises({ patientId }: patientId) {
   const exercisesData = PatientExercisesData.filter(
@@ -13,7 +15,21 @@ function PatientExercises({ patientId }: patientId) {
     return <div>Patient has no exercises assigned</div>;
   }
   return (
-    <ExerciseList exercisesData={exercisesData}/>
+    <>
+      {exercisesData.map((exercise) => {
+        return (
+          <Box mb="4">
+            <LinkBox as={RouterLink} to={`/ExerciseResults/${exercise.id}`}>
+              <ExerciseResultCard
+                name={exercise.name}
+                type={exercise.type}
+                difficulty={exercise.difficutly}
+              ></ExerciseResultCard>
+            </LinkBox>
+          </Box>
+        );
+      })}
+    </>
   );
 }
 

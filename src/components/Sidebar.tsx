@@ -73,7 +73,9 @@ function Sidebar() {
             <PopoverHeader>Somethingsomethingsadawdawdas</PopoverHeader>
             <PopoverBody>
               <Stack>
-                <Center>Settings</Center>
+                <Link as={RouterLink} to="/UserSettings">
+                  <Center>User Settings</Center>
+                </Link>
                 <Divider />
                 <Center>About page</Center>
                 <Center>Log out</Center>
