@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -15,31 +15,79 @@ import {
   Text,
   Code,
   Flex,
+  useMediaQuery,
 } from "@chakra-ui/react";
+import { v4 as uuidv4 } from "uuid";
 import FullCalendar, { DateSelectArg } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import TimePicker, { TimePickerValue } from "react-time-picker";
+import { subDays } from 'date-fns'
+import "./CalendarStyles.css";
+
+type Event = {
+  id: string;
+  title: string;
+  allDay: boolean;
+  start: string;
+  end: string;
+};
 
 function CalendarPage() {
+  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
+  const [isLargerThan411] = useMediaQuery("(min-width: 411px)");
   const [calendarSelection, setCalendarSelection] = useState<DateSelectArg>();
-  const [events, setEvents] = useState<
-    { title: string; start: string; end: string }[]
-  >([
-    { title: "event 1", start: "2022-09-01", end: "2022-09-01" },
-    { title: "event 2", start: "2022-09-03", end: "2022-09-06" },
-    { title: "event 3", start: "2022-09-13", end: "2022-09-17" },
+  const [eventStartTime, setEventStartTime] =
+    useState<TimePickerValue>("10:00");
+  const [eventEndTime, setEventEndTime] = useState<TimePickerValue>("10:00");
+  const [events, setEvents] = useState<Event[]>([
+    {
+      id: "0",
+      title: "event 1",
+      allDay: false,
+      start: "2022-10-01T10:30:00",
+      end: "2022-10-01T11:30:00",
+    },
+    {
+      id: "1",
+      title: "event 4",
+      allDay: false,
+      start: "2022-10-01T10:30:00",
+      end: "2022-10-01T11:30:00",
+    },
+    {
+      id: "2",
+      title: "event 2",
+      allDay: false,
+      start: "2022-10-03T12:30:00",
+      end: "2022-10-06T14:30:00",
+    },
+    {
+      id: "3",
+      title: "event 3",
+      allDay: false,
+      start: "2022-10-13T14:30:00",
+      end: "2022-10-17T14:30:00",
+    },
   ]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [eventTitle, setEventTitle] = useState<string>("");
 
   function handleAddEvent() {
-    console.log(calendarSelection);
+    const startDate = new Date(calendarSelection?.startStr! + "T" + eventStartTime).toISOString();
+    const endDate = subDays(new Date(calendarSelection?.endStr! + "T" + eventEndTime), 1).toISOString();
+
+    console.log(startDate);
+    console.log(endDate);
     setEvents([
       ...events,
       {
+        id: uuidv4(),
         title: eventTitle!,
-        start: calendarSelection?.startStr!,
-        end: calendarSelection?.endStr!,
+        allDay: false,
+        start: startDate,
+        end: endDate,
       },
     ]);
     setCalendarSelection(undefined);
@@ -63,14 +111,26 @@ function CalendarPage() {
               onChange={(title) => setEventTitle(title.target.value)}
               placeholder="event title"
             />
-            <Flex mx="3" my="1" justifyContent="space-between">
-              <Text>event start date:</Text>
-              <Code mr="20%">{calendarSelection?.startStr}</Code>
-            </Flex>
-            <Flex mx="3" my="1" justifyContent="space-between">
-              <Text>event end date:</Text>
-              <Code mr="20%">{calendarSelection?.endStr}</Code>
-            </Flex>
+            <Box mx="3">
+              <Flex my="1" justifyContent="space-between">
+                <Text>event start date:</Text>
+                <Code>{calendarSelection?.startStr}</Code>
+                <TimePicker
+                  disableClock={true}
+                  onChange={(t) => setEventStartTime(t)}
+                  value={eventStartTime}
+                />
+              </Flex>
+              <Flex my="1" justifyContent="space-between">
+                <Text>event end date:</Text>
+                <Code>{calendarSelection?.endStr}</Code>
+                <TimePicker
+                  disableClock={true}
+                  onChange={(t) => setEventEndTime(t)}
+                  value={eventEndTime}
+                />
+              </Flex>
+            </Box>
           </ModalBody>
 
           <ModalFooter>
@@ -78,7 +138,12 @@ function CalendarPage() {
               Cancel
             </Button>
             <Button
-              isDisabled={eventTitle === "" || eventTitle === undefined}
+              isDisabled={
+                eventTitle === "" ||
+                eventTitle === undefined ||
+                eventStartTime === null ||
+                eventEndTime === null
+              }
               colorScheme="blue"
               onClick={() => {
                 onClose();
@@ -91,16 +156,23 @@ function CalendarPage() {
         </ModalContent>
       </Modal>
       <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
+        height={"auto"}
+        contentHeight={"auto"}
+        plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
         selectable={true}
         select={(selection) => setCalendarSelection(selection)}
         unselectAuto={false}
         unselect={() => setCalendarSelection(undefined)}
+        longPressDelay={0}
         events={events}
+        eventClick={(e) => {
+          console.log(e);
+        }}
+        dayMaxEventRows={2}
         headerToolbar={{
           left: "title",
-          center: "",
+          center: "dayGridMonth timeGridWeek",
           right: "today prev,next",
         }}
       />

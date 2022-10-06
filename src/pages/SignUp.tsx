@@ -10,9 +10,12 @@ import {
   FormErrorMessage,
   Stack,
 } from "@chakra-ui/react";
-import { Formik, Field, ErrorMessage, useFormik, Form } from "formik";
+import { Formik, Field, ErrorMessage, useFormik, Form, FieldInputProps } from "formik";
+import axios from "../api/axios";
 
 function SignUp() {
+  const SIGNUP_URL = "/user/register/therapist/";
+
   function validateName(value: string) {
     let error;
     if (!value) {
@@ -77,7 +80,19 @@ function SignUp() {
           }}
           onSubmit={(values, actions) => {
             setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
+              axios.post(
+                SIGNUP_URL,
+                {
+                  email: values.email,
+                  name: values.fullName,
+                  password: values.password,
+                  confirm_password: values.confirmPassword,
+                },
+                {
+                  headers: { "Content-Type": "application/json" },
+                  withCredentials: false,
+                }
+              );
               actions.setSubmitting(false);
             }, 1000);
           }}
@@ -112,7 +127,7 @@ function SignUp() {
                     isInvalid={form.errors.password && form.touched.password}
                   >
                     <FormLabel>Password</FormLabel>
-                    <Input {...field} placeholder="" />
+                    <Input type="password" {...field} placeholder="" />
                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                   </FormControl>
                 )}
@@ -126,7 +141,7 @@ function SignUp() {
                     }
                   >
                     <FormLabel>Confirm Password</FormLabel>
-                    <Input {...field} placeholder="" />
+                    <Input type="password" {...field} placeholder="" />
                     <FormErrorMessage>
                       {form.errors.confirmPassword}
                     </FormErrorMessage>

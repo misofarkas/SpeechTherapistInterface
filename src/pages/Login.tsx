@@ -1,7 +1,39 @@
-import { Link } from "react-router-dom";
-import { Input, Button, Text, Box, Heading, Container } from "@chakra-ui/react";
+import { useState, useContext } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { Input, Button, Text, Box, Heading, Container, Link } from "@chakra-ui/react";
+import { useAuth } from "../contexts/AuthContext";
+
+import axios from "../api/axios";
 
 function Login() {
+  const LOGIN_URL = "/user/login/";
+  const { setAuth } = useAuth();
+  const [email, setEmail] = useState<string>("example@example.com");
+  const [password, setPassword] = useState<string>("123456789");
+
+  async function handleLogin(e: any) {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        LOGIN_URL,
+        { email: email, password: password },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: false,
+        }
+      );
+
+      const accessToken = response?.data?.token;
+      console.log(accessToken);
+      setAuth({ email, password, accessToken });
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      console.log("API Error");
+    }
+  }
+
   return (
     <Container>
       <Box
@@ -17,16 +49,27 @@ function Login() {
         </Heading>
         <form>
           <Text>Email</Text>
-          <Input mb="2"></Input>
+          <Input
+            mb="2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          ></Input>
           <Text>Password</Text>
-          <Input type="password" mb="10"></Input>
-          <Button w="full">Login</Button>
+          <Input
+            type="password"
+            mb="10"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          ></Input>
+          <Button w="full" onClick={handleLogin}>
+            Login
+          </Button>
         </form>
       </Box>
       <Box textAlign="center">
         <p>Don't have an account yet?</p>
-        <Link className="basic-link" to={"/SignUp"}>
-          <p>Sign up here</p>
+        <Link as={RouterLink}  to={"/SignUp"}>
+          Sign up here
         </Link>
       </Box>
     </Container>

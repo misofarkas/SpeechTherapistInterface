@@ -1,5 +1,12 @@
+type ConnectPairAnswer = {
+  id: string,
+  text: string,
+  imageUrl: string,
+  isCorrect: boolean,
+}
+
 type ConnectPairsQuestion = {
-    
+    answers: ConnectPairAnswer[]
 }
 
 type NameImagesQuestion = {
@@ -17,7 +24,7 @@ export type TaskResults = {
     questions: ConnectPairsQuestion[] | NameImagesQuestion[]
   }
 
-export const ImageData: TaskResults[] = [
+export const CompletedTasks: TaskResults[] = [
     {
       id: "0",
       patientId: "0",

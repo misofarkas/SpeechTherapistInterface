@@ -27,10 +27,12 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FaRegCalendar, FaRegListAlt, FaUserAlt } from "react-icons/fa";
+import { useAuth } from "../contexts/AuthContext";
 
 function Sidebar() {
   const [isLargerThan992] = useMediaQuery("(min-width: 992px)");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { auth, logOut } = useAuth();
 
   return (
     <>
@@ -49,40 +51,45 @@ function Sidebar() {
           </Heading>
         )}
         <Spacer />
-        <Link as={RouterLink} to="/SignUp" color="blue.500">
-          Sign up
-        </Link>
-        <Link as={RouterLink} to="/Login" color="blue.500">
-          Login
-        </Link>
-        <Popover>
-          <PopoverTrigger>
-            <Button>
-              <Flex>
-                <Avatar
-                  src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg"
-                  size="sm"
-                  mr="2"
-                />
-                <Text mt="1">Jon Doe</Text>
-              </Flex>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverHeader>Somethingsomethingsadawdawdas</PopoverHeader>
-            <PopoverBody>
-              <Stack>
-                <Link as={RouterLink} to="/UserSettings">
-                  <Center>User Settings</Center>
-                </Link>
-                <Divider />
-                <Center>About page</Center>
-                <Center>Log out</Center>
-              </Stack>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
+        {auth?.accessToken ? (
+          <Popover>
+            <PopoverTrigger>
+              <Button>
+                <Flex>
+                  <Avatar
+                    src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg"
+                    size="sm"
+                    mr="2"
+                  />
+                  <Text mt="1">{auth?.email}</Text>
+                </Flex>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverHeader>PopeverHeader</PopoverHeader>
+              <PopoverBody>
+                <Stack>
+                  <Link as={RouterLink} to="/UserSettings">
+                    <Center>User Settings</Center>
+                  </Link>
+                  <Divider />
+                  <Center>About page</Center>
+                  <Center><Link  onClick={logOut}>Log out</Link></Center>
+                </Stack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <>
+            <Link as={RouterLink} to="/SignUp" color="blue.500">
+              Sign up
+            </Link>
+            <Link as={RouterLink} to="/Login" color="blue.500">
+              Login
+            </Link>
+          </>
+        )}
       </Flex>
 
       <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">

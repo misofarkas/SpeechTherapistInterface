@@ -1,0 +1,45 @@
+
+.fc-daygrid-day-events {
+    height: 60px !important;
+}
+
+/* very small screens */
+@media (max-width: 600px) {
+  .fc-toolbar-title {
+    font-size: 20px !important;
+  }
+  .fc-today-button,
+  .fc-button {
+    font-size: 12px !important;
+  }
+
+  .fc-daygrid-day-events{
+    height: 40px !important;
+  }
+
+  .fc-more-link {
+    font-size: 10px !important;
+  }
+/*
+  .fc-col-header-cell {
+    height: 25px !important;
+  }
+  */
+}
+
+@media (max-width: 375px) {
+
+    .fc-daygrid-day-events{
+        height: 30px !important;
+      }
+    .fc-more-link {
+        font-size: 9px !important;
+      }
+    .fc-event-title  {
+        font-size: 9px !important;
+    }
+    .fc-event-title-container {
+        height: 14px !important;
+    } 
+}
+

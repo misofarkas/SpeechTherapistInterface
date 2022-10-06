@@ -36,3 +36,9 @@
     font-size: var(--fontsize-sm);
   }
 }
+
+
+.calendar {
+  font-size: 12px;
+  background-color: aqua;
+}
