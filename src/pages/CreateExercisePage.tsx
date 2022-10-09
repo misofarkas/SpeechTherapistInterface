@@ -23,25 +23,36 @@ import {
 } from "@chakra-ui/react";
 import { TagProvider } from "../contexts/TagContext";
 import { AddIcon } from "@chakra-ui/icons";
+import axios from "../api/axios";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  BasicChoice,
+  GeneratedTasks,
+  Question,
+} from "../data/GeneratedCPExercise";
+import UploadImage from "../components/UploadImage";
 
 let nextId = 0;
 
-type Question = {
-  id: number;
-};
-
 function CreateExercisePage() {
+  const TASK_URL = "/task/tasks/";
+
   const [name, setName] = useState("");
-  const [type, setType] = useState("Name Images");
-  const [savedType, setSavedType] = useState("Name Images");
-  const [difficulty, setDifficulty] = useState("Easy");
+  const [type, setType] = useState(1);
+  const [savedType, setSavedType] = useState(1);
+  const difficulty = "hard";
+
+  const { auth } = useAuth();
 
   const [questions, setQuestions] = useState<Question[]>([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  function handleAddQuestion() {
-    setQuestions([...questions, { id: nextId++ }]);
+  function handleAddQuestion(heading: string, choices: BasicChoice[]) {
+    setQuestions([
+      ...questions,
+      { id: nextId++, heading: heading, choices: choices },
+    ]);
   }
 
   return (
@@ -51,7 +62,7 @@ function CreateExercisePage() {
           <TabList>
             <Tab>Settings</Tab>
             <Tab>Questions</Tab>
-            <Tab>Something else maybe</Tab>
+            <Tab>Upload Custom Image</Tab>
           </TabList>
 
           <TabPanels>
@@ -64,18 +75,18 @@ function CreateExercisePage() {
                   onChange={(e) => setName(e.target.value)}
                 ></Input>
                 <Text>Type</Text>
-                <Select value={type} onChange={(e) => setType(e.target.value)}>
-                  <option value="Name Images">Name Images</option>
-                  <option value="Connect Pairs Text Image">Connect Pairs (Text - Image)</option>
-                  <option value="Connect Pairs Text Text">Connect Pairs (Text - Text)</option>
+                <Select
+                  value={type}
+                  onChange={(e) => setType(Number(e.target.value))}
+                >
+                  <option value={1}>Connect Pairs (Text - Image)</option>
+                  <option value={2}>Name Images</option>
+                  <option value={3}>Connect Pairs (Text - Text)</option>
                 </Select>
                 <Text>Difficulty</Text>
-                <Select
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value)}
-                >
-                  <option value="Easy">Easy</option>
-                  <option value="Hard">Hard</option>
+                <Select>
+                  <option value="easy">Easy</option>
+                  <option value="hard">Hard</option>
                 </Select>
                 <Button
                   onClick={
@@ -120,7 +131,11 @@ function CreateExercisePage() {
 
             {/* Question tab */}
             <TabPanel>
-              <QuestionList questions={questions} type={savedType} difficulty={difficulty}/>
+              <QuestionList
+                questions={questions}
+                type={savedType}
+                difficulty={difficulty}
+              />
               <Box
                 w="full"
                 h="5rem"
@@ -129,15 +144,15 @@ function CreateExercisePage() {
                 boxShadow="md"
                 textAlign="center"
                 cursor="pointer"
-                onClick={handleAddQuestion}
+                onClick={() => handleAddQuestion("placeholder", [])}
               >
                 <AddIcon color="gray.300" mt="5" w={8} h={8} />
               </Box>
             </TabPanel>
 
-            {/* Third TBD tab */}
+            {/* Help tab */}
             <TabPanel>
-              <p>three!</p>
+              <UploadImage />
             </TabPanel>
           </TabPanels>
         </Tabs>

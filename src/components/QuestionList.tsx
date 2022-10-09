@@ -1,24 +1,18 @@
 import { Box } from "@chakra-ui/react";
 import NIQuestionCard from "./CreateQuestionCards/NIQuestionCard";
-import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard"
+import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard";
+import { Question } from "../data/GeneratedCPExercise";
 
-type QuestionSettings = {
-  questions: {
-    id: number;
-  }[];
-  type: string;
-  difficulty: string;
-};
 
-function QuestionList({ questions, type, difficulty }: QuestionSettings) {
+function QuestionList({ questions, type, difficulty }: {questions: Question[],type: number, difficulty: string}) {
   return (
     <>
       {questions.map((q) => {
         return (
           <Box mb="5" key={q.id}>
-            {type === "Name Images" && <NIQuestionCard isEditable={difficulty === "Hard"} />}
-            {type === "Connect Pairs Text Image" && <CPQuestionCard type="image" isEditable={difficulty === "Hard"}/>}
-            {type === "Connect Pairs Text Text" && <CPQuestionCard type="text" isEditable={difficulty === "Hard"}/>}
+            {type === 2 && <NIQuestionCard isEditable={difficulty === "hard"} />}
+            {type === 1 && <CPQuestionCard type="image" isEditable={difficulty === "hard"} choices={q.choices}/>}
+            {type === 3 && <CPQuestionCard type="text" isEditable={difficulty === "hard"} choices={q.choices}/>}
           </Box>
         );
       })}

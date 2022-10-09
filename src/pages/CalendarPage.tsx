@@ -23,7 +23,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import TimePicker, { TimePickerValue } from "react-time-picker";
-import { subDays } from 'date-fns'
+import { subDays } from "date-fns";
 import "./CalendarStyles.css";
 
 type Event = {
@@ -34,10 +34,18 @@ type Event = {
   end: string;
 };
 
+type DateRange = {
+  start: Date;
+  end: Date;
+};
+
 function CalendarPage() {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const [isLargerThan411] = useMediaQuery("(min-width: 411px)");
-  const [calendarSelection, setCalendarSelection] = useState<DateSelectArg>();
+  const [eventDateRange, setEventDateRange] = useState<DateRange>({
+    start: new Date(),
+    end: new Date(),
+  });
   const [eventStartTime, setEventStartTime] =
     useState<TimePickerValue>("10:00");
   const [eventEndTime, setEventEndTime] = useState<TimePickerValue>("10:00");
@@ -74,29 +82,31 @@ function CalendarPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [eventTitle, setEventTitle] = useState<string>("");
 
-  function handleAddEvent() {
-    const startDate = new Date(calendarSelection?.startStr! + "T" + eventStartTime).toISOString();
-    const endDate = subDays(new Date(calendarSelection?.endStr! + "T" + eventEndTime), 1).toISOString();
+  function resetDate() {
+    setEventDateRange({start: new Date(), end: new Date()});
+    setEventTitle("");
+  }
 
-    console.log(startDate);
-    console.log(endDate);
+  function handleAddEvent() {
+    console.log(eventDateRange?.start.toString());
+    console.log(eventDateRange?.end);
     setEvents([
       ...events,
       {
         id: uuidv4(),
         title: eventTitle!,
         allDay: false,
-        start: startDate,
-        end: endDate,
+        start: eventDateRange?.start!.toISOString(),
+        end: eventDateRange?.end!.toISOString(),
       },
     ]);
-    setCalendarSelection(undefined);
-    setEventTitle("");
+
+    resetDate();
   }
 
   return (
-    <Container>
-      <Button isDisabled={calendarSelection === undefined} onClick={onOpen}>
+    <Container pb="5">
+      <Button onClick={onOpen}>
         Add event
       </Button>
 
@@ -114,7 +124,9 @@ function CalendarPage() {
             <Box mx="3">
               <Flex my="1" justifyContent="space-between">
                 <Text>event start date:</Text>
-                <Code>{calendarSelection?.startStr}</Code>
+                <Code>
+                  {eventDateRange?.start.toString()}
+                </Code>
                 <TimePicker
                   disableClock={true}
                   onChange={(t) => setEventStartTime(t)}
@@ -123,7 +135,9 @@ function CalendarPage() {
               </Flex>
               <Flex my="1" justifyContent="space-between">
                 <Text>event end date:</Text>
-                <Code>{calendarSelection?.endStr}</Code>
+                <Code>
+                  {eventDateRange?.end.toString()}
+                </Code>
                 <TimePicker
                   disableClock={true}
                   onChange={(t) => setEventEndTime(t)}
@@ -161,9 +175,13 @@ function CalendarPage() {
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
         selectable={true}
-        select={(selection) => setCalendarSelection(selection)}
+        select={(selection) => {
+          setEventDateRange({ start: selection.start, end: selection.end });
+          setEventStartTime(selection.start);
+          setEventEndTime(selection.end);
+        }}
         unselectAuto={false}
-        unselect={() => setCalendarSelection(undefined)}
+        unselect={resetDate}
         longPressDelay={0}
         events={events}
         eventClick={(e) => {

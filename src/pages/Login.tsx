@@ -13,7 +13,7 @@ function Login() {
 
   async function handleLogin(e: any) {
     e.preventDefault();
-
+    setAuth({email: "NO API", password: "123", accessToken: "NO API"})
     try {
       const response = await axios.post(
         LOGIN_URL,

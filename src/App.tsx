@@ -4,6 +4,7 @@ import CalendarPage from "./pages/CalendarPage";
 import Patients from "./pages/Patients";
 import Exercises from "./pages/Exercises";
 import CreateExercisePage from "./pages/CreateExercisePage";
+import CreateGeneratedExercisePage from "./pages/CreateGeneratedExercisePage";
 import PatientProfile from "./pages/PatientProfile";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -37,6 +38,10 @@ export const App = () => {
                 <Route
                   path="/CreateExercise"
                   element={<CreateExercisePage />}
+                />
+                <Route
+                  path="/CreateGeneratedExercise"
+                  element={<CreateGeneratedExercisePage />}
                 />
                 <Route
                   path="/ExerciseResults/:id"

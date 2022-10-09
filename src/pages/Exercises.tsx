@@ -8,17 +8,16 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { Link as RouterLink } from "react-router-dom"
+import { Link as RouterLink } from "react-router-dom";
 import ExerciseList from "../components/ExerciseList";
 import { PatientExercisesData, Exercise } from "../data/PatientExercisesData";
-
 
 function Exercises() {
   const [filterNameValue, setFilterNameValue] = useState("");
   const [filterTypeValue, setFilterTypeValue] = useState("");
   const [filterDifficultyValue, setFilterDifficultyValue] = useState("");
   const [sortBy, setSortBy] = useState("");
-  
+
   // Filter data
   const filteredExercisesData = PatientExercisesData.filter(
     (exercise) =>
@@ -67,9 +66,12 @@ function Exercises() {
     <Container>
       <Box maxW="800px" mx="auto" mb="10">
         <Box mb="8">
-        <Link as={RouterLink} to="/CreateExercise" >
-                <Button w="full">Create New Exercise</Button>
-            </Link>
+          <Link as={RouterLink}  to="/CreateExercise">
+            <Button w="full" mb="2">Create Custom Exercise</Button>
+          </Link>
+          <Link as={RouterLink} to="/CreateGeneratedExercise">
+            <Button w="full">Generate New Exercise</Button>
+          </Link>
         </Box>
 
         <Input

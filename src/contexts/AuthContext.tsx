@@ -1,4 +1,5 @@
 import React, { useContext, createContext, useState } from "react";
+import useLocalStorage from "../hooks/useLocalStorage"
 
 const AuthContext = createContext<any>({});
 
@@ -13,7 +14,7 @@ type authType = {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [auth, setAuth] = useState<authType | undefined>();
+  const [auth, setAuth] =  useLocalStorage("Token", "");
 
   function logOut() {
     setAuth(undefined)
