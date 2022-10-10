@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -11,56 +11,52 @@ import {
   Box,
   Button,
   Flex,
-  Tag,
-  Stack,
-  TagLabel,
   Wrap,
   WrapItem,
   Image,
   Center,
   Text,
 } from "@chakra-ui/react";
-import { TagData } from "../data/TagData";
-import { ImageData } from "../data/ImageData";
-import { useTagContext } from "../contexts/TagContext";
+import SelectTags from "./SelectTags";
+import { BasicChoice } from "../data/GeneratedCPExercise";
 
 type ImageModalArgs = {
-  selectedImageId: string | undefined;
-  setSelectedImageId: (id: string, index: number) => void;
-  imageIndex: number | undefined
-  boxSize: string
+  selectedImageUrl: string | undefined;
+  handleUpdateChoice: ((a: string, b: string, c: string | undefined, d: string | undefined) => void) | undefined;
+  boxSize: string;
+  imageData: BasicChoice[];
+  questionId: string;
+  choiceId: string;
 };
 
 function SelectImageModal({
-  selectedImageId,
-  setSelectedImageId,
-  imageIndex,
-  boxSize
+  selectedImageUrl,
+  handleUpdateChoice,
+  boxSize,
+  imageData,
+  questionId,
+  choiceId,
 }: ImageModalArgs) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { selectedTagIds, toggleTag } = useTagContext();
-  const [previewImageId, setPreviewImageId] = useState<string | undefined>();
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | undefined>();
 
-  const selectedImage = ImageData.find((image) => image.id === selectedImageId);
+  const selectedImage = imageData.find((image) => image.image === selectedImageUrl);
   const imageSelected = selectedImage !== undefined;
 
-  function isSelected(id: string) {
-    return selectedTagIds.includes(id);
-  }
-
+  console.log("preview:", previewImageUrl);
   return (
     <>
       <Box onClick={onOpen}>
         {!imageSelected && (
-          <Center boxSize={boxSize}>
+          <Center boxSize={boxSize} borderWidth="1px" borderRadius="lg">
             <Text>Select Image</Text>
           </Center>
         )}
         {imageSelected && (
           <Box>
             <Image
-              src={selectedImage.url}
-              alt={selectedImage.alt}
+              src={selectedImage.image}
+              alt={selectedImage.text}
               objectFit="cover"
               boxSize={boxSize}
               borderRadius="lg"
@@ -75,42 +71,23 @@ function SelectImageModal({
           <ModalCloseButton />
           <ModalBody>
             <Flex>
-              <Stack mr="5">
-                {TagData.map((tag) => {
-                  return (
-                    <Tag
-                      key={tag.id}
-                      onClick={() => toggleTag(tag.id)}
-                      transition="0.2s"
-                      _hover={{
-                        bg: isSelected(tag.id) ? "green.300" : "gray.200",
-                      }}
-                      cursor="pointer"
-                      bg={isSelected(tag.id) ? "green.200" : "gray.100"}
-                    >
-                      <TagLabel mx="auto">{tag.name}</TagLabel>
-                    </Tag>
-                  );
-                })}
-              </Stack>
+              <Box maxW="125px">
+                <SelectTags />
+              </Box>
               <Wrap w="full" spacing="0.2rem">
-                {ImageData.map((image) => {
+                {imageData.map((image) => {
                   return (
                     <WrapItem key={image.id}>
                       <Image
-                        src={image.url}
-                        alt={image.alt}
+                        src={image.image}
+                        alt={image.text}
                         objectFit="cover"
                         boxSize="7rem"
-                        onClick={() => setPreviewImageId(image.id)}
+                        onClick={() => setPreviewImageUrl(image.image)}
                         borderRadius="lg"
                         cursor="pointer"
                         border="2px"
-                        borderColor={
-                          previewImageId === image.id
-                            ? "blue.400"
-                            : "transparent"
-                        }
+                        borderColor={previewImageUrl === image.image ? "blue.400" : "transparent"}
                       />
                     </WrapItem>
                   );
@@ -126,7 +103,7 @@ function SelectImageModal({
             <Button
               colorScheme="blue"
               onClick={() => {
-                setSelectedImageId(previewImageId ?? "", imageIndex ?? -1);
+                handleUpdateChoice!(questionId, choiceId, undefined, previewImageUrl ?? "");
                 onClose();
               }}
             >

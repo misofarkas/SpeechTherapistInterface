@@ -15,9 +15,14 @@ export function TagProvider({ children }: { children: React.ReactNode }) {
       : setSelectedTagIds([...selectedTagIds, id]);
   }
 
+  function isSelected(id: string) {
+    return selectedTagIds.includes(id);
+  }
+
   const value = {
     selectedTagIds,
     toggleTag,
+    isSelected,
   };
 
   return <TagContext.Provider value={value}>{children}</TagContext.Provider>;

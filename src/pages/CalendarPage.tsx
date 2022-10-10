@@ -46,8 +46,7 @@ function CalendarPage() {
     start: new Date(),
     end: new Date(),
   });
-  const [eventStartTime, setEventStartTime] =
-    useState<TimePickerValue>("10:00");
+  const [eventStartTime, setEventStartTime] = useState<TimePickerValue>("10:00");
   const [eventEndTime, setEventEndTime] = useState<TimePickerValue>("10:00");
   const [events, setEvents] = useState<Event[]>([
     {
@@ -83,7 +82,7 @@ function CalendarPage() {
   const [eventTitle, setEventTitle] = useState<string>("");
 
   function resetDate() {
-    setEventDateRange({start: new Date(), end: new Date()});
+    setEventDateRange({ start: new Date(), end: new Date() });
     setEventTitle("");
   }
 
@@ -106,9 +105,7 @@ function CalendarPage() {
 
   return (
     <Container pb="5">
-      <Button onClick={onOpen}>
-        Add event
-      </Button>
+      <Button onClick={onOpen}>Add event</Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -124,25 +121,13 @@ function CalendarPage() {
             <Box mx="3">
               <Flex my="1" justifyContent="space-between">
                 <Text>event start date:</Text>
-                <Code>
-                  {eventDateRange?.start.toString()}
-                </Code>
-                <TimePicker
-                  disableClock={true}
-                  onChange={(t) => setEventStartTime(t)}
-                  value={eventStartTime}
-                />
+                <Code>{eventDateRange?.start.toString()}</Code>
+                <TimePicker disableClock={true} onChange={(t) => setEventStartTime(t)} value={eventStartTime} />
               </Flex>
               <Flex my="1" justifyContent="space-between">
                 <Text>event end date:</Text>
-                <Code>
-                  {eventDateRange?.end.toString()}
-                </Code>
-                <TimePicker
-                  disableClock={true}
-                  onChange={(t) => setEventEndTime(t)}
-                  value={eventEndTime}
-                />
+                <Code>{eventDateRange?.end.toString()}</Code>
+                <TimePicker disableClock={true} onChange={(t) => setEventEndTime(t)} value={eventEndTime} />
               </Flex>
             </Box>
           </ModalBody>
@@ -153,10 +138,7 @@ function CalendarPage() {
             </Button>
             <Button
               isDisabled={
-                eventTitle === "" ||
-                eventTitle === undefined ||
-                eventStartTime === null ||
-                eventEndTime === null
+                eventTitle === "" || eventTitle === undefined || eventStartTime === null || eventEndTime === null
               }
               colorScheme="blue"
               onClick={() => {

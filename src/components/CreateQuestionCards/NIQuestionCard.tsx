@@ -11,8 +11,9 @@ import {
 } from "@chakra-ui/react";
 import { ImageData } from "../../data/ImageData";
 import SelectImageModal from "../SelectImageModal";
+import { BasicChoice } from "../../data/GeneratedCPExercise";
 
-function NIQuestionCard({isEditable} : {isEditable: boolean}) {
+function NIQuestionCard({isEditable, imageData} : {isEditable: boolean, imageData: BasicChoice[] | undefined}) {
   const [selectedInputId, setSelectedInputId] = useState(1);
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>();
   
@@ -62,6 +63,7 @@ function NIQuestionCard({isEditable} : {isEditable: boolean}) {
             setSelectedImageId={handleImageSelection}
             boxSize="150px"
             imageIndex={undefined}
+            imageData={imageData ?? []}
           />
         </GridItem>
         <GridItem colSpan={1}>

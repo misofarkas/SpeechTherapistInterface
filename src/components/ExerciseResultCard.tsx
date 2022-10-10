@@ -2,12 +2,12 @@ import { Box, Flex, Heading, Icon, Tag } from "@chakra-ui/react";
 import { AiOutlinePicture, AiFillStar } from "react-icons/ai";
 
 type ExerciseResultCardArgs = {
-  name: string,
-  type: string,
-  difficulty: string
-}
+  name: string;
+  type: string;
+  difficulty: string;
+};
 
-function ExerciseCard({name, type, difficulty}: ExerciseResultCardArgs) {
+function ExerciseCard({ name, type, difficulty }: ExerciseResultCardArgs) {
   return (
     <Box
       w="full"
@@ -21,7 +21,9 @@ function ExerciseCard({name, type, difficulty}: ExerciseResultCardArgs) {
       <Flex h="full" px="4" gap="4" alignItems="center">
         <Icon w="12" h="12" as={AiOutlinePicture} />
         <div>
-          <Heading size="sm" mb="2">{name}</Heading>
+          <Heading size="sm" mb="2">
+            {name}
+          </Heading>
           <Flex gap="2">
             <Tag>{type}</Tag>
             <Tag backgroundColor="green.400">{difficulty}</Tag>

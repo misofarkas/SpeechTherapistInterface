@@ -42,20 +42,14 @@ function UserSettings() {
               <Box borderWidth="1px" borderRadius="lg" padding="5">
                 <Stack spacing="4">
                   <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
-                    <Heading
-                      size="sm"
-                      alignSelf={isLargerThan768 ? "center" : ""}
-                    >
+                    <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""}>
                       Full Name
                     </Heading>
                     <Input maxW="400px"></Input>
                   </Flex>
                   <Divider />
                   <Flex gap="4">
-                    <Heading
-                      size="sm"
-                      alignSelf="center"
-                    >
+                    <Heading size="sm" alignSelf="center">
                       Change Avatar
                     </Heading>
                     <Avatar />
@@ -82,25 +76,17 @@ function UserSettings() {
                       <Box>
                         <Heading size="sm">Email</Heading>
                         <Flex gap="4">
-                          <Text
-                            fontSize="sm"
-                            alignSelf="center"
-                          >
+                          <Text fontSize="sm" alignSelf="center">
                             some_email@gmail.com
                           </Text>
                           <Button size="sm">Change Email</Button>
                         </Flex>
-                        <FormHelperText>
-                          You can change your email only once per week.
-                        </FormHelperText>
+                        <FormHelperText>You can change your email only once per week.</FormHelperText>
                       </Box>
                       <Divider />
                       <Box>
                         <Flex gap="4">
-                          <Heading
-                            size="sm"
-                            alignSelf="center"
-                          >
+                          <Heading size="sm" alignSelf="center">
                             Phone number
                           </Heading>
                           <Input maxW="400px"></Input>

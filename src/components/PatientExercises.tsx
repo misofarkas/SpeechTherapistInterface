@@ -8,9 +8,7 @@ type patientId = {
 };
 
 function PatientExercises({ patientId }: patientId) {
-  const exercisesData = PatientExercisesData.filter(
-    (e) => e.patientId === patientId
-  );
+  const exercisesData = PatientExercisesData.filter((e) => e.patientId === patientId);
   if (exercisesData.length === 0) {
     return <div>Patient has no exercises assigned</div>;
   }

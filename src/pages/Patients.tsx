@@ -3,9 +3,9 @@ import { Container } from "@chakra-ui/react";
 
 function Patients() {
   return (
-      <Container>
-        <PatientList />
-      </Container>
+    <Container>
+      <PatientList />
+    </Container>
   );
 }
 

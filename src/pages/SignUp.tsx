@@ -60,14 +60,7 @@ function SignUp() {
 
   return (
     <Container>
-      <Box
-        borderWidth="1px"
-        borderRadius="lg"
-        maxW="400px"
-        padding="5"
-        m="auto"
-        mb="5"
-      >
+      <Box borderWidth="1px" borderRadius="lg" maxW="400px" padding="5" m="auto" mb="5">
         <Heading size="md" textAlign="center" my="4">
           Create account
         </Heading>
@@ -101,9 +94,7 @@ function SignUp() {
             <Form>
               <Field name="fullName" validate={validateName}>
                 {({ field, form }) => (
-                  <FormControl
-                    isInvalid={form.errors.fullName && form.touched.fullName}
-                  >
+                  <FormControl isInvalid={form.errors.fullName && form.touched.fullName}>
                     <FormLabel>Full name</FormLabel>
                     <Input {...field} placeholder="name" />
                     <FormErrorMessage>{form.errors.fullName}</FormErrorMessage>
@@ -112,9 +103,7 @@ function SignUp() {
               </Field>
               <Field name="email" validate={validateEmail}>
                 {({ field, form }) => (
-                  <FormControl
-                    isInvalid={form.errors.email && form.touched.email}
-                  >
+                  <FormControl isInvalid={form.errors.email && form.touched.email}>
                     <FormLabel>Email</FormLabel>
                     <Input {...field} placeholder="email" />
                     <FormErrorMessage>{form.errors.email}</FormErrorMessage>
@@ -123,9 +112,7 @@ function SignUp() {
               </Field>
               <Field name="password" validate={validatePassword}>
                 {({ field, form }) => (
-                  <FormControl
-                    isInvalid={form.errors.password && form.touched.password}
-                  >
+                  <FormControl isInvalid={form.errors.password && form.touched.password}>
                     <FormLabel>Password</FormLabel>
                     <Input type="password" {...field} placeholder="" />
                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
@@ -134,26 +121,14 @@ function SignUp() {
               </Field>
               <Field name="confirmPassword" validate={validateConfirmPassword}>
                 {({ field, form }) => (
-                  <FormControl
-                    isInvalid={
-                      form.errors.confirmPassword &&
-                      form.touched.confirmPassword
-                    }
-                  >
+                  <FormControl isInvalid={form.errors.confirmPassword && form.touched.confirmPassword}>
                     <FormLabel>Confirm Password</FormLabel>
                     <Input type="password" {...field} placeholder="" />
-                    <FormErrorMessage>
-                      {form.errors.confirmPassword}
-                    </FormErrorMessage>
+                    <FormErrorMessage>{form.errors.confirmPassword}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
-              <Button
-                mt={4}
-                colorScheme="teal"
-                isLoading={props.isSubmitting}
-                type="submit"
-              >
+              <Button mt={4} colorScheme="teal" isLoading={props.isSubmitting} type="submit">
                 Submit
               </Button>
             </Form>

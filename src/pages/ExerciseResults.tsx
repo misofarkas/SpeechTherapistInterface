@@ -1,7 +1,8 @@
+import { useParams } from "react-router-dom";
+
 function ExerciseResults() {
-  return (
-    <div>ExerciseResults</div>
-  )
+  const { id } = useParams();
+  return <div>ExerciseResults</div>;
 }
 
-export default ExerciseResults
+export default ExerciseResults;

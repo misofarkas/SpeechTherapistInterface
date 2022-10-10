@@ -1,17 +1,7 @@
 import { PatientData } from "../data/PatientData";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Input,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Input, useMediaQuery } from "@chakra-ui/react";
 
 function PatientList() {
   const [filterValue, setFilterValue] = useState("");
@@ -44,27 +34,20 @@ function PatientList() {
               <Th>Name</Th>
               {isLargerThan992 && <Th isNumeric>Age</Th>}
               {isLargerThan768 && <Th>Phone number</Th>}
-              
+
               <Th className="email">Email</Th>
             </Tr>
           </Thead>
           <Tbody>
             {filteredPatientData.map((patient) => {
               return (
-                <Tr key={patient.id} transition="0.2s" _hover={{background: "gray.100"}}>
+                <Tr key={patient.id} transition="0.2s" _hover={{ background: "gray.100" }}>
                   <Td>
-                    <Link
-                      to={`/patient-profile/${patient.id}`}
-                    >
-                      {adjustStringLength(patient.name, 15)}
-                    </Link>
+                    <Link to={`/patient-profile/${patient.id}`}>{adjustStringLength(patient.name, 15)}</Link>
                   </Td>
                   {isLargerThan992 && <Td isNumeric> {patient.age} </Td>}
-                  {isLargerThan768 && <Td> {patient.phoneNumber} </Td> }
-                  <Td className="email">
-                    {" "}
-                    {adjustStringLength(patient.email, 20)}{" "}
-                  </Td>
+                  {isLargerThan768 && <Td> {patient.phoneNumber} </Td>}
+                  <Td className="email"> {adjustStringLength(patient.email, 20)} </Td>
                 </Tr>
               );
             })}

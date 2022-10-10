@@ -13,7 +13,7 @@ function Login() {
 
   async function handleLogin(e: any) {
     e.preventDefault();
-    setAuth({email: "NO API", password: "123", accessToken: "NO API"})
+    //setAuth({email: "NO API", password: "123", accessToken: "NO API"})
     try {
       const response = await axios.post(
         LOGIN_URL,
@@ -36,31 +36,15 @@ function Login() {
 
   return (
     <Container>
-      <Box
-        borderWidth="1px"
-        borderRadius="lg"
-        maxW="400px"
-        padding="5"
-        m="auto"
-        mb="5"
-      >
+      <Box borderWidth="1px" borderRadius="lg" maxW="400px" padding="5" m="auto" mb="5">
         <Heading size="md" textAlign="center" my="4">
           Therapist Login
         </Heading>
         <form>
           <Text>Email</Text>
-          <Input
-            mb="2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          ></Input>
+          <Input mb="2" value={email} onChange={(e) => setEmail(e.target.value)}></Input>
           <Text>Password</Text>
-          <Input
-            type="password"
-            mb="10"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></Input>
+          <Input type="password" mb="10" value={password} onChange={(e) => setPassword(e.target.value)}></Input>
           <Button w="full" onClick={handleLogin}>
             Login
           </Button>
@@ -68,7 +52,7 @@ function Login() {
       </Box>
       <Box textAlign="center">
         <p>Don't have an account yet?</p>
-        <Link as={RouterLink}  to={"/SignUp"}>
+        <Link as={RouterLink} to={"/SignUp"}>
           Sign up here
         </Link>
       </Box>

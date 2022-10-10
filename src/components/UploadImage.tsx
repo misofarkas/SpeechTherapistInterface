@@ -1,15 +1,4 @@
-import {
-  Button,
-  FormLabel,
-  Input,
-  Stack,
-  Image,
-  Flex,
-  Center,
-  Text,
-  useMediaQuery,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, FormLabel, Input, Stack, Image, Flex, Center, Text, useMediaQuery, useToast } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import axios from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
@@ -22,7 +11,7 @@ function UploadImage() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>();
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const toast = useToast();
-  const fileInput = useRef(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const { auth } = useAuth();
 
   function handleImageSelection(e: any) {
@@ -40,7 +29,7 @@ function UploadImage() {
         status: "error",
         duration: 5000,
         isClosable: true,
-      })
+      });
     } else if (imageText === "") {
       toast({
         title: "Error",
@@ -48,7 +37,7 @@ function UploadImage() {
         status: "error",
         duration: 5000,
         isClosable: true,
-      })
+      });
     } else {
       const data = new FormData();
       data.append("image", image);
@@ -76,19 +65,9 @@ function UploadImage() {
   }
 
   return (
-    <Flex
-      gap={isLargerThan768 ? "50px" : "20px"}
-      direction={isLargerThan768 ? "row" : "column"}
-    >
+    <Flex gap={isLargerThan768 ? "50px" : "20px"} direction={isLargerThan768 ? "row" : "column"}>
       {image !== "" ? (
-        <Image
-          mt="3"
-          objectFit="cover"
-          boxSize="200px"
-          borderRadius="lg"
-          src={imagePreviewUrl}
-          alt="no image found"
-        />
+        <Image mt="3" objectFit="cover" boxSize="200px" borderRadius="lg" src={imagePreviewUrl} alt="no image found" />
       ) : (
         <Center boxSize="200px" mt="3" borderRadius="lg" borderWidth="1px">
           <Text>Image Preview</Text>
@@ -105,12 +84,11 @@ function UploadImage() {
         ></input>
         <Button onClick={() => fileInput.current?.click()}>Select Image</Button>
         <FormLabel>Image Name</FormLabel>
-        <Input
-          value={imageText}
-          onChange={(e) => setImageText(e.target.value)}
-        ></Input>
+        <Input value={imageText} onChange={(e) => setImageText(e.target.value)}></Input>
 
-        <Button onClick={postFile} isLoading={loading} loadingText="Submitting" >Upload</Button>
+        <Button onClick={postFile} isLoading={loading} loadingText="Submitting">
+          Upload
+        </Button>
       </Stack>
     </Flex>
   );

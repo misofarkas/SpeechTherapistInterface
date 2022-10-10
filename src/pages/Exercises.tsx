@@ -1,12 +1,4 @@
-import {
-  Container,
-  Select,
-  Flex,
-  Input,
-  Box,
-  Link,
-  Button,
-} from "@chakra-ui/react";
+import { Container, Select, Flex, Input, Box, Link, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import ExerciseList from "../components/ExerciseList";
@@ -23,21 +15,16 @@ function Exercises() {
     (exercise) =>
       exercise.name.toLowerCase().includes(filterNameValue.toLowerCase()) &&
       (filterTypeValue === "" || filterTypeValue === exercise.type) &&
-      (filterDifficultyValue === "" ||
-        filterDifficultyValue === exercise.difficutly)
+      (filterDifficultyValue === "" || filterDifficultyValue === exercise.difficutly)
   );
 
   // Sort data
   switch (sortBy) {
     case "fav-asc":
-      filteredExercisesData.sort((a, b) =>
-        a.favorited > b.favorited ? 1 : -1
-      );
+      filteredExercisesData.sort((a, b) => (a.favorited > b.favorited ? 1 : -1));
       break;
     case "fav-des":
-      filteredExercisesData.sort((a, b) =>
-        a.favorited < b.favorited ? 1 : -1
-      );
+      filteredExercisesData.sort((a, b) => (a.favorited < b.favorited ? 1 : -1));
       break;
     case "diff-asc":
       filteredExercisesData.sort((a, b) => compareDifficulties(a, b));
@@ -50,10 +37,7 @@ function Exercises() {
   }
 
   function compareDifficulties(a: Exercise, b: Exercise) {
-    if (
-      a.difficutly === "Easy" &&
-      (b.difficutly === "Medium" || b.difficutly === "Hard")
-    ) {
+    if (a.difficutly === "Easy" && (b.difficutly === "Medium" || b.difficutly === "Hard")) {
       return -1;
     }
     if (a.difficutly === "Medium" && b.difficutly === "Hard") {
@@ -66,8 +50,10 @@ function Exercises() {
     <Container>
       <Box maxW="800px" mx="auto" mb="10">
         <Box mb="8">
-          <Link as={RouterLink}  to="/CreateExercise">
-            <Button w="full" mb="2">Create Custom Exercise</Button>
+          <Link as={RouterLink} to="/CreateExercise">
+            <Button w="full" mb="2">
+              Create Custom Exercise
+            </Button>
           </Link>
           <Link as={RouterLink} to="/CreateGeneratedExercise">
             <Button w="full">Generate New Exercise</Button>
@@ -102,12 +88,7 @@ function Exercises() {
             <option value="Hard">Hard</option>
           </Select>
         </Flex>
-        <Select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          maxW="200px"
-          placeholder="Sort by"
-        >
+        <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} maxW="200px" placeholder="Sort by">
           <option value="fav-des">Favorites desc</option>
           <option value="fav-asc">Favorites asc</option>
           <option value="diff-des">Difficulty desc</option>

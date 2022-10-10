@@ -36,14 +36,7 @@ function Sidebar() {
 
   return (
     <>
-      <Flex
-        bg="gray.100"
-        w="full"
-        height="4rem"
-        px="5"
-        alignItems="center"
-        gap="2"
-      >
+      <Flex bg="gray.100" w="full" height="4rem" px="5" alignItems="center" gap="2">
         <HamburgerIcon w={8} h={8} cursor="pointer" onClick={onOpen} />
         {isLargerThan992 && (
           <Heading size="lg" ml="5" mb="1">
@@ -56,11 +49,7 @@ function Sidebar() {
             <PopoverTrigger>
               <Button>
                 <Flex>
-                  <Avatar
-                    src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg"
-                    size="sm"
-                    mr="2"
-                  />
+                  <Avatar src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg" size="sm" mr="2" />
                   <Text mt="1">{auth?.email}</Text>
                 </Flex>
               </Button>
@@ -75,7 +64,9 @@ function Sidebar() {
                   </Link>
                   <Divider />
                   <Center>About page</Center>
-                  <Center><Link  onClick={logOut}>Log out</Link></Center>
+                  <Center>
+                    <Link onClick={logOut}>Log out</Link>
+                  </Center>
                 </Stack>
               </PopoverBody>
             </PopoverContent>
