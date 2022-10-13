@@ -5,7 +5,7 @@ import SelectImageModal from "../SelectImageModal";
 import { BsArrowRight } from "react-icons/bs";
 import { IconType } from "react-icons/lib";
 import { ImageData } from "../../data/ImageData";
-import { BasicChoice, Question } from "../../data/GeneratedCPExercise";
+import { BasicChoice, Question } from "../../types/commonTypes";
 
 type ImageId = string | undefined;
 

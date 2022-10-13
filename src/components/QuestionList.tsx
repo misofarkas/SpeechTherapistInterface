@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import NIQuestionCard from "./CreateQuestionCards/NIQuestionCard";
 import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard";
-import { BasicChoice, Question } from "../data/GeneratedCPExercise";
+import { BasicChoice, Question } from "../types/commonTypes";
 
 function QuestionList({
   questions,
@@ -23,7 +23,15 @@ function QuestionList({
       {questions.map((q) => {
         return (
           <Box mb="5" key={q.id}>
-            {type === 3 && <NIQuestionCard isEditable={difficulty === "hard"} imageData={imageData} />}
+            {type === 3 && (
+              <NIQuestionCard
+                isEditable={difficulty === "hard"}
+                question={q}
+                handleUpdateChoice={handleUpdateChoice}
+                handleDeleteQuestion={handleDeleteQuestion}
+                imageData={imageData}
+              />
+            )}
             {type === 1 && (
               <CPQuestionCard
                 type="image"

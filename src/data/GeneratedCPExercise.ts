@@ -1,29 +1,4 @@
-export type Tag = {
-  id: string;
-  text: string;
-};
-
-export type BasicChoice = {
-  id: string;
-  text: string;
-  image: string;
-  tags: Tag[];
-};
-
-export type Question = {
-  id: string;
-  heading: string;
-  choices: BasicChoice[];
-};
-
-export type GeneratedTask = {
-  id: string;
-  name: string;
-  type: number;
-  difficulty: string;
-  created_by: string;
-  questions: Question[];
-};
+import { GeneratedTask } from "../types/commonTypes";
 
 export const GeneratedTasks: GeneratedTask[] = [
   {

@@ -1,23 +1,20 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Flex, LinkBox } from "@chakra-ui/react";
 import ExerciseCard from "./ExerciseCard";
-import { Exercise } from "../data/PatientExercisesData";
+import { Task } from "../types/commonTypes";
 
-type ExerciseData = {
-  exercisesData: Exercise[];
-};
 
-function ExerciseList({ exercisesData }: ExerciseData) {
+function ExerciseList({ taskData }: { taskData: Task[]}) {
   return (
     <Flex flexDirection="column" gap="2">
-      {exercisesData.map((exercise) => {
+      {taskData.map((task) => {
         return (
-          <LinkBox as={RouterLink} key={exercise.id} to="#">
+          <LinkBox as={RouterLink} key={task.id} to="#">
             <ExerciseCard
-              name={exercise.name}
-              favs={exercise.favorited}
-              type={exercise.type}
-              difficulty={exercise.difficutly}
+              name={task.name}
+              favs={20}
+              type={String(task.type)}
+              difficulty={task.difficulty}
             />
           </LinkBox>
         );

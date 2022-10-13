@@ -1,25 +1,28 @@
-import { Question } from "../data/GeneratedCPExercise";
+import { Question } from "../types/commonTypes";
 import axios from "./axios";
 
 async function postTask({
   questions,
   auth,
-  postError,
-  setPostError,
+  error,
+  setError,
 }: {
   questions: Question[];
   auth: any;
-  postError: string;
-  setPostError: (a: string) => void;
+  error: string;
+  setError: (a: string) => void;
 }) {
   const POST_TASK_URL = "/task/tasks/";
   let isValid = true;
 
   console.log(questions);
+  if (questions === undefined || questions.length === 0) {
+    isValid = false;
+  }
   questions.forEach((question) => {
     question.choices.forEach((choice) => {
       if (choice.text === "" && choice.image === "") {
-        setPostError("Not all questions are fully filled out")
+        setError("Not all questions are fully filled out")
         isValid = false;
       }
     });
@@ -39,7 +42,7 @@ async function postTask({
         }
       );
     } catch (err) {
-      setPostError(String(err));
+      setError(String(err));
     }
   }
 }

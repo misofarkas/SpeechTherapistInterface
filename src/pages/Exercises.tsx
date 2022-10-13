@@ -1,40 +1,55 @@
 import { Container, Select, Flex, Input, Box, Link, Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import getTasks from "../api/getTasks";
 import ExerciseList from "../components/ExerciseList";
+import { useAuth } from "../contexts/AuthContext";
 import { PatientExercisesData, Exercise } from "../data/PatientExercisesData";
+import { Task } from "../types/commonTypes";
 
 function Exercises() {
   const [filterNameValue, setFilterNameValue] = useState("");
-  const [filterTypeValue, setFilterTypeValue] = useState("");
+  const [filterTypeValue, setFilterTypeValue] = useState<number>(0);
   const [filterDifficultyValue, setFilterDifficultyValue] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [error, setError] = useState("");
+  const { auth } = useAuth();
+
+  useEffect(() => {
+    getTasks({ auth, setError }).then((value) => {
+      setTasks(value);
+    });
+  }, []);
 
   // Filter data
-  const filteredExercisesData = PatientExercisesData.filter(
-    (exercise) =>
-      exercise.name.toLowerCase().includes(filterNameValue.toLowerCase()) &&
-      (filterTypeValue === "" || filterTypeValue === exercise.type) &&
-      (filterDifficultyValue === "" || filterDifficultyValue === exercise.difficutly)
+  const filteredTaskData = tasks.filter(
+    (task) =>
+    task.name.toLowerCase().includes(filterNameValue.toLowerCase()) &&
+      (filterTypeValue === 0 || filterTypeValue === task.type) &&
+      (filterDifficultyValue === "" || filterDifficultyValue === task.difficulty)
   );
+  console.log("type value:",filterTypeValue)
 
+  /*
   // Sort data
   switch (sortBy) {
     case "fav-asc":
-      filteredExercisesData.sort((a, b) => (a.favorited > b.favorited ? 1 : -1));
+      filteredTaskData.sort((a, b) => (a.favorited > b.favorited ? 1 : -1));
       break;
     case "fav-des":
-      filteredExercisesData.sort((a, b) => (a.favorited < b.favorited ? 1 : -1));
+      filteredTaskData.sort((a, b) => (a.favorited < b.favorited ? 1 : -1));
       break;
     case "diff-asc":
-      filteredExercisesData.sort((a, b) => compareDifficulties(a, b));
+      filteredTaskData.sort((a, b) => compareDifficulties(a, b));
       break;
     case "diff-des":
-      filteredExercisesData.sort((a, b) => -compareDifficulties(a, b));
+      filteredTaskData.sort((a, b) => -compareDifficulties(a, b));
       break;
     default:
       break;
   }
+  */
 
   function compareDifficulties(a: Exercise, b: Exercise) {
     if (a.difficutly === "Easy" && (b.difficutly === "Medium" || b.difficutly === "Hard")) {
@@ -70,12 +85,13 @@ function Exercises() {
         <Flex mb="2" gap="2">
           <Select
             value={filterTypeValue}
-            onChange={(e) => setFilterTypeValue(e.target.value)}
+            onChange={(e) => setFilterTypeValue(Number(e.target.value))}
             maxW="400px"
             placeholder="All types"
           >
-            <option value="Connect Images">Connect Images</option>
-            <option value="Name Images">Name Images</option>
+            <option value={1}>Connect Images</option>
+            <option value={2}>Connect Text</option>
+            <option value={3}>Name Images</option>
           </Select>
           <Select
             value={filterDifficultyValue}
@@ -83,9 +99,8 @@ function Exercises() {
             maxW="400px"
             placeholder="All difficulties"
           >
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
+            <option value="easy">Easy</option>
+            <option value="hard">Hard</option>
           </Select>
         </Flex>
         <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} maxW="200px" placeholder="Sort by">
@@ -96,7 +111,7 @@ function Exercises() {
         </Select>
       </Box>
       <Box maxW="800px" mx="auto">
-        <ExerciseList exercisesData={filteredExercisesData} />
+        <ExerciseList taskData={filteredTaskData} />
       </Box>
     </Container>
   );

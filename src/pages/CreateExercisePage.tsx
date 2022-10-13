@@ -25,15 +25,14 @@ import { TagProvider } from "../contexts/TagContext";
 import { AddIcon } from "@chakra-ui/icons";
 import axios from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
-import { BasicChoice, Question } from "../data/GeneratedCPExercise";
+import { BasicChoice, Question } from "../types/commonTypes";
 import UploadImage from "../components/UploadImage";
 import postTask from "../api/postTask";
 import { cloneDeep } from "lodash";
 import { v4 as uuidv4 } from "uuid";
+import getImages from "../api/getImages";
 
 function CreateExercisePage() {
-  const TASK_URL = "/task/tasks/";
-  const BASIC_CHOICE_URL = "/task/basic_choices/";
   const { auth } = useAuth();
   const [name, setName] = useState("");
   const [type, setType] = useState(1);
@@ -43,7 +42,8 @@ function CreateExercisePage() {
   const [imageData, setImageData] = useState<BasicChoice[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
-  const [postError, setPostError] = useState("");
+  const [error, setError] = useState("");
+  const [imageError, setImageError] = useState("");
 
   function handleAddQuestion(heading: string) {
     setQuestions([
@@ -59,24 +59,13 @@ function CreateExercisePage() {
   function handleDeleteQuestion(questionId: string) {
     const newQuestions = questions.filter((q) => q.id !== questionId);
     setQuestions(newQuestions);
-    
   }
 
   function generateEmptyChoices() {
     switch (savedType) {
       case 1:
-        // Connect Pairs - image/text
-        return [
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-        ];
-        break;
       case 2:
-        // Connect Pairs - text/text
+        // Connect Pairs
         return [
           { id: uuidv4(), text: "", image: "", tags: [] },
           { id: uuidv4(), text: "", image: "", tags: [] },
@@ -87,7 +76,13 @@ function CreateExercisePage() {
         ];
         break;
       case 3:
-        return [];
+        return [
+          { id: uuidv4(), text: "", image: "", tags: [] },
+          { id: uuidv4(), text: "", image: "", tags: [] },
+          { id: uuidv4(), text: "", image: "", tags: [] },
+          { id: uuidv4(), text: "", image: "", tags: [] },
+          { id: uuidv4(), text: "", image: "", tags: [] },
+        ];
         break;
       default:
         return [];
@@ -118,26 +113,9 @@ function CreateExercisePage() {
   }
 
   useEffect(() => {
-    async function getImages() {
-      setIsLoading(true);
-      try {
-        const imageData = await axios.get(BASIC_CHOICE_URL, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${auth?.accessToken}`,
-          },
-          withCredentials: false,
-        });
-
-        setImageData(imageData.data);
-        console.log(imageData.data);
-      } catch (error) {
-        console.error(error);
-      }
-      setIsLoading(false);
-    }
-
-    getImages();
+    getImages({ auth, setIsLoading, setImageError }).then((value) => {
+      setImageData(value);
+    });
   }, []);
 
   return (
@@ -242,8 +220,8 @@ function CreateExercisePage() {
               <UploadImage />
             </TabPanel>
             <TabPanel>
-              <Button onClick={() => postTask({ questions, auth, postError, setPostError })}>Save</Button>
-              {postError !== "" && <Text color="red.400">failed to save task: {postError}</Text>}
+              <Button onClick={() => postTask({ questions, auth, error, setError })}>Save</Button>
+              {error !== "" && <Text color="red.400">failed to save task: {error}</Text>}
             </TabPanel>
           </TabPanels>
         </Tabs>

@@ -19,7 +19,7 @@ import {
 import { TagProvider } from "../contexts/TagContext";
 import axios from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
-import { BasicChoice, GeneratedTasks, Question } from "../data/GeneratedCPExercise";
+import { Question } from "../types/commonTypes"
 import SelectTags from "../components/SelectTags";
 import QuestionList from "../components/QuestionList";
 
@@ -61,8 +61,6 @@ function CreateGeneratedExercisePage() {
     }
     setTimeout(() => setIsGenerating(false), 1000);
 
-    // Placeholder data, remove later..
-    //setQuestions(GeneratedTasks[0].questions);
   }
 
   return (
