@@ -15,14 +15,18 @@ type authType = {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useLocalStorage("Token", "");
+  const [userId, setUserId] = useLocalStorage("Id", "");
 
   function logOut() {
     setAuth(undefined);
+    setUserId(undefined)
   }
 
   const value = {
     auth,
     setAuth,
+    userId,
+    setUserId,
     logOut,
   };
 

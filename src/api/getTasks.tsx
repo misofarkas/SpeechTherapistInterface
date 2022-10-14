@@ -1,8 +1,9 @@
 import axios from "./axios";
 
-async function getTasks({ auth, setError }: { auth: any; setError: (a: string) => void }) {
-  const GET_TASK_URL = "/task/tasks/";
+async function getTasks({ auth, setError, id=undefined }: { auth: any; setError: (a: string) => void; id?: string }) {
+  const GET_TASK_URL = id === undefined ? "/task/tasks/" : `/task/tasks/${id}/`;
   let result;
+  console.log(GET_TASK_URL);
   try {
     result = await axios.get(GET_TASK_URL, {
       headers: {
@@ -14,7 +15,7 @@ async function getTasks({ auth, setError }: { auth: any; setError: (a: string) =
   } catch (err) {
     setError(String(err));
   }
-  console.log(result?.data);
+  console.log("getTasks result:", result?.data);
   return result?.data;
 }
 

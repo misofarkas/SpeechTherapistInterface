@@ -1,25 +1,39 @@
 import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react"
 import { PatientData } from "../data/PatientData";
 import { Button, Container, Textarea, Text, Heading, Flex, Box, useMediaQuery } from "@chakra-ui/react";
 import PatientExercises from "../components/PatientExercises";
 import PatientCard from "../components/PatientCard";
+import { useAuth } from "../contexts/AuthContext";
+import { Patient } from "../types/commonTypes";
+import getPatients from "../api/getPatients";
 
 function PatientProfile() {
   const { id } = useParams();
-  const person = fetchPerson(id ?? "");
+  const [patient, setPatient] = useState<Patient>();
+  const { auth } = useAuth();
+  const [error, setError] = useState("");
 
   const [isLargerThan992] = useMediaQuery("(min-width: 768px)");
 
+
+  useEffect(() => {
+    getPatients({ auth, setError, id }).then((value) => {
+      setPatient(value);
+    });
+  }, []);
+
+
   return (
     <Container centerContent>
-      {person === undefined ? (
+      {patient === undefined ? (
         <Text>This patient does not exist</Text>
       ) : (
         <>
           <Flex gap="6" flexDirection={isLargerThan992 ? "row" : "column"}>
             <Box maxW="30rem">
               <PatientCard
-                name={person.name}
+                name={patient.name}
                 avatarUrl="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg"
               />
 
@@ -60,6 +74,3 @@ function PatientProfile() {
 
 export default PatientProfile;
 
-function fetchPerson(id: string) {
-  return PatientData.find((p) => p.id === id);
-}

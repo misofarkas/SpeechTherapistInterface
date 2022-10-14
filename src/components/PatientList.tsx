@@ -1,18 +1,30 @@
 import { PatientData } from "../data/PatientData";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Input, useMediaQuery } from "@chakra-ui/react";
+import { useAuth } from "../contexts/AuthContext";
+import getPatients from "../api/getPatients";
+import { Patient } from "../types/commonTypes";
 
 function PatientList() {
   const [filterValue, setFilterValue] = useState("");
   const [isLargerThan992] = useMediaQuery("(min-width: 992px)");
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
+  const [error, setError] = useState("");
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const { auth } = useAuth();
 
   function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFilterValue(e.target.value);
   }
 
-  const filteredPatientData = PatientData.filter((patient) =>
+  useEffect(() => {
+    getPatients({ auth, setError }).then((value) => {
+      setPatients(value);
+    });
+  }, []);
+
+  const filteredPatientData = patients.filter((patient) =>
     patient.name.toLowerCase().includes(filterValue.toLowerCase())
   );
 
@@ -35,7 +47,7 @@ function PatientList() {
               {isLargerThan992 && <Th isNumeric>Age</Th>}
               {isLargerThan768 && <Th>Phone number</Th>}
 
-              <Th className="email">Email</Th>
+              <Th>Email</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -45,9 +57,13 @@ function PatientList() {
                   <Td>
                     <Link to={`/patient-profile/${patient.id}`}>{adjustStringLength(patient.name, 15)}</Link>
                   </Td>
+                  {/*
                   {isLargerThan992 && <Td isNumeric> {patient.age} </Td>}
                   {isLargerThan768 && <Td> {patient.phoneNumber} </Td>}
-                  <Td className="email"> {adjustStringLength(patient.email, 20)} </Td>
+                  */}
+                  <Td isNumeric>33</Td>
+                  <Td> +420 000 000 000 </Td>
+                  <Td> {adjustStringLength(patient.email, 20)} </Td>
                 </Tr>
               );
             })}

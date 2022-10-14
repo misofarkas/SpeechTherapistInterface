@@ -36,6 +36,16 @@ export type Task = {
   tags: Tag[];
 };
 
+export type TaskExtended = {
+  id: string;
+  name: string;
+  type: number;
+  difficulty: string;
+  created_by: string;
+  tags: Tag[];
+  questions: Question[];
+}
+
 export type AnswerChoice = {
   data1: string;
   data2: string;
@@ -52,4 +62,12 @@ export type TaskResult = {
   answered_by: string;
   task: string;
   answers: Answer[];
+};
+
+export type Patient = {
+  id: string;
+  email: string;
+  name: string;
+  is_therapist: boolean;
+  assigned_tasks: Task[];
 };

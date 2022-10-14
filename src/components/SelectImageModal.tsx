@@ -18,7 +18,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import SelectTags from "./SelectTags";
-import { BasicChoice } from "../data/GeneratedCPExercise";
+import { BasicChoice } from "../types/commonTypes";
 
 type ImageModalArgs = {
   selectedImageUrl: string | undefined;

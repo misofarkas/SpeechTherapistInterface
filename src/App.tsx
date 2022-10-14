@@ -15,6 +15,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ExerciseResults from "./pages/ExerciseResults";
 import UserSettings from "./pages/UserSettings";
 import RequireAuth from "./components/RequireAuth";
+import ExercisePreview from "./pages/ExercisePreview";
+import PageNotFound from "./pages/PageNotFound";
 
 export const App = () => {
   return (
@@ -47,8 +49,14 @@ export const App = () => {
                   path="/ExerciseResults/:id"
                   element={<ExerciseResults />}
                 />
+                <Route
+                  path="/ExercisePreview/:id"
+                  element={<ExercisePreview />}
+                />
                 <Route path="/UserSettings" element={<UserSettings />} />
               </Route>
+
+              <Route path="*" element={<PageNotFound />} />
             </Routes>
           </Router>
         </AuthProvider>

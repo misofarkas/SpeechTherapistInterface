@@ -5,15 +5,17 @@ import { Task } from "../types/commonTypes";
 
 
 function ExerciseList({ taskData }: { taskData: Task[]}) {
+
+
   return (
     <Flex flexDirection="column" gap="2">
       {taskData.map((task) => {
         return (
-          <LinkBox as={RouterLink} key={task.id} to="#">
+          <LinkBox as={RouterLink} key={task.id} to={`/ExercisePreview/${task.id}`}>
             <ExerciseCard
               name={task.name}
               favs={20}
-              type={String(task.type)}
+              type={task.type}
               difficulty={task.difficulty}
             />
           </LinkBox>

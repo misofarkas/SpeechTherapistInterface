@@ -177,8 +177,6 @@ function ImageGridItem({
 }: ImageGridItemArgs) {
   return (
     <GridItem
-      borderWidth={selectedImageUrl !== undefined ? "0" : "1px"}
-      borderRadius="lg"
       boxSize={itemWidth}
       textAlign="center"
       cursor="pointer"

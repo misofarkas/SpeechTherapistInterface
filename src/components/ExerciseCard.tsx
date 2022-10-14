@@ -4,11 +4,27 @@ import { AiOutlinePicture, AiFillStar } from "react-icons/ai";
 type ExerciseCardInfo = {
   name: string;
   favs: number;
-  type: string;
+  type: number;
   difficulty: string;
 };
 
 function ExerciseCard({ name, favs, type, difficulty }: ExerciseCardInfo) {
+
+  let typeText;
+  switch (type) {
+    case 1:
+      typeText = "Connect Images"
+      break;
+    case 2:
+      typeText = "Connect Text"
+      break;
+    case 3:
+      typeText = "Name Images"
+      break;
+    default:
+      typeText = ""
+  }
+
   return (
     <Box
       w="full"
@@ -27,10 +43,9 @@ function ExerciseCard({ name, favs, type, difficulty }: ExerciseCardInfo) {
           </Heading>
           <Flex gap="2">
             <Tag>
-              {" "}
               <Icon w="4" h="4" as={AiFillStar} mr="1" color="yellow.400" /> {favs}
             </Tag>
-            <Tag>{type}</Tag>
+            <Tag>{typeText}</Tag>
             <Tag backgroundColor="green.400">{difficulty}</Tag>
           </Flex>
         </div>

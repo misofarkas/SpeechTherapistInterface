@@ -1,38 +1,38 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Input, Button, Text, Box, Heading, Container, Link } from "@chakra-ui/react";
 import { useAuth } from "../contexts/AuthContext";
 
 import axios from "../api/axios";
+import login from "../api/login";
+import getProfile from "../api/getProfile";
 
 function Login() {
   const LOGIN_URL = "/user/login/";
-  const { setAuth } = useAuth();
+  const { auth, setAuth, setUserId } = useAuth();
   const [email, setEmail] = useState<string>("example@example.com");
   const [password, setPassword] = useState<string>("123456789");
+  const [error, setError] = useState("");
 
   async function handleLogin(e: any) {
     e.preventDefault();
-    //setAuth({email: "NO API", password: "123", accessToken: "NO API"})
-    try {
-      const response = await axios.post(
-        LOGIN_URL,
-        { email: email, password: password },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: false,
-        }
-      );
-
-      const accessToken = response?.data?.token;
-      console.log(accessToken);
+    login({ setError, email, password }).then((accessToken) => {
       setAuth({ email, password, accessToken });
-      setEmail("");
-      setPassword("");
-    } catch (err) {
-      console.log("API Error");
-    }
+    });
+    setEmail("");
+    setPassword("");
   }
+
+  useEffect(() => {
+    console.log("auth: ",auth)
+
+    if (auth !== undefined) {
+      getProfile({ auth, setError }).then((value) => {
+        console.log("userId value:", value)
+        setUserId({ id: value?.id });
+      });
+    }
+  }, [auth]);
 
   return (
     <Container>
