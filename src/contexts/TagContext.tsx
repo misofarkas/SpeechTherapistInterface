@@ -7,20 +7,21 @@ export function useTagContext() {
 }
 
 export function TagProvider({ children }: { children: React.ReactNode }) {
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  function toggleTag(id: string) {
-    selectedTagIds.includes(id)
-      ? setSelectedTagIds(selectedTagIds.filter((i) => i !== id))
-      : setSelectedTagIds([...selectedTagIds, id]);
+
+  function toggleTag(name: string) {
+    selectedTags.includes(name)
+      ? setSelectedTags(selectedTags.filter((e) => e !== name))
+      : setSelectedTags([...selectedTags, name]);
   }
 
-  function isSelected(id: string) {
-    return selectedTagIds.includes(id);
+  function isSelected(name: string) {
+    return selectedTags.includes(name);
   }
 
   const value = {
-    selectedTagIds,
+    selectedTags,
     toggleTag,
     isSelected,
   };

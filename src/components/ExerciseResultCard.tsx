@@ -3,7 +3,7 @@ import { AiOutlinePicture, AiFillStar } from "react-icons/ai";
 
 type ExerciseResultCardArgs = {
   name: string;
-  type: string;
+  type: number;
   difficulty: string;
 };
 

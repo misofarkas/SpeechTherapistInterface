@@ -16,69 +16,74 @@ import {
   Select,
   useDisclosure,
   Input,
+  Center,
+  Spinner,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import QuestionList from "../components/QuestionList";
 import { Patient, TaskExtended } from "../types/commonTypes";
 import { useAuth } from "../contexts/AuthContext";
-import getTasks from "../api/getTasks";
-import getPatients from "../api/getPatients";
-import assignTask from "../api/assignTask";
-import deleteTask from "../api/deleteTask";
+import { getTask } from "../api/tasksApi";
+import { getPatients } from "../api/patientsApi";
+import { assignTask } from "../api/tasksApi";
+import { deleteTask } from "../api/tasksApi";
+import { useQuery, useMutation } from "react-query";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function ExercisePreview() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [task, setTask] = useState<TaskExtended>();
-  const [error, setError] = useState("");
   const { auth, userId } = useAuth();
   const { isOpen: isAssignOpen, onOpen: onAssignOpen, onClose: onAssignClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const [patients, setPatients] = useState<Patient[]>();
   const [selectedPatient, setSelectedPatient] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
+  //const [isDeleting, setIsDeleting] = useState(false);
+  const { isLoading, isSuccess, error, data: taskData } = useQuery("task", () => getTask({ auth, id: id ?? "" }));
 
+  let task: TaskExtended | undefined = undefined;
+  if (isSuccess) {
+    task = taskData.data;
+  }
   const isEditable = task?.created_by === userId.id;
-  console.log("deleting:", isDeleting)
 
-  useEffect(() => {
-    if (id !== undefined) {
-      getTasks({ auth, setError, id }).then((value) => {
-        setTask(value);
-      });
+  const {
+    isLoading: isLoadingPatients,
+    isSuccess: isSuccessPatients,
+    error: errorPatients,
+    data: patientsData,
+  } = useQuery("patients", () => getPatients({ auth }));
 
-      getPatients({ auth, setError }).then((value) => {
-        setPatients(value);
-      });
-    }
-  }, []);
-
-  function handleTaskAssignment(patientId: string, taskId: string) {
-    assignTask({ auth, setError, patientId, taskId });
+  let patients: Patient[] = [];
+  if (isSuccessPatients) {
+    patients = patientsData.data;
   }
 
-  function handleTaskDeletion(id: string) {
-    setIsDeleting(true);
-    deleteTask({ auth, setError, id});
-    if (error === "") {
-      setTimeout(() => navigate('/Exercises'), 1000)
-      
-    }
-  }
+  const { isLoading: isAssigning, mutate: assignTaskMutation } = useMutation(() =>
+    assignTask({ auth, patientId: selectedPatient, taskId: task?.id ?? "" })
+  );
 
-  if (error !== "") {
+  const { isLoading: isDeleting, mutate: deleteTaskMutation } = useMutation(() =>
+    deleteTask({ auth, id: task?.id ?? "" }), {
+      onSuccess: () => {
+        navigate("/Exercises");
+      }
+    }
+  );
+
+  //console.log("created_by:", task?.created_by);
+  //console.log("userId: ", userId.id);
+
+  if (error !== null || errorPatients !== null || task === undefined) {
+    console.log("error:", error);
     return (
       <>
         <Text>There has been an error</Text>
-        <Text>{error}</Text>
       </>
     );
   }
 
-  if (task === undefined) {
-    return (
-      <>Loading...</>
-    )
+  if (isLoading || isLoadingPatients) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -118,7 +123,7 @@ function ExercisePreview() {
                 colorScheme="blue"
                 onClick={() => {
                   onAssignClose();
-                  handleTaskAssignment(selectedPatient, task.id);
+                  assignTaskMutation();
                 }}
               >
                 Assign
@@ -127,7 +132,11 @@ function ExercisePreview() {
           </ModalContent>
         </Modal>
 
-        {isEditable && <Button isLoading={isDeleting} loadingText="Deleting..." maxW="200px" onClick={onDeleteOpen}>Delete task</Button>}
+        {isEditable && (
+          <Button isLoading={isDeleting} loadingText="Deleting..." maxW="200px" onClick={onDeleteOpen}>
+            Delete task
+          </Button>
+        )}
 
         <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
           <ModalOverlay />
@@ -146,7 +155,7 @@ function ExercisePreview() {
                 colorScheme="red"
                 onClick={() => {
                   onDeleteClose();
-                  handleTaskDeletion(task.id);
+                  deleteTaskMutation();
                 }}
               >
                 Delete

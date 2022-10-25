@@ -7,11 +7,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-type authType = {
-  email: string;
-  password: string;
-  accessToken: string;
-};
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useLocalStorage("Token", "");

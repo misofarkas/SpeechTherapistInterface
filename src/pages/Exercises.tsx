@@ -1,35 +1,38 @@
-import { Container, Select, Flex, Input, Box, Link, Button } from "@chakra-ui/react";
+import { Container, Select, Flex, Input, Box, Link, Button, Switch, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import getTasks from "../api/getTasks";
+//import getTasks from "../api/getTasks";
 import ExerciseList from "../components/ExerciseList";
 import { useAuth } from "../contexts/AuthContext";
 import { PatientExercisesData, Exercise } from "../data/PatientExercisesData";
 import { Task } from "../types/commonTypes";
+import { getTasks } from "../api/tasksApi";
+import { useQuery } from "react-query";
 
 function Exercises() {
   const [filterNameValue, setFilterNameValue] = useState("");
   const [filterTypeValue, setFilterTypeValue] = useState<number>(0);
   const [filterDifficultyValue, setFilterDifficultyValue] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [error, setError] = useState("");
-  const { auth } = useAuth();
+  const [createdByUser, setCreatedByUser] = useState(false);
+  const { auth, userId } = useAuth();
 
-  useEffect(() => {
-    getTasks({ auth, setError }).then((value) => {
-      setTasks(value);
-    });
-  }, []);
+  const { isLoading, isSuccess, error, data: taskData } = useQuery("tasks", () => getTasks({ auth }));
+
+  console.log("loading...:", isLoading);
+  console.log("API error:", error);
 
   // Filter data
-  const filteredTaskData = tasks.filter(
-    (task) =>
-    task.name.toLowerCase().includes(filterNameValue.toLowerCase()) &&
-      (filterTypeValue === 0 || filterTypeValue === task.type) &&
-      (filterDifficultyValue === "" || filterDifficultyValue === task.difficulty)
-  );
-  console.log("type value:",filterTypeValue)
+  let filteredTaskData: Task[] = [];
+  if (isSuccess) {
+    filteredTaskData = taskData.data.filter(
+      (task) =>
+        task.name.toLowerCase().includes(filterNameValue.toLowerCase()) &&
+        (filterTypeValue === 0 || filterTypeValue === task.type) &&
+        (filterDifficultyValue === "" || filterDifficultyValue === task.difficulty) &&
+        (!createdByUser || userId.id === task.created_by)
+    );
+  }
 
   /*
   // Sort data
@@ -49,8 +52,7 @@ function Exercises() {
     default:
       break;
   }
-  */
-
+  
   function compareDifficulties(a: Exercise, b: Exercise) {
     if (a.difficutly === "Easy" && (b.difficutly === "Medium" || b.difficutly === "Hard")) {
       return -1;
@@ -60,6 +62,7 @@ function Exercises() {
     }
     return 1;
   }
+  */
 
   return (
     <Container>
@@ -75,14 +78,18 @@ function Exercises() {
           </Link>
         </Box>
 
-        <Input
-          value={filterNameValue}
-          onChange={(e) => setFilterNameValue(e.target.value)}
-          mb="2"
-          maxW="49.5%"
-          placeholder="Filter by name"
-        />
-        <Flex mb="2" gap="2">
+        <Flex gap="3">
+          <Input
+            value={filterNameValue}
+            onChange={(e) => setFilterNameValue(e.target.value)}
+            mb="2"
+            maxW="49.5%"
+            placeholder="Filter by name"
+          />
+          <Text>My exercises</Text>
+          <Switch mt="1" isChecked={createdByUser} onChange={(e) => setCreatedByUser(e.target.checked)} />
+        </Flex>
+        <Flex mb="2" gap="3">
           <Select
             value={filterTypeValue}
             onChange={(e) => setFilterTypeValue(Number(e.target.value))}
@@ -111,7 +118,7 @@ function Exercises() {
         </Select>
       </Box>
       <Box maxW="800px" mx="auto">
-        <ExerciseList taskData={filteredTaskData} />
+        {error !== null ? <>{error}</> : <ExerciseList taskData={filteredTaskData} />}
       </Box>
     </Container>
   );

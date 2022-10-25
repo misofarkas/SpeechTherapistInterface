@@ -1,18 +1,43 @@
 import { Button, FormLabel, Input, Stack, Image, Flex, Center, Text, useMediaQuery, useToast } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import axios from "../api/axios";
+import { postImage } from "../api/imageApi";
 import { useAuth } from "../contexts/AuthContext";
+import { useMutation } from "react-query";
 
 function UploadImage() {
-  const UPLOAD_IMAGE_URL = "/task/basic_choices/";
   const [image, setImage] = useState("");
   const [imageText, setImageText] = useState<string>("");
-  const [loading, setLoading] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string>();
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const toast = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
   const { auth } = useAuth();
+
+  const { mutate: uploadImageMutation, isLoading } = useMutation(
+    () => postImage({ auth, image, imageText, tags: [] }),
+    {
+      onSuccess: () => {
+        setImage("");
+        setImageText("");
+        toast({
+          title: "Success",
+          description: "Image has been uploaded",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "There was an error when uploading your image",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+    }
+  );
 
   function handleImageSelection(e: any) {
     const file = e.target.files[0];
@@ -39,28 +64,7 @@ function UploadImage() {
         isClosable: true,
       });
     } else {
-      const data = new FormData();
-      data.append("image", image);
-      data.append("text", imageText);
-      data.append("tags", JSON.stringify([]));
-      setLoading(true);
-      const res = await axios.post(UPLOAD_IMAGE_URL, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${auth?.accessToken}`,
-        },
-        withCredentials: false,
-      });
-      setLoading(false);
-      setImage("");
-      setImageText("");
-      toast({
-        title: "Success",
-        description: "Image has been uploaded",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      uploadImageMutation();
     }
   }
 
@@ -86,7 +90,7 @@ function UploadImage() {
         <FormLabel>Image Name</FormLabel>
         <Input value={imageText} onChange={(e) => setImageText(e.target.value)}></Input>
 
-        <Button onClick={postFile} isLoading={loading} loadingText="Submitting">
+        <Button onClick={postFile} isLoading={isLoading} loadingText="Submitting">
           Upload
         </Button>
       </Stack>

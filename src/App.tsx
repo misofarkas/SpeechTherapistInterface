@@ -12,54 +12,47 @@ import theme from "./theme";
 import Sidebar from "./components/Sidebar";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthProvider } from "./contexts/AuthContext";
+import { TagProvider } from "./contexts/TagContext";
+import { QueryClient, QueryClientProvider } from "react-query";
 import ExerciseResults from "./pages/ExerciseResults";
 import UserSettings from "./pages/UserSettings";
 import RequireAuth from "./components/RequireAuth";
 import ExercisePreview from "./pages/ExercisePreview";
 import PageNotFound from "./pages/PageNotFound";
 
+const queryClient = new QueryClient();
+
 export const App = () => {
   return (
     <>
       <ChakraProvider theme={theme}>
-        <AuthProvider>
-          <Router>
-            <Sidebar />
-            <Routes>
-              <Route path="/Login" element={<Login />} />
-              <Route path="/SignUp" element={<SignUp />} />
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <TagProvider>
+              <Router>
+                <Sidebar />
+                <Routes>
+                  <Route path="/Login" element={<Login />} />
+                  <Route path="/SignUp" element={<SignUp />} />
 
-              <Route element={<RequireAuth />}>
-                <Route path="/" element={<Patients />} />
-                <Route path="/Calendar" element={<CalendarPage />} />
-                <Route path="/Exercises" element={<Exercises />} />
-                <Route
-                  path="/patient-profile/:id"
-                  element={<PatientProfile />}
-                />
-                <Route
-                  path="/CreateExercise"
-                  element={<CreateExercisePage />}
-                />
-                <Route
-                  path="/CreateGeneratedExercise"
-                  element={<CreateGeneratedExercisePage />}
-                />
-                <Route
-                  path="/ExerciseResults/:id"
-                  element={<ExerciseResults />}
-                />
-                <Route
-                  path="/ExercisePreview/:id"
-                  element={<ExercisePreview />}
-                />
-                <Route path="/UserSettings" element={<UserSettings />} />
-              </Route>
+                  <Route element={<RequireAuth />}>
+                    <Route path="/" element={<Patients />} />
+                    <Route path="/Calendar" element={<CalendarPage />} />
+                    <Route path="/Exercises" element={<Exercises />} />
+                    <Route path="/patient-profile/:id" element={<PatientProfile />} />
+                    <Route path="/CreateExercise" element={<CreateExercisePage />} />
+                    <Route path="/CreateGeneratedExercise" element={<CreateGeneratedExercisePage />} />
+                    <Route path="/ExerciseResults/:id" element={<ExerciseResults />} />
+                    <Route path="/ExercisePreview/:id" element={<ExercisePreview />} />
+                    <Route path="/UserSettings" element={<UserSettings />} />
+                  </Route>
 
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
-          </Router>
-        </AuthProvider>
+                  <Route path="*" element={<PageNotFound />} />
+                </Routes>
+              </Router>
+            </TagProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </ChakraProvider>
     </>
   );

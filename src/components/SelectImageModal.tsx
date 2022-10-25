@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -19,6 +19,8 @@ import {
 } from "@chakra-ui/react";
 import SelectTags from "./SelectTags";
 import { BasicChoice } from "../types/commonTypes";
+import { useTagContext } from "../contexts/TagContext";
+import { intersection } from "lodash";
 
 type ImageModalArgs = {
   selectedImageUrl: string | undefined;
@@ -39,11 +41,12 @@ function SelectImageModal({
 }: ImageModalArgs) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [previewImageUrl, setPreviewImageUrl] = useState<string | undefined>();
-
+  const { selectedTags } = useTagContext();
   const selectedImage = imageData.find((image) => image.image === selectedImageUrl);
   const imageSelected = selectedImage !== undefined;
 
-  console.log("preview:", previewImageUrl);
+  const filteredImages = filterImages(imageData, selectedTags);
+
   return (
     <>
       <Box onClick={onOpen}>
@@ -75,7 +78,7 @@ function SelectImageModal({
                 <SelectTags />
               </Box>
               <Wrap w="full" spacing="0.2rem">
-                {imageData.map((image) => {
+                {filteredImages.map((image) => {
                   return (
                     <WrapItem key={image.id}>
                       <Image
@@ -114,6 +117,14 @@ function SelectImageModal({
       </Modal>
     </>
   );
+}
+
+function filterImages(imageData: BasicChoice[], selectedTags: string[]) {
+  if (selectedTags.length === 0) {
+    return imageData;
+  }
+
+  return imageData.filter((image) => intersection(image.tags.map((tag) => tag.name), selectedTags).length !== 0);
 }
 
 export default SelectImageModal;

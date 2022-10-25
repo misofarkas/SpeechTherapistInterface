@@ -2,7 +2,8 @@ import { NumberDecrementStepperProps } from "@chakra-ui/react";
 
 export type Tag = {
   id: string;
-  text: string;
+  name: string;
+  user: string;
 };
 
 export type BasicChoice = {

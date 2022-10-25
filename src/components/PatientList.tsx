@@ -1,32 +1,35 @@
 import { PatientData } from "../data/PatientData";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Input, useMediaQuery } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Input, useMediaQuery, Text } from "@chakra-ui/react";
 import { useAuth } from "../contexts/AuthContext";
-import getPatients from "../api/getPatients";
+import { getPatients } from "../api/patientsApi";
 import { Patient } from "../types/commonTypes";
+import { useQuery } from "react-query";
 
 function PatientList() {
   const [filterValue, setFilterValue] = useState("");
   const [isLargerThan992] = useMediaQuery("(min-width: 992px)");
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
-  const [error, setError] = useState("");
-  const [patients, setPatients] = useState<Patient[]>([]);
   const { auth } = useAuth();
+
+  // Linked only = true nastaviť
+  const { isLoading, isSuccess, error, data: patientsData } = useQuery("patients", () => getPatients({ auth }));
 
   function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFilterValue(e.target.value);
   }
 
-  useEffect(() => {
-    getPatients({ auth, setError }).then((value) => {
-      setPatients(value);
-    });
-  }, []);
+  let filteredPatientData: Patient[] = []
+  if (isSuccess) {
+    filteredPatientData = patientsData.data.filter((patient) => patient.name.toLowerCase().includes(filterValue.toLowerCase()));
+  }
 
-  const filteredPatientData = patients.filter((patient) =>
-    patient.name.toLowerCase().includes(filterValue.toLowerCase())
-  );
+  if (error !== null) {
+    return (
+      <Text>There was an error</Text>
+    )
+  }
 
   return (
     <>

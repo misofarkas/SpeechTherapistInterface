@@ -93,7 +93,7 @@ function SignUp() {
           {(props) => (
             <Form>
               <Field name="fullName" validate={validateName}>
-                {({ field, form }) => (
+                {({ field, form }: any) => (
                   <FormControl isInvalid={form.errors.fullName && form.touched.fullName}>
                     <FormLabel>Full name</FormLabel>
                     <Input {...field} placeholder="name" />
@@ -102,7 +102,7 @@ function SignUp() {
                 )}
               </Field>
               <Field name="email" validate={validateEmail}>
-                {({ field, form }) => (
+                {({ field, form }: any) => (
                   <FormControl isInvalid={form.errors.email && form.touched.email}>
                     <FormLabel>Email</FormLabel>
                     <Input {...field} placeholder="email" />
@@ -111,7 +111,7 @@ function SignUp() {
                 )}
               </Field>
               <Field name="password" validate={validatePassword}>
-                {({ field, form }) => (
+                {({ field, form }: any) => (
                   <FormControl isInvalid={form.errors.password && form.touched.password}>
                     <FormLabel>Password</FormLabel>
                     <Input type="password" {...field} placeholder="" />
@@ -120,7 +120,7 @@ function SignUp() {
                 )}
               </Field>
               <Field name="confirmPassword" validate={validateConfirmPassword}>
-                {({ field, form }) => (
+                {({ field, form }: any) => (
                   <FormControl isInvalid={form.errors.confirmPassword && form.touched.confirmPassword}>
                     <FormLabel>Confirm Password</FormLabel>
                     <Input type="password" {...field} placeholder="" />

@@ -16,6 +16,7 @@ import {
   Code,
   Flex,
   useMediaQuery,
+  Heading,
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import FullCalendar, { DateSelectArg } from "@fullcalendar/react";
@@ -30,8 +31,8 @@ type Event = {
   id: string;
   title: string;
   allDay: boolean;
-  start: string;
-  end: string;
+  start: Date;
+  end: Date;
 };
 
 type DateRange = {
@@ -53,34 +54,39 @@ function CalendarPage() {
       id: "0",
       title: "event 1",
       allDay: false,
-      start: "2022-10-01T10:30:00",
-      end: "2022-10-01T11:30:00",
+      start: new Date("2022-10-01T11:00:00"),
+      end: new Date("2022-10-01T11:30:00"),
     },
     {
       id: "1",
       title: "event 4",
       allDay: false,
-      start: "2022-10-01T10:30:00",
-      end: "2022-10-01T11:30:00",
+      start: new Date("2022-10-01T10:30:00"),
+      end: new Date("2022-10-01T11:30:00"),
     },
     {
       id: "2",
       title: "event 2",
       allDay: false,
-      start: "2022-10-03T12:30:00",
-      end: "2022-10-06T14:30:00",
+      start: new Date("2022-10-03T12:30:00"),
+      end: new Date("2022-10-06T14:30:00"),
     },
     {
       id: "3",
       title: "event 3",
       allDay: false,
-      start: "2022-10-13T14:30:00",
-      end: "2022-10-17T14:30:00",
+      start: new Date("2022-10-13T14:30:00"),
+      end: new Date("2022-10-17T14:30:00"),
     },
   ]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const [eventTitle, setEventTitle] = useState<string>("");
+  const [selectedEventId, setSelectedEventId] = useState("");
+  const selectedEvent = events.find((e) => e.id === selectedEventId);
 
+  console.log("eventRange start:", eventDateRange.start);
+  console.log("eventRange end:", eventDateRange.end);
   function resetDate() {
     setEventDateRange({ start: new Date(), end: new Date() });
     setEventTitle("");
@@ -95,8 +101,8 @@ function CalendarPage() {
         id: uuidv4(),
         title: eventTitle!,
         allDay: false,
-        start: eventDateRange?.start!.toISOString(),
-        end: eventDateRange?.end!.toISOString(),
+        start: eventDateRange?.start,
+        end: eventDateRange?.end,
       },
     ]);
 
@@ -120,13 +126,13 @@ function CalendarPage() {
             />
             <Box mx="3">
               <Flex my="1" justifyContent="space-between">
-                <Text>event start date:</Text>
-                <Code>{eventDateRange?.start.toString()}</Code>
+                <Text>from:</Text>
+                <Code>{eventDateRange?.start.toString().substring(0, 15)}</Code>
                 <TimePicker disableClock={true} onChange={(t) => setEventStartTime(t)} value={eventStartTime} />
               </Flex>
               <Flex my="1" justifyContent="space-between">
-                <Text>event end date:</Text>
-                <Code>{eventDateRange?.end.toString()}</Code>
+                <Text>to:</Text>
+                <Code>{eventDateRange?.end.toString().substring(0, 15)}</Code>
                 <TimePicker disableClock={true} onChange={(t) => setEventEndTime(t)} value={eventEndTime} />
               </Flex>
             </Box>
@@ -151,6 +157,37 @@ function CalendarPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isEditOpen} onClose={onEditClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit event</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Heading>{selectedEvent?.title}</Heading>
+            <Box mx="3">
+              <Flex my="1" justifyContent="space-between">
+                <Text>from:</Text>
+                <Code>{selectedEvent?.start.toString().substring(0, 24)}</Code>
+              </Flex>
+              <Flex my="1" justifyContent="space-between">
+                <Text>to:</Text>
+                <Code>{selectedEvent?.end.toString().substring(0, 24)}</Code>
+              </Flex>
+            </Box>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="red" mr={3}>
+              Delete
+            </Button>
+            <Button colorScheme="blue" mr={3} onClick={onEditClose}>
+              Close
+            </Button>
+            <Button variant="ghost">Save?</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       <FullCalendar
         height={"auto"}
         contentHeight={"auto"}
@@ -167,7 +204,9 @@ function CalendarPage() {
         longPressDelay={0}
         events={events}
         eventClick={(e) => {
-          console.log(e);
+          setSelectedEventId(e.event._def.publicId);
+          console.log(e.event._def.publicId);
+          onEditOpen();
         }}
         dayMaxEventRows={2}
         headerToolbar={{

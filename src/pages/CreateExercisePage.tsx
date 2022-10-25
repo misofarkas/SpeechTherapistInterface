@@ -21,16 +21,15 @@ import {
   ModalBody,
   Box,
 } from "@chakra-ui/react";
-import { TagProvider } from "../contexts/TagContext";
 import { AddIcon } from "@chakra-ui/icons";
-import axios from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
 import { BasicChoice, Question } from "../types/commonTypes";
 import UploadImage from "../components/UploadImage";
-import postTask from "../api/postTask";
+import {postTask} from "../api/tasksApi";
 import { cloneDeep } from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import getImages from "../api/getImages";
+import {getImages} from "../api/imageApi";
+import { useQuery, useMutation } from "react-query";
 
 function CreateExercisePage() {
   const { auth } = useAuth();
@@ -39,11 +38,10 @@ function CreateExercisePage() {
   const [savedType, setSavedType] = useState(1);
   const difficulty = "hard";
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [imageData, setImageData] = useState<BasicChoice[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [imageError, setImageError] = useState("");
+
+  const {isLoading: isLoadingImages, error: imageError, data: imageData} = useQuery("images", () => getImages({auth}))
+  const {isLoading: isSubmitting, error: postingError, mutate: postTaskMutation} = useMutation(() => postTask({auth, questions}))
 
   function handleAddQuestion(heading: string) {
     setQuestions([
@@ -112,14 +110,15 @@ function CreateExercisePage() {
     setQuestions(newQuestions);
   }
 
+  /*
   useEffect(() => {
     getImages({ auth, setIsLoading, setImageError }).then((value) => {
       setImageData(value);
     });
   }, []);
+  */
 
   return (
-    <TagProvider>
       <Container>
         <Tabs variant="enclosed">
           <TabList>
@@ -187,7 +186,7 @@ function CreateExercisePage() {
 
             {/* Question tab */}
             <TabPanel>
-              {isLoading ? (
+              {isLoadingImages || imageData === undefined ? (
                 <Text>loading..</Text>
               ) : (
                 <>
@@ -197,7 +196,7 @@ function CreateExercisePage() {
                     difficulty={difficulty}
                     handleUpdateChoice={handleUpdateChoice}
                     handleDeleteQuestion={handleDeleteQuestion}
-                    imageData={imageData}
+                    imageData={imageData.data}
                   />
                   <Box
                     w="full"
@@ -220,13 +219,12 @@ function CreateExercisePage() {
               <UploadImage />
             </TabPanel>
             <TabPanel>
-              <Button onClick={() => postTask({ questions, auth, error, setError })}>Save</Button>
-              {error !== "" && <Text color="red.400">failed to save task: {error}</Text>}
+              <Button onClick={() => postTaskMutation()}>Save</Button>
+              {postingError !== null && <Text color="red.400">failed to save task</Text>}
             </TabPanel>
           </TabPanels>
         </Tabs>
       </Container>
-    </TagProvider>
   );
 }
 
