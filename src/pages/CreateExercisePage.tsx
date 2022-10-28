@@ -20,15 +20,16 @@ import {
   ModalCloseButton,
   ModalBody,
   Box,
+  Toast,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { useAuth } from "../contexts/AuthContext";
-import { BasicChoice, Question } from "../types/commonTypes";
+import { Question, BasicChoice, CustomChoice } from "../types/commonTypes";
 import UploadImage from "../components/UploadImage";
-import {postTask} from "../api/tasksApi";
+import { postTask } from "../api/tasksApi";
 import { cloneDeep } from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import {getImages} from "../api/imageApi";
+import { getImages } from "../api/imageApi";
 import { useQuery, useMutation } from "react-query";
 
 function CreateExercisePage() {
@@ -39,9 +40,18 @@ function CreateExercisePage() {
   const difficulty = "hard";
   const [questions, setQuestions] = useState<Question[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [error, setError] = useState("");
 
-  const {isLoading: isLoadingImages, error: imageError, data: imageData} = useQuery("images", () => getImages({auth}))
-  const {isLoading: isSubmitting, error: postingError, mutate: postTaskMutation} = useMutation(() => postTask({auth, questions}))
+  const {
+    isLoading: isLoadingImages,
+    error: imageError,
+    data: imageData,
+  } = useQuery("images", () => getImages({ auth }));
+  const {
+    isLoading: isSubmitting,
+    error: postingError,
+    mutate: postTaskMutation,
+  } = useMutation(() => postTask({ auth, name, type: savedType, tags: [], questions }));
 
   function handleAddQuestion(heading: string) {
     setQuestions([
@@ -59,6 +69,32 @@ function CreateExercisePage() {
     setQuestions(newQuestions);
   }
 
+  function handlePostTask() {
+    if (questions.length === 0) {
+      return;
+    }
+
+    let isValid = true;
+    setError("");
+
+    if (questions === undefined || questions.length === 0) {
+      isValid = false;
+    }
+    questions.forEach((question) => {
+      question.choices.forEach((choice) => {
+        if (choice.text === "" && choice.image === "") {
+          isValid = false;
+        }
+      });
+    });
+
+    if (isValid) {
+      postTaskMutation();
+    } else {
+      setError("not all question are fully filled out");
+    }
+  }
+
   function generateEmptyChoices() {
     switch (savedType) {
       case 1:
@@ -72,7 +108,7 @@ function CreateExercisePage() {
           { id: uuidv4(), text: "", image: "", tags: [] },
           { id: uuidv4(), text: "", image: "", tags: [] },
         ];
-        break;
+
       case 3:
         return [
           { id: uuidv4(), text: "", image: "", tags: [] },
@@ -81,7 +117,7 @@ function CreateExercisePage() {
           { id: uuidv4(), text: "", image: "", tags: [] },
           { id: uuidv4(), text: "", image: "", tags: [] },
         ];
-        break;
+
       default:
         return [];
     }
@@ -110,121 +146,115 @@ function CreateExercisePage() {
     setQuestions(newQuestions);
   }
 
-  /*
-  useEffect(() => {
-    getImages({ auth, setIsLoading, setImageError }).then((value) => {
-      setImageData(value);
-    });
-  }, []);
-  */
-
   return (
-      <Container>
-        <Tabs variant="enclosed">
-          <TabList>
-            <Tab>Settings</Tab>
-            <Tab>Questions</Tab>
-            <Tab>Upload Custom Image</Tab>
-            <Tab>Finalize</Tab>
-          </TabList>
+    <Container>
+      <Tabs variant="enclosed">
+        <TabList>
+          <Tab>Settings</Tab>
+          <Tab>Questions</Tab>
+          <Tab>Upload Custom Image</Tab>
+          <Tab>Finalize</Tab>
+        </TabList>
 
-          <TabPanels>
-            {/* Settings tab */}
-            <TabPanel>
-              <Stack maxW="400px" spacing="0.5rem">
-                <Text>Name</Text>
-                <Input value={name} onChange={(e) => setName(e.target.value)}></Input>
-                <Text>Type</Text>
-                <Select value={type} onChange={(e) => setType(Number(e.target.value))}>
-                  <option value={1}>Connect Pairs (Text - Image)</option>
-                  <option value={2}>Connect Pairs (Text - Text)</option>
-                  <option value={3}>Name Images</option>
-                </Select>
-                <Text>Difficulty</Text>
-                <Select>
-                  <option value="easy">Easy</option>
-                  <option value="hard">Hard</option>
-                </Select>
-                <Button
-                  onClick={
-                    type !== savedType && questions.length !== 0
-                      ? onOpen
-                      : () => {
-                          setSavedType(type);
-                        }
-                  }
+        <TabPanels>
+          {/* Settings tab */}
+          <TabPanel>
+            <Stack maxW="400px" spacing="0.5rem">
+              <Text>Name</Text>
+              <Input value={name} onChange={(e) => setName(e.target.value)}></Input>
+              <Text>Type</Text>
+              <Select value={type} onChange={(e) => setType(Number(e.target.value))}>
+                <option value={1}>Connect Pairs (Text - Image)</option>
+                <option value={2}>Connect Pairs (Text - Text)</option>
+                <option value={3}>Name Images</option>
+              </Select>
+              <Text>Difficulty</Text>
+              <Select>
+                <option value="easy">Easy</option>
+                <option value="hard">Hard</option>
+              </Select>
+              <Button
+                onClick={
+                  type !== savedType && questions.length !== 0
+                    ? onOpen
+                    : () => {
+                        setSavedType(type);
+                      }
+                }
+              >
+                Apply
+              </Button>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Warning!</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <Text>Changing Task type will delete all created questions</Text>
+                    <Text mb="4">Do you want to proceed?</Text>
+                    <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={() => {
+                        setSavedType(type);
+                        setQuestions([]);
+                        onClose();
+                      }}
+                    >
+                      Continue
+                    </Button>
+                    <Button colorScheme="red" onClick={onClose}>
+                      Abort
+                    </Button>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+            </Stack>
+          </TabPanel>
+
+          {/* Question tab */}
+          <TabPanel>
+            {isLoadingImages || imageData === undefined ? (
+              <Text>loading..</Text>
+            ) : (
+              <>
+                <QuestionList
+                  questions={questions}
+                  type={savedType}
+                  difficulty={difficulty}
+                  handleUpdateChoice={handleUpdateChoice}
+                  handleDeleteQuestion={handleDeleteQuestion}
+                  imageData={imageData.data}
+                />
+                <Box
+                  w="full"
+                  h="5rem"
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  boxShadow="md"
+                  textAlign="center"
+                  cursor="pointer"
+                  onClick={() => handleAddQuestion("placeholder")}
                 >
-                  Apply
-                </Button>
-                <Modal isOpen={isOpen} onClose={onClose}>
-                  <ModalOverlay />
-                  <ModalContent>
-                    <ModalHeader>Warning!</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                      <Text>Changing Task type will delete all created questions</Text>
-                      <Text mb="4">Do you want to proceed?</Text>
-                      <Button
-                        colorScheme="blue"
-                        mr={3}
-                        onClick={() => {
-                          setSavedType(type);
-                          setQuestions([]);
-                          onClose();
-                        }}
-                      >
-                        Continue
-                      </Button>
-                      <Button colorScheme="red" onClick={onClose}>
-                        Abort
-                      </Button>
-                    </ModalBody>
-                  </ModalContent>
-                </Modal>
-              </Stack>
-            </TabPanel>
+                  <AddIcon color="gray.300" mt="5" w={8} h={8} />
+                </Box>
+              </>
+            )}
+          </TabPanel>
 
-            {/* Question tab */}
-            <TabPanel>
-              {isLoadingImages || imageData === undefined ? (
-                <Text>loading..</Text>
-              ) : (
-                <>
-                  <QuestionList
-                    questions={questions}
-                    type={savedType}
-                    difficulty={difficulty}
-                    handleUpdateChoice={handleUpdateChoice}
-                    handleDeleteQuestion={handleDeleteQuestion}
-                    imageData={imageData.data}
-                  />
-                  <Box
-                    w="full"
-                    h="5rem"
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    boxShadow="md"
-                    textAlign="center"
-                    cursor="pointer"
-                    onClick={() => handleAddQuestion("placeholder")}
-                  >
-                    <AddIcon color="gray.300" mt="5" w={8} h={8} />
-                  </Box>
-                </>
-              )}
-            </TabPanel>
-
-            {/* Help tab */}
-            <TabPanel>
-              <UploadImage />
-            </TabPanel>
-            <TabPanel>
-              <Button onClick={() => postTaskMutation()}>Save</Button>
-              {postingError !== null && <Text color="red.400">failed to save task</Text>}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Container>
+          {/* Help tab */}
+          <TabPanel>
+            <UploadImage />
+          </TabPanel>
+          <TabPanel>
+            <Button isLoading={isSubmitting} loadingText={"sumbitting"} onClick={handlePostTask}>
+              Save
+            </Button>
+            {postingError !== null && <Text color="red.400">failed to save task</Text>}
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Container>
   );
 }
 

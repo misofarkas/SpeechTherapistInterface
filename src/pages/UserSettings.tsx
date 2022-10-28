@@ -20,10 +20,12 @@ import {
   useMediaQuery,
   Code,
 } from "@chakra-ui/react";
+import { useAuth } from "../contexts/AuthContext";
 
 function UserSettings() {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
-  console.log(isLargerThan768 ? "row" : "column");
+  const { user } = useAuth()
+  console.log("user", user);
 
   return (
     <Container maxW="1200px">
@@ -45,19 +47,19 @@ function UserSettings() {
                     <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""}>
                       Full Name
                     </Heading>
-                    <Input maxW="400px"></Input>
+                    <Input placeholder={user.name} maxW="400px"></Input>
                   </Flex>
                   <Divider />
                   <Flex gap="4">
                     <Heading size="sm" alignSelf="center">
                       Change Avatar
                     </Heading>
-                    <Avatar />
+                    <Avatar src={user.image}/>
                   </Flex>
                   <Divider />
                   <Box>
                     <Heading size="sm" mb="2">
-                      About (optional)
+                      Bio
                     </Heading>
                     <Text size="sm" color="gray.600">
                       Tell us a little about yourself
@@ -104,13 +106,12 @@ function UserSettings() {
                     <Divider />
                     <Box>
                       <Text size="sm" color="gray.600">
-                        Generate a new invite link for your patients
+                        Using this code, your patients can send you a link request
                       </Text>
                       <Flex gap="4">
-                        <Code fontSize="sm" alignSelf="center">
-                          fs45cSw2dA32s4
+                        <Code fontSize="xl" alignSelf="center">
+                          {user.therapist_code}
                         </Code>
-                        <Button size="sm">Generate New Link</Button>
                       </Flex>
                     </Box>
                   </Stack>

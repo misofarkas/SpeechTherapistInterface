@@ -9,7 +9,7 @@ import getProfile from "../api/getProfile";
 
 function Login() {
   const LOGIN_URL = "/user/login/";
-  const { auth, setAuth, setUserId } = useAuth();
+  const { auth, setAuth, setUser } = useAuth();
   const [email, setEmail] = useState<string>("example@example.com");
   const [password, setPassword] = useState<string>("123456789");
   const [error, setError] = useState("");
@@ -17,7 +17,7 @@ function Login() {
   async function handleLogin(e: any) {
     e.preventDefault();
     login({ setError, email, password }).then((accessToken) => {
-      setAuth({ email, password, accessToken });
+      setAuth({ accessToken });
     });
     setEmail("");
     setPassword("");
@@ -28,8 +28,8 @@ function Login() {
 
     if (auth !== undefined) {
       getProfile({ auth, setError }).then((value) => {
-        console.log("userId value:", value)
-        setUserId({ id: value?.id });
+        console.log("user value:", value)
+        setUser({ ...value });
       });
     }
   }, [auth]);

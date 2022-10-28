@@ -1,4 +1,4 @@
-import { Task, Question, TaskExtended, TaskResult } from "../types/commonTypes";
+import { Task, Question, TaskExtended, TaskResult, Tag } from "../types/commonTypes";
 import axios from "./axios";
 
 export async function getTasks({ auth }: { auth: any }) {
@@ -11,27 +11,24 @@ export async function getTask({ auth, id }: { auth: any; id: string }) {
   });
 }
 
-export async function postTask({ auth, questions }: { auth: any; questions: Question[] }) {
-  let isValid = true;
-
-  if (questions === undefined || questions.length === 0) {
-    isValid = false;
-  }
-  questions.forEach((question) => {
-    question.choices.forEach((choice) => {
-      if (choice.text === "" && choice.image === "") {
-        isValid = false;
-      }
-    });
-  });
-
-  if (isValid) {
-    return await axios.post(
-      "/task/tasks/",
-      { name: "test1", type: 1, tags: [], questions: questions },
-      { headers: { Authorization: `Token ${auth?.accessToken}` } }
-    );
-  }
+export async function postTask({
+  auth,
+  name,
+  type,
+  tags,
+  questions,
+}: {
+  auth: any;
+  name: string;
+  type: number;
+  tags: Tag[];
+  questions: Question[];
+}) {
+  return await axios.post(
+    "/task/custom_task/",
+    { name, type, difficulty: "hard", tags, custom_questions: questions },
+    { headers: { Authorization: `Token ${auth?.accessToken}` } }
+  );
 }
 
 export async function patchTask({ auth, questions }: { auth: any; questions: Question[] }) {

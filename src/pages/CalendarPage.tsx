@@ -12,140 +12,121 @@ import {
   Button,
   useDisclosure,
   Input,
-  Text,
-  Code,
-  Flex,
-  useMediaQuery,
-  Heading,
+  Stack,
+  Divider,
+  Select,
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
-import FullCalendar, { DateSelectArg } from "@fullcalendar/react";
+import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import TimePicker, { TimePickerValue } from "react-time-picker";
-import { subDays } from "date-fns";
 import "./CalendarStyles.css";
-
-type Event = {
-  id: string;
-  title: string;
-  allDay: boolean;
-  start: Date;
-  end: Date;
-};
-
-type DateRange = {
-  start: Date;
-  end: Date;
-};
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { getMeetings, postMeetings } from "../api/meetingsApi";
+import { useAuth } from "../contexts/AuthContext";
+import { getPatients } from "../api/patientsApi";
+import { Event } from "../types/commonTypes";
 
 function CalendarPage() {
-  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
-  const [isLargerThan411] = useMediaQuery("(min-width: 411px)");
-  const [eventDateRange, setEventDateRange] = useState<DateRange>({
+  const { auth, user } = useAuth();
+  const [currentEvent, setCurrentEvent] = useState<Event>({
+    id: "",
+    title: "",
+    assignedPatient: "",
     start: new Date(),
     end: new Date(),
   });
-  const [eventStartTime, setEventStartTime] = useState<TimePickerValue>("10:00");
-  const [eventEndTime, setEventEndTime] = useState<TimePickerValue>("10:00");
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: "0",
-      title: "event 1",
-      allDay: false,
-      start: new Date("2022-10-01T11:00:00"),
-      end: new Date("2022-10-01T11:30:00"),
-    },
-    {
-      id: "1",
-      title: "event 4",
-      allDay: false,
-      start: new Date("2022-10-01T10:30:00"),
-      end: new Date("2022-10-01T11:30:00"),
-    },
-    {
-      id: "2",
-      title: "event 2",
-      allDay: false,
-      start: new Date("2022-10-03T12:30:00"),
-      end: new Date("2022-10-06T14:30:00"),
-    },
-    {
-      id: "3",
-      title: "event 3",
-      allDay: false,
-      start: new Date("2022-10-13T14:30:00"),
-      end: new Date("2022-10-17T14:30:00"),
-    },
-  ]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
-  const [eventTitle, setEventTitle] = useState<string>("");
-  const [selectedEventId, setSelectedEventId] = useState("");
-  const selectedEvent = events.find((e) => e.id === selectedEventId);
 
-  console.log("eventRange start:", eventDateRange.start);
-  console.log("eventRange end:", eventDateRange.end);
-  function resetDate() {
-    setEventDateRange({ start: new Date(), end: new Date() });
-    setEventTitle("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const queryClient = useQueryClient();
+  const { data: patientData } = useQuery("patients", () => getPatients({ auth }));
+  const { isLoading, isError, error, data: meetings } = useQuery("meetings", () => getMeetings({ auth }));
+  const addMeetingMutation = useMutation(postMeetings, {
+    onSuccess: () => {
+      console.log("invalidating meetings");
+      queryClient.invalidateQueries("meetings");
+    },
+  });
+
+  function resetEvent() {
+    setCurrentEvent({ id: "", title: "", assignedPatient: "", start: new Date(), end: new Date() });
   }
 
   function handleAddEvent() {
-    console.log(eventDateRange?.start.toString());
-    console.log(eventDateRange?.end);
-    setEvents([
-      ...events,
-      {
-        id: uuidv4(),
-        title: eventTitle!,
-        allDay: false,
-        start: eventDateRange?.start,
-        end: eventDateRange?.end,
+    addMeetingMutation.mutate({
+      auth,
+      meeting: {
+        name: currentEvent.title,
+        created_by: user.id,
+        assigned_patient: currentEvent.assignedPatient,
+        start_time: currentEvent.start.toISOString(),
+        end_time: currentEvent.end.toISOString(),
       },
-    ]);
+    });
 
-    resetDate();
+    resetEvent();
   }
 
   return (
     <Container pb="5">
       <Button onClick={onOpen}>Add event</Button>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          resetEvent();
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Add event</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Input
-              value={eventTitle}
-              onChange={(title) => setEventTitle(title.target.value)}
-              placeholder="event title"
-            />
-            <Box mx="3">
-              <Flex my="1" justifyContent="space-between">
-                <Text>from:</Text>
-                <Code>{eventDateRange?.start.toString().substring(0, 15)}</Code>
-                <TimePicker disableClock={true} onChange={(t) => setEventStartTime(t)} value={eventStartTime} />
-              </Flex>
-              <Flex my="1" justifyContent="space-between">
-                <Text>to:</Text>
-                <Code>{eventDateRange?.end.toString().substring(0, 15)}</Code>
-                <TimePicker disableClock={true} onChange={(t) => setEventEndTime(t)} value={eventEndTime} />
-              </Flex>
-            </Box>
+            <Stack>
+              <Input
+                value={currentEvent.title}
+                onChange={(title) => setCurrentEvent({ ...currentEvent, title: title.target.value })}
+                placeholder="event title"
+                size="md"
+              />
+              <Select
+                placeholder="Select a patient"
+                onChange={(e) => setCurrentEvent({ ...currentEvent, assignedPatient: e.target.value })}
+              >
+                {patientData?.data.map((patient) => {
+                  return (
+                    <option key={patient.id} value={patient.email}>
+                      {patient.name}
+                    </option>
+                  );
+                })}
+              </Select>
+              <Divider />
+              <Input
+                maxW="12.5rem"
+                value={currentEvent.start.toLocaleString("sv")}
+                onChange={(e) => setCurrentEvent({ ...currentEvent, start: new Date(e.target.value) })}
+                type="datetime-local"
+              />
+              <Input
+                maxW="12.5rem"
+                value={currentEvent.end.toLocaleString("sv")}
+                onChange={(e) => setCurrentEvent({ ...currentEvent, end: new Date(e.target.value) })}
+                type="datetime-local"
+              />
+            </Stack>
           </ModalBody>
 
           <ModalFooter>
+            <Button colorScheme="red" mr={3} display={currentEvent ? "" : "none"}>
+              Delete
+            </Button>
             <Button variant="ghost" mr={3} onClick={onClose}>
               Cancel
             </Button>
             <Button
-              isDisabled={
-                eventTitle === "" || eventTitle === undefined || eventStartTime === null || eventEndTime === null
-              }
+              isDisabled={currentEvent.title === ""}
               colorScheme="blue"
               onClick={() => {
                 onClose();
@@ -157,56 +138,36 @@ function CalendarPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isEditOpen} onClose={onEditClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit event</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Heading>{selectedEvent?.title}</Heading>
-            <Box mx="3">
-              <Flex my="1" justifyContent="space-between">
-                <Text>from:</Text>
-                <Code>{selectedEvent?.start.toString().substring(0, 24)}</Code>
-              </Flex>
-              <Flex my="1" justifyContent="space-between">
-                <Text>to:</Text>
-                <Code>{selectedEvent?.end.toString().substring(0, 24)}</Code>
-              </Flex>
-            </Box>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="red" mr={3}>
-              Delete
-            </Button>
-            <Button colorScheme="blue" mr={3} onClick={onEditClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Save?</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       <FullCalendar
         height={"auto"}
+        timeZone="local"
         contentHeight={"auto"}
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
         selectable={true}
         select={(selection) => {
-          setEventDateRange({ start: selection.start, end: selection.end });
-          setEventStartTime(selection.start);
-          setEventEndTime(selection.end);
+          setCurrentEvent({ ...currentEvent, start: selection.start, end: selection.end });
         }}
         unselectAuto={false}
-        unselect={resetDate}
+        unselect={resetEvent}
         longPressDelay={0}
-        events={events}
+        events={meetings?.data.map((meeting) => ({
+          id: meeting.id,
+          title: meeting.name,
+          start: new Date(meeting.start_time),
+          end: new Date(meeting.end_time),
+        }))}
         eventClick={(e) => {
-          setSelectedEventId(e.event._def.publicId);
-          console.log(e.event._def.publicId);
-          onEditOpen();
+          const meeting = meetings?.data.find((m) => String(m.id) === e.event._def.publicId)!;
+          setCurrentEvent({
+            id: meeting.id!,
+            title: meeting.name,
+            assignedPatient: meeting.assigned_patient,
+            start: new Date(meeting.start_time),
+            end: new Date(meeting.end_time),
+          });
+          onOpen();
         }}
         dayMaxEventRows={2}
         headerToolbar={{

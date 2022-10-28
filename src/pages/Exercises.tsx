@@ -15,9 +15,9 @@ function Exercises() {
   const [filterDifficultyValue, setFilterDifficultyValue] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [createdByUser, setCreatedByUser] = useState(false);
-  const { auth, userId } = useAuth();
+  const { auth, user } = useAuth();
 
-  const { isLoading, isSuccess, error, data: taskData } = useQuery("tasks", () => getTasks({ auth }));
+  const { isLoading, isSuccess, error, data: taskResponse } = useQuery("tasks", () => getTasks({ auth }));
 
   console.log("loading...:", isLoading);
   console.log("API error:", error);
@@ -25,12 +25,12 @@ function Exercises() {
   // Filter data
   let filteredTaskData: Task[] = [];
   if (isSuccess) {
-    filteredTaskData = taskData.data.filter(
+    filteredTaskData = taskResponse.data.filter(
       (task) =>
         task.name.toLowerCase().includes(filterNameValue.toLowerCase()) &&
         (filterTypeValue === 0 || filterTypeValue === task.type) &&
         (filterDifficultyValue === "" || filterDifficultyValue === task.difficulty) &&
-        (!createdByUser || userId.id === task.created_by)
+        (!createdByUser || user.id === task.created_by)
     );
   }
 

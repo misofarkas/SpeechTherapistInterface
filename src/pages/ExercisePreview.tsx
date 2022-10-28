@@ -33,7 +33,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 function ExercisePreview() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { auth, userId } = useAuth();
+  const { auth, user } = useAuth();
   const { isOpen: isAssignOpen, onOpen: onAssignOpen, onClose: onAssignClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [selectedPatient, setSelectedPatient] = useState("");
@@ -42,9 +42,9 @@ function ExercisePreview() {
 
   let task: TaskExtended | undefined = undefined;
   if (isSuccess) {
-    task = taskData.data;
+    task = taskData.data as TaskExtended;
   }
-  const isEditable = task?.created_by === userId.id;
+  const isEditable = task?.created_by === user.id;
 
   const {
     isLoading: isLoadingPatients,
@@ -71,7 +71,7 @@ function ExercisePreview() {
   );
 
   //console.log("created_by:", task?.created_by);
-  //console.log("userId: ", userId.id);
+  //console.log("user id: ", user.id);
 
   if (error !== null || errorPatients !== null || task === undefined) {
     console.log("error:", error);

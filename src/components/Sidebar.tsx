@@ -27,12 +27,14 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FaRegCalendar, FaRegListAlt, FaUserAlt } from "react-icons/fa";
+import { BsFillHouseFill } from "react-icons/bs";
 import { useAuth } from "../contexts/AuthContext";
+import Notifications from "./Notifications";
 
 function Sidebar() {
   const [isLargerThan992] = useMediaQuery("(min-width: 992px)");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { auth, logOut } = useAuth();
+  const { auth, user, logOut } = useAuth();
 
   return (
     <>
@@ -44,33 +46,37 @@ function Sidebar() {
           </Heading>
         )}
         <Spacer />
+
         {auth?.accessToken ? (
-          <Popover>
-            <PopoverTrigger>
-              <Button>
-                <Flex>
-                  <Avatar src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg" size="sm" mr="2" />
-                  <Text mt="1">{auth?.email}</Text>
-                </Flex>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <PopoverArrow />
-              <PopoverHeader>PopeverHeader</PopoverHeader>
-              <PopoverBody>
-                <Stack>
-                  <Link as={RouterLink} to="/UserSettings">
-                    <Center>User Settings</Center>
-                  </Link>
-                  <Divider />
-                  <Center>About page</Center>
-                  <Center>
-                    <Link onClick={logOut}>Log out</Link>
-                  </Center>
-                </Stack>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+          <>
+            <Notifications />
+            <Popover>
+              <PopoverTrigger>
+                <Button>
+                  <Flex>
+                    <Avatar src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg" size="sm" mr="2" />
+                    <Text mt="1">{user?.email}</Text>
+                  </Flex>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverHeader>PopeverHeader</PopoverHeader>
+                <PopoverBody>
+                  <Stack>
+                    <Link as={RouterLink} to="/UserSettings">
+                      <Center>User Settings</Center>
+                    </Link>
+                    <Divider />
+                    <Center>About page</Center>
+                    <Center>
+                      <Link onClick={logOut}>Log out</Link>
+                    </Center>
+                  </Stack>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </>
         ) : (
           <>
             <Link as={RouterLink} to="/SignUp" color="blue.500">
@@ -90,6 +96,12 @@ function Sidebar() {
           <DrawerBody>
             <Stack mt="10">
               <Link as={RouterLink} to="/" onClick={onClose}>
+                <Button w="full" pr="10">
+                  <Icon mr="4" as={BsFillHouseFill}/>
+                  Dashboard
+                </Button>
+              </Link>
+              <Link as={RouterLink} to="/Patients" onClick={onClose}>
                 <Button w="full" pr="10">
                   <Icon mr="4" as={FaUserAlt} />
                   Patients

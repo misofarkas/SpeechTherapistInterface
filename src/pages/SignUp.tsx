@@ -11,10 +11,13 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { Formik, Field, ErrorMessage, useFormik, Form, FieldInputProps } from "formik";
+import { useMutation } from "react-query";
 import axios from "../api/axios";
+import { register } from "../api/register";
 
 function SignUp() {
-  const SIGNUP_URL = "/user/register/therapist/";
+  const { isLoading, isError, error, mutate: registerMutation } = useMutation(register);
+  const SIGNUP_URL = "/user/therapist/register/";
 
   function validateName(value: string) {
     let error;
@@ -71,22 +74,16 @@ function SignUp() {
             password: "",
             confirmPassword: "",
           }}
-          onSubmit={(values, actions) => {
+          onSubmit={(values) => {
             setTimeout(() => {
-              axios.post(
-                SIGNUP_URL,
-                {
+              registerMutation({
+                registerInfo: {
                   email: values.email,
                   name: values.fullName,
                   password: values.password,
                   confirm_password: values.confirmPassword,
                 },
-                {
-                  headers: { "Content-Type": "application/json" },
-                  withCredentials: false,
-                }
-              );
-              actions.setSubmitting(false);
+              });
             }, 1000);
           }}
         >
@@ -131,6 +128,9 @@ function SignUp() {
               <Button mt={4} colorScheme="teal" isLoading={props.isSubmitting} type="submit">
                 Submit
               </Button>
+              <Box>
+                <>{error && <Text>There has been an error</Text>}</>
+              </Box>
             </Form>
           )}
         </Formik>

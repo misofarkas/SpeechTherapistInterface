@@ -13,6 +13,7 @@ function UploadImage() {
   const fileInput = useRef<HTMLInputElement>(null);
   const { auth } = useAuth();
 
+
   const { mutate: uploadImageMutation, isLoading } = useMutation(
     () => postImage({ auth, image, imageText, tags: [] }),
     {
@@ -40,6 +41,7 @@ function UploadImage() {
   );
 
   function handleImageSelection(e: any) {
+    console.log(e)
     const file = e.target.files[0];
     setImage(file);
     setImagePreviewUrl(URL.createObjectURL(file));

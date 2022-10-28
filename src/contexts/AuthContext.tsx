@@ -11,18 +11,18 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useLocalStorage("Token", "");
-  const [userId, setUserId] = useLocalStorage("Id", "");
+  const [user, setUser] = useLocalStorage("User", "");
 
   function logOut() {
     setAuth(undefined);
-    setUserId(undefined)
+    setUser(undefined)
   }
 
   const value = {
     auth,
     setAuth,
-    userId,
-    setUserId,
+    user,
+    setUser,
     logOut,
   };
 

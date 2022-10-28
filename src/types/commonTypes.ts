@@ -1,4 +1,8 @@
-import { NumberDecrementStepperProps } from "@chakra-ui/react";
+export type Auth = {
+  email: string;
+  password: string;
+  accessToken: string;
+};
 
 export type Tag = {
   id: string;
@@ -10,6 +14,13 @@ export type BasicChoice = {
   id: string;
   text: string;
   image: string;
+  tags: Tag[];
+};
+
+export type CustomChoice = {
+  id: string;
+  data1: string;
+  data2: string;
   tags: Tag[];
 };
 
@@ -45,7 +56,17 @@ export type TaskExtended = {
   created_by: string;
   tags: Tag[];
   questions: Question[];
-}
+};
+
+export type TaskExtended2 = {
+  id: string;
+  name: string;
+  type: number;
+  difficulty: string;
+  created_by: string;
+  tags: Tag[];
+  questions: Question;
+};
 
 export type AnswerChoice = {
   data1: string;
@@ -71,4 +92,48 @@ export type Patient = {
   name: string;
   is_therapist: boolean;
   assigned_tasks: Task[];
+};
+
+export type Meeting = {
+  id?: string;
+  name: string;
+  created_by: number;
+  assigned_patient: string;
+  start_time: string;
+  end_time: string;
+};
+
+export type User = {
+  email: string;
+  name: string;
+  password: string;
+  confirm_password: string;
+  image?: string;
+  phone?: string;
+  location?: string;
+  country?: string;
+  company?: string;
+};
+
+export type LinkRequest = {
+  id: string;
+  email: string;
+  name: string;
+  image: string;
+  assigned_to: number;
+  assigment_active: boolean;
+};
+
+
+export type Event = {
+  id: string;
+  title: string;
+  assignedPatient: string;
+  start: Date;
+  end: Date;
+};
+
+export type DateRange = {
+  start: Date;
+  end: Date;
 };

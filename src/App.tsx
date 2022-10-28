@@ -19,6 +19,8 @@ import UserSettings from "./pages/UserSettings";
 import RequireAuth from "./components/RequireAuth";
 import ExercisePreview from "./pages/ExercisePreview";
 import PageNotFound from "./pages/PageNotFound";
+import ScrollToTop from "./components/ScrollToTop";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -29,14 +31,17 @@ export const App = () => {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <TagProvider>
+              
               <Router>
+              <ScrollToTop />
                 <Sidebar />
                 <Routes>
                   <Route path="/Login" element={<Login />} />
                   <Route path="/SignUp" element={<SignUp />} />
 
                   <Route element={<RequireAuth />}>
-                    <Route path="/" element={<Patients />} />
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/Patients" element={<Patients />} />
                     <Route path="/Calendar" element={<CalendarPage />} />
                     <Route path="/Exercises" element={<Exercises />} />
                     <Route path="/patient-profile/:id" element={<PatientProfile />} />
