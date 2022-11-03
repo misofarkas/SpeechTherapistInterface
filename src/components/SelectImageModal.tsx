@@ -18,15 +18,15 @@ import {
   Text,
 } from "@chakra-ui/react";
 import SelectTags from "./SelectTags";
-import { BasicChoice } from "../types/commonTypes";
+import { CustomChoice } from "../types/commonTypes";
 import { useTagContext } from "../contexts/TagContext";
 import { intersection } from "lodash";
 
 type ImageModalArgs = {
   selectedImageUrl: string | undefined;
-  handleUpdateChoice: ((a: string, b: string, c: string | undefined, d: string | undefined) => void) | undefined;
+  handleUpdateChoice: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
   boxSize: string;
-  imageData: BasicChoice[];
+  imageData: CustomChoice[];
   questionId: string;
   choiceId: string;
 };
@@ -42,7 +42,7 @@ function SelectImageModal({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [previewImageUrl, setPreviewImageUrl] = useState<string | undefined>();
   const { selectedTags } = useTagContext();
-  const selectedImage = imageData.find((image) => image.image === selectedImageUrl);
+  const selectedImage = imageData.find((image) => image.data2 === selectedImageUrl);
   const imageSelected = selectedImage !== undefined;
 
   const filteredImages = filterImages(imageData, selectedTags);
@@ -58,8 +58,8 @@ function SelectImageModal({
         {imageSelected && (
           <Box>
             <Image
-              src={selectedImage.image}
-              alt={selectedImage.text}
+              src={selectedImage.data2}
+              alt={selectedImage.data1}
               objectFit="cover"
               boxSize={boxSize}
               borderRadius="lg"
@@ -82,15 +82,15 @@ function SelectImageModal({
                   return (
                     <WrapItem key={image.id}>
                       <Image
-                        src={image.image}
-                        alt={image.text}
+                        src={image.data2}
+                        alt={image.data1}
                         objectFit="cover"
                         boxSize="7rem"
-                        onClick={() => setPreviewImageUrl(image.image)}
+                        onClick={() => setPreviewImageUrl(image.data2)}
                         borderRadius="lg"
                         cursor="pointer"
                         border="2px"
-                        borderColor={previewImageUrl === image.image ? "blue.400" : "transparent"}
+                        borderColor={previewImageUrl === image.data2 ? "blue.400" : "transparent"}
                       />
                     </WrapItem>
                   );
@@ -106,7 +106,7 @@ function SelectImageModal({
             <Button
               colorScheme="blue"
               onClick={() => {
-                handleUpdateChoice!(questionId, choiceId, undefined, previewImageUrl ?? "");
+                handleUpdateChoice!(questionId, choiceId, previewImageUrl ?? "", false);
                 onClose();
               }}
             >
@@ -119,7 +119,7 @@ function SelectImageModal({
   );
 }
 
-function filterImages(imageData: BasicChoice[], selectedTags: string[]) {
+function filterImages(imageData: CustomChoice[], selectedTags: string[]) {
   if (selectedTags.length === 0) {
     return imageData;
   }

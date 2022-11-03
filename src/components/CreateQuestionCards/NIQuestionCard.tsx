@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Grid, GridItem, Text, Image, useMediaQuery, Center, Input, CloseButton } from "@chakra-ui/react";
 import { ImageData } from "../../data/ImageData";
 import SelectImageModal from "../SelectImageModal";
-import { BasicChoice, Question } from "../../types/commonTypes";
+import { CustomChoice, BasicQuestion, Question } from "../../types/commonTypes";
 
 function NIQuestionCard({
   isEditable,
@@ -12,10 +12,10 @@ function NIQuestionCard({
   imageData = undefined,
 }: {
   isEditable: boolean;
-  question: Question;
-  handleUpdateChoice?: ((a: string, b: string, c: string | undefined, d: string | undefined) => void) | undefined;
+  question: BasicQuestion;
+  handleUpdateChoice?: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
   handleDeleteQuestion?: ((a: string) => void) | undefined;
-  imageData?: BasicChoice[] | undefined;
+  imageData?: CustomChoice[] | undefined;
 }) {
   const [selectedInputId, setSelectedInputId] = useState(1);
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>();
@@ -68,7 +68,7 @@ function NIQuestionCard({
             value={question.choices[0].text}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[0].id, e.target.value, undefined);
+                handleUpdateChoice(question.id, question.choices[0].id, e.target.value, true);
             }}
             maxW="400px"
             borderWidth="2px"
@@ -83,7 +83,7 @@ function NIQuestionCard({
             value={question.choices[1].text}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[1].id, e.target.value, undefined);
+                handleUpdateChoice(question.id, question.choices[1].id, e.target.value, true);
             }}
           />
         </GridItem>
@@ -95,7 +95,7 @@ function NIQuestionCard({
             value={question.choices[2].text}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[2].id, e.target.value, undefined);
+                handleUpdateChoice(question.id, question.choices[2].id, e.target.value, true);
             }}
           />
         </GridItem>
@@ -107,7 +107,7 @@ function NIQuestionCard({
             value={question.choices[3].text}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[3].id, e.target.value, undefined);
+                handleUpdateChoice(question.id, question.choices[3].id, e.target.value, true);
             }}
           />
         </GridItem>

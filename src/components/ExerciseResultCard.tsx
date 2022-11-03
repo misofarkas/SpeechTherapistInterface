@@ -7,7 +7,7 @@ type ExerciseResultCardArgs = {
   difficulty: string;
 };
 
-function ExerciseCard({ name, type, difficulty }: ExerciseResultCardArgs) {
+function ExerciseResultCard({ name, type, difficulty }: ExerciseResultCardArgs) {
   return (
     <Box
       w="full"
@@ -34,4 +34,4 @@ function ExerciseCard({ name, type, difficulty }: ExerciseResultCardArgs) {
   );
 }
 
-export default ExerciseCard;
+export default ExerciseResultCard;

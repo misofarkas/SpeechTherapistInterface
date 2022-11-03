@@ -54,21 +54,19 @@ function Sidebar() {
               <PopoverTrigger>
                 <Button>
                   <Flex>
-                    <Avatar src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg" size="sm" mr="2" />
+                    <Avatar src={user?.image} size="sm" mr="2" />
                     <Text mt="1">{user?.email}</Text>
                   </Flex>
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
                 <PopoverArrow />
-                <PopoverHeader>PopeverHeader</PopoverHeader>
                 <PopoverBody>
                   <Stack>
                     <Link as={RouterLink} to="/UserSettings">
                       <Center>User Settings</Center>
                     </Link>
                     <Divider />
-                    <Center>About page</Center>
                     <Center>
                       <Link onClick={logOut}>Log out</Link>
                     </Center>

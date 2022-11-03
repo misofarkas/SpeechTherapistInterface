@@ -24,8 +24,16 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { useAuth } from "../contexts/AuthContext";
-import { Question, BasicChoice, CustomChoice } from "../types/commonTypes";
-import UploadImage from "../components/UploadImage";
+import { Question, BasicChoice, CustomChoice, BasicQuestion, ConnectPairCustomQuestion } from "../types/commonTypes";
+import {
+  isBasicChoice,
+  isCustomChoice,
+  isBasicQuestion,
+  isCustomQuestion,
+  isBasicQuestions,
+  isCustomQuestions,
+} from "../types/typeGuards";
+import UploadImageChoice from "../components/UploadImageChoice";
 import { postTask } from "../api/tasksApi";
 import { cloneDeep } from "lodash";
 import { v4 as uuidv4 } from "uuid";
@@ -38,7 +46,7 @@ function CreateExercisePage() {
   const [type, setType] = useState(1);
   const [savedType, setSavedType] = useState(1);
   const difficulty = "hard";
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<BasicQuestion[] | ConnectPairCustomQuestion[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [error, setError] = useState("");
 
@@ -53,23 +61,50 @@ function CreateExercisePage() {
     mutate: postTaskMutation,
   } = useMutation(() => postTask({ auth, name, type: savedType, tags: [], questions }));
 
-  function handleAddQuestion(heading: string) {
-    setQuestions([
-      ...questions,
-      {
-        id: uuidv4(),
-        heading: heading,
-        choices: generateEmptyChoices(),
-      },
-    ]);
+  function handleAddQuestion(questions: BasicQuestion[] | ConnectPairCustomQuestion[]) {
+    if (savedType === 3 && isBasicQuestions(questions, savedType)) {
+      setQuestions([
+        ...questions,
+        {
+          id: uuidv4(),
+          heading: "placeholder",
+          choices: [
+            { id: uuidv4(), text: "", image: "", tags: [] },
+            { id: uuidv4(), text: "", image: "", tags: [] },
+            { id: uuidv4(), text: "", image: "", tags: [] },
+            { id: uuidv4(), text: "", image: "", tags: [] },
+          ],
+        },
+      ]);
+    }
+    if ((savedType === 1 || savedType === 2) && isCustomQuestions(questions, savedType)) {
+      setQuestions([
+        ...questions,
+        {
+          id: uuidv4(),
+          heading: "placeholder",
+          choices: [
+            { id: uuidv4(), data1: "", data2: "", tags: [] },
+            { id: uuidv4(), data1: "", data2: "", tags: [] },
+            { id: uuidv4(), data1: "", data2: "", tags: [] },
+          ],
+        },
+      ]);
+    }
   }
 
   function handleDeleteQuestion(questionId: string) {
-    const newQuestions = questions.filter((q) => q.id !== questionId);
-    setQuestions(newQuestions);
+    if (isBasicQuestions(questions, savedType)) {
+      setQuestions(questions.filter((q) => q.id !== questionId));
+    }
+    if (isCustomQuestions(questions, savedType)) {
+      setQuestions(questions.filter((q) => q.id !== questionId));
+    }
   }
 
-  function handlePostTask() {
+  function handlePostTask(questions: Question[]) {
+    console.log("questions", questions);
+    console.log("length", questions.length);
     if (questions.length === 0) {
       return;
     }
@@ -82,11 +117,16 @@ function CreateExercisePage() {
     }
     questions.forEach((question) => {
       question.choices.forEach((choice) => {
-        if (choice.text === "" && choice.image === "") {
+        if (
+          (isBasicChoice(choice, savedType) && !choice.text && !choice.image) ||
+          (isCustomChoice(choice, savedType) && !choice.data1 && !choice.data2)
+        ) {
           isValid = false;
         }
       });
     });
+
+    console.log("valid?", isValid);
 
     if (isValid) {
       postTaskMutation();
@@ -95,52 +135,25 @@ function CreateExercisePage() {
     }
   }
 
-  function generateEmptyChoices() {
-    switch (savedType) {
-      case 1:
-      case 2:
-        // Connect Pairs
-        return [
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-        ];
-
-      case 3:
-        return [
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-          { id: uuidv4(), text: "", image: "", tags: [] },
-        ];
-
-      default:
-        return [];
-    }
-  }
-
-  console.log("quesitons:", questions);
-
-  function handleUpdateChoice(
-    questionId: string,
-    choiceId: string,
-    text: string | undefined,
-    image: string | undefined
-  ) {
+  function handleUpdateChoice(questionId: string, choiceId: string, input: string, changeFirst: boolean) {
     let newQuestions = cloneDeep(questions);
-    let question = newQuestions.find((q) => q.id === questionId);
-    let choice = question?.choices.find((c) => c.id === choiceId);
-    if (choice !== undefined) {
-      if (text !== undefined) {
-        choice.text = text;
-      }
-      if (image !== undefined) {
-        choice.image = image;
-      }
+    let question = isBasicQuestions(newQuestions, type)
+      ? newQuestions.find((q) => q.id === questionId)
+      : newQuestions.find((q) => q.id === questionId);
+
+    if (!question) {
+      // couldn't find question
+      return;
+    }
+
+    let choice = isBasicQuestion(question, savedType)
+      ? question.choices.find((c) => c.id === choiceId)
+      : question.choices.find((c) => c.id === choiceId);
+    if (choice && isBasicChoice(choice, savedType)) {
+      changeFirst ? (choice.text = input) : (choice.image = input);
+    }
+    if (choice && isCustomChoice(choice, savedType)) {
+      changeFirst ? (choice.data1 = input) : (choice.data2 = input);
     }
 
     setQuestions(newQuestions);
@@ -234,7 +247,7 @@ function CreateExercisePage() {
                   boxShadow="md"
                   textAlign="center"
                   cursor="pointer"
-                  onClick={() => handleAddQuestion("placeholder")}
+                  onClick={() => handleAddQuestion(questions)}
                 >
                   <AddIcon color="gray.300" mt="5" w={8} h={8} />
                 </Box>
@@ -242,14 +255,21 @@ function CreateExercisePage() {
             )}
           </TabPanel>
 
-          {/* Help tab */}
           <TabPanel>
-            <UploadImage />
+            <UploadImageChoice />
           </TabPanel>
+          {/* Finalize tab */}
           <TabPanel>
-            <Button isLoading={isSubmitting} loadingText={"sumbitting"} onClick={handlePostTask}>
+            <Button
+              isLoading={isSubmitting}
+              loadingText={"sumbitting"}
+              onClick={() => {
+                handlePostTask(questions);
+              }}
+            >
               Save
             </Button>
+            {error && <Text color="red.400">{error}</Text>}
             {postingError !== null && <Text color="red.400">failed to save task</Text>}
           </TabPanel>
         </TabPanels>

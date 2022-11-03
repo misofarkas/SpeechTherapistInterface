@@ -5,7 +5,7 @@ import SelectImageModal from "../SelectImageModal";
 import { BsArrowRight } from "react-icons/bs";
 import { IconType } from "react-icons/lib";
 import { ImageData } from "../../data/ImageData";
-import { BasicChoice, Question } from "../../types/commonTypes";
+import { CustomChoice, ConnectPairCustomQuestion } from "../../types/commonTypes";
 
 type ImageId = string | undefined;
 
@@ -21,136 +21,74 @@ function CPQuestionCard({
 }: {
   type: string;
   isEditable: boolean;
-  question: Question;
-  handleUpdateChoice?: ((a: string, b: string, c: string | undefined, d: string | undefined) => void) | undefined;
+  question: ConnectPairCustomQuestion;
+  handleUpdateChoice?: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
   handleDeleteQuestion?: ((a: string) => void) | undefined;
-  imageData?: BasicChoice[] | undefined;
+  imageData?: CustomChoice[] | undefined;
 }) {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const gridItemWidth = isLargerThan768 ? "150px" : "75px";
   const gridItemHeight = type === "image" ? (isLargerThan768 ? "150px" : "75px") : "40px";
   const iconSize = isLargerThan768 ? "75px" : "50px";
+  const indexes = [0, 1, 2];
+
+  console.log("rendering")
+  console.log("question", question)
 
   return (
     <Box maxW="800px" mx="auto" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">
       {isEditable && <CloseButton ml="95%" mb="2" onClick={() => handleDeleteQuestion!(question.id)}></CloseButton>}
       <Grid templateRows="repeat(3, 1fr)" templateColumns="1fr 0.3fr 1fr" gap={4}>
-        <TextGridItem
-          value={question.choices[0].text}
-          itemHeight={gridItemHeight}
-          onChange={(e) => {
-            handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[0].id, e, undefined);
-          }}
-        />
+        {indexes.map((i) => {
+          return (
+            <>
+              <TextGridItem
+                value={question.choices[i].data1}
+                itemHeight={gridItemHeight}
+                onChange={(e) => {
+                  handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[i].id, e, true);
+                }}
+              />
 
-        <IconGridItem icon={BsArrowRight} itemWidth={gridItemWidth} itemHeight={gridItemHeight} iconSize={iconSize} />
+              <IconGridItem
+                icon={BsArrowRight}
+                itemWidth={gridItemWidth}
+                itemHeight={gridItemHeight}
+                iconSize={iconSize}
+              />
 
-        {type === "image" ? (
-          isEditable ? (
-            <ImageGridItem
-              selectedImageUrl={question.choices[3].image ?? ""}
-              handleUpdateChoice={handleUpdateChoice}
-              itemWidth={gridItemWidth}
-              itemHeight={gridItemHeight}
-              imageData={imageData ?? []}
-              questionId={question.id}
-              choiceId={question.choices[3].id}
-            />
-          ) : (
-            <Image
-              src={question.choices[0].image ?? ""}
-              objectFit="cover"
-              boxSize={gridItemWidth}
-              borderRadius="lg"
-            ></Image>
-          )
-        ) : (
-          <TextGridItem
-            value={question.choices[3].text}
-            itemHeight={gridItemHeight}
-            onChange={(e) => {
-              handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[3].id, e, undefined);
-            }}
-          />
-        )}
-
-        <TextGridItem
-          value={question.choices[1].text}
-          itemHeight={gridItemHeight}
-          onChange={(e) => {
-            handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[1].id, e, undefined);
-          }}
-        />
-
-        <IconGridItem icon={BsArrowRight} itemWidth={gridItemWidth} itemHeight={gridItemHeight} iconSize={iconSize} />
-
-        {type === "image" ? (
-          isEditable ? (
-            <ImageGridItem
-              selectedImageUrl={question.choices[4].image ?? ""}
-              handleUpdateChoice={handleUpdateChoice}
-              itemWidth={gridItemWidth}
-              itemHeight={gridItemHeight}
-              imageData={imageData ?? []}
-              questionId={question.id}
-              choiceId={question.choices[4].id}
-            />
-          ) : (
-            <Image
-              src={question.choices[1].image ?? ""}
-              objectFit="cover"
-              boxSize={gridItemWidth}
-              borderRadius="lg"
-            ></Image>
-          )
-        ) : (
-          <TextGridItem
-            value={question.choices[4].text}
-            itemHeight={gridItemHeight}
-            onChange={(e) => {
-              handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[4].id, e, undefined);
-            }}
-          />
-        )}
-
-        <TextGridItem
-          value={question.choices[2].text}
-          itemHeight={gridItemHeight}
-          onChange={(e) => {
-            handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[2].id, e, undefined);
-          }}
-        />
-
-        <IconGridItem icon={BsArrowRight} itemWidth={gridItemWidth} itemHeight={gridItemHeight} iconSize={iconSize} />
-
-        {type === "image" ? (
-          isEditable ? (
-            <ImageGridItem
-              selectedImageUrl={question.choices[5].image ?? ""}
-              handleUpdateChoice={handleUpdateChoice}
-              itemWidth={gridItemWidth}
-              itemHeight={gridItemHeight}
-              imageData={imageData ?? []}
-              questionId={question.id}
-              choiceId={question.choices[5].id}
-            />
-          ) : (
-            <Image
-              src={question.choices[2].image ?? ""}
-              objectFit="cover"
-              boxSize={gridItemWidth}
-              borderRadius="lg"
-            ></Image>
-          )
-        ) : (
-          <TextGridItem
-            value={question.choices[5].text}
-            itemHeight={gridItemHeight}
-            onChange={(e) => {
-              handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[5].id, e, undefined);
-            }}
-          />
-        )}
+              {type === "image" ? (
+                isEditable ? (
+                  <ImageGridItem
+                    selectedImageUrl={question.choices[i].data2 ?? ""}
+                    handleUpdateChoice={handleUpdateChoice}
+                    itemWidth={gridItemWidth}
+                    itemHeight={gridItemHeight}
+                    imageData={imageData ?? []}
+                    questionId={question.id}
+                    choiceId={question.choices[i].id}
+                  />
+                ) : (
+                  <Image
+                    src={question.choices[i].data2 ?? ""}
+                    objectFit="cover"
+                    boxSize={gridItemWidth}
+                    borderRadius="lg"
+                  ></Image>
+                )
+              ) : (
+                <TextGridItem
+                  value={question.choices[i].data2}
+                  itemHeight={gridItemHeight}
+                  onChange={(e) => {
+                    handleUpdateChoice !== undefined &&
+                      handleUpdateChoice(question.id, question.choices[i].id, e, false);
+                  }}
+                />
+              )}
+            </>
+          );
+        })}
       </Grid>
     </Box>
   );
@@ -158,10 +96,10 @@ function CPQuestionCard({
 
 type ImageGridItemArgs = {
   selectedImageUrl: string | undefined;
-  handleUpdateChoice: ((a: string, b: string, c: string | undefined, d: string | undefined) => void) | undefined;
+  handleUpdateChoice: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
   itemWidth: string;
   itemHeight: string;
-  imageData: BasicChoice[];
+  imageData: CustomChoice[];
   questionId: string;
   choiceId: string;
 };
@@ -176,12 +114,7 @@ function ImageGridItem({
   choiceId,
 }: ImageGridItemArgs) {
   return (
-    <GridItem
-      boxSize={itemWidth}
-      textAlign="center"
-      cursor="pointer"
-      mx="auto"
-    >
+    <GridItem boxSize={itemWidth} textAlign="center" cursor="pointer" mx="auto">
       <SelectImageModal
         selectedImageUrl={selectedImageUrl}
         handleUpdateChoice={handleUpdateChoice}

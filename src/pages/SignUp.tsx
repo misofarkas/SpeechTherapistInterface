@@ -12,12 +12,10 @@ import {
 } from "@chakra-ui/react";
 import { Formik, Field, ErrorMessage, useFormik, Form, FieldInputProps } from "formik";
 import { useMutation } from "react-query";
-import axios from "../api/axios";
 import { register } from "../api/register";
 
 function SignUp() {
   const { isLoading, isError, error, mutate: registerMutation } = useMutation(register);
-  const SIGNUP_URL = "/user/therapist/register/";
 
   function validateName(value: string) {
     let error;
@@ -37,6 +35,8 @@ function SignUp() {
       error = "Email is required";
     } else if (!value.includes("@")) {
       error = "Email is invalid";
+    } else if (value.length < 5) {
+      error = "Email is too short"
     }
     return error;
   }

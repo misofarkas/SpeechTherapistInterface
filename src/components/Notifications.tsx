@@ -12,6 +12,7 @@ import {
   Flex,
   Divider,
   Avatar,
+  Badge,
 } from "@chakra-ui/react";
 import { AiOutlineBell } from "react-icons/ai";
 import { FcCheckmark } from "react-icons/fc";
@@ -35,12 +36,16 @@ function Notifications() {
     },
   });
 
-
   return (
     <Popover>
       <PopoverTrigger>
         <Button>
-          <Icon boxSize={"25px"} as={AiOutlineBell} />
+          {notificationsData && (
+            <Badge position="absolute" variant="solid" colorScheme="red" mr="5" mt="4" fontSize="2xs">
+              {notificationsData.data.length}
+            </Badge>
+          )}
+          <Icon boxSize={"2rem"} as={AiOutlineBell} />
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -50,11 +55,11 @@ function Notifications() {
             {notificationsData?.data.map((request) => {
               return (
                 <Box key={request.id}>
-                  <Divider />
+                  <Divider mb="2"/>
                   <Flex gap="2">
                     <Avatar src={request.image} boxSize="3rem" alignSelf="center" />
                     <Stack spacing="0">
-                      <Text as='b'>{request.name}</Text>
+                      <Text as="b">{request.name}</Text>
                       <Text>wants to connect</Text>
                     </Stack>
 

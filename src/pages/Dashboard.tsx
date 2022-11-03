@@ -1,5 +1,5 @@
 import { Container, Heading } from "@chakra-ui/react";
-import MeetingCard from "../components/meetingCard";
+import MeetingCard from "../components/MeetingCard";
 
 function Dashboard() {
   return (

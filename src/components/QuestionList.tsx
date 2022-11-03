@@ -1,7 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import NIQuestionCard from "./CreateQuestionCards/NIQuestionCard";
 import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard";
-import { BasicChoice, Question } from "../types/commonTypes";
+import { CustomChoice, Question } from "../types/commonTypes";
+import { isBasicQuestion, isCustomQuestion } from "../types/typeGuards";
 
 function QuestionList({
   questions,
@@ -14,16 +15,17 @@ function QuestionList({
   questions: Question[];
   type: number;
   difficulty: string;
-  handleUpdateChoice?: ((a: string, b: string, c: string | undefined, d: string | undefined) => void) | undefined;
+  handleUpdateChoice?: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
   handleDeleteQuestion?: ((a: string) => void) | undefined;
-  imageData?: BasicChoice[] | undefined;
+  imageData?: CustomChoice[] | undefined;
 }) {
   return (
     <>
       {questions.map((q) => {
+        console.log(type, isCustomQuestion(q, type), q)
         return (
           <Box mb="5" key={q.id}>
-            {type === 3 && (
+            {type === 3 && isBasicQuestion(q, type) && (
               <NIQuestionCard
                 isEditable={difficulty === "hard"}
                 question={q}
@@ -32,7 +34,7 @@ function QuestionList({
                 imageData={imageData}
               />
             )}
-            {type === 1 && (
+            {type === 1 && isCustomQuestion(q, type) && (
               <CPQuestionCard
                 type="image"
                 isEditable={difficulty === "hard"}
@@ -42,7 +44,7 @@ function QuestionList({
                 imageData={imageData}
               />
             )}
-            {type === 2 && (
+            {type === 2 && isCustomQuestion(q, type) && (
               <CPQuestionCard
                 type="text"
                 isEditable={difficulty === "hard"}

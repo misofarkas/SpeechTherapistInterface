@@ -24,8 +24,6 @@ function PatientProfile() {
   } = useQuery("patient", () => getPatient({ auth, id: id ?? "" }));
   const patient = isSuccess ? patientData.data : undefined;
   
-  /*
-  TODO s peťom prebrať či robiť prienik na front-end alebo back-end
   const {
     isLoading: isLoadingResults,
     isSuccess: resultsIsSuccess,
@@ -40,7 +38,6 @@ function PatientProfile() {
     finishedTaskIds = patient.assigned_tasks.map((task) => task.id);
     //imageData.filter((image) => intersection(image.tags.map((tag) => tag.name), selectedTags).length !== 0);
   }
-  */
   
 
   if (isLoading) {

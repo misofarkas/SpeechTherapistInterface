@@ -20,15 +20,69 @@ import {
   useMediaQuery,
   Code,
 } from "@chakra-ui/react";
+import { useState } from "react";
+import { useMutation } from "react-query";
+import { updateAvatar, updateProfile } from "../api/userProfileApi";
+import SaveSettingsPrompt from "../components/SaveSettingsPrompt";
+import UploadImage from "../components/UploadImage";
 import { useAuth } from "../contexts/AuthContext";
+import { User } from "../types/commonTypes";
 
 function UserSettings() {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
-  const { user } = useAuth()
+  const { auth, user, setUser } = useAuth();
+  const [currentSettings, setCurrentSettings] = useState<User>(user);
+  const [newAvatar, setNewAvatar] = useState("");
+  const [newAvatarPreview, setNewAvatarPreview] = useState<string | null>(user.image);
+  const settingsHaveChanged = JSON.stringify(user) !== JSON.stringify(currentSettings);
+
+  const updateProfileMutation = useMutation(updateProfile, {
+    onSuccess: () => {
+      console.log("profile Updated");
+      setUser(currentSettings);
+    },
+  });
+
+  const updateAvatarMutation = useMutation(updateAvatar);
+
+  
+  console.log("currentSettigns", currentSettings);
   console.log("user", user);
+  
+  console.log("user === currentSettings", JSON.stringify(user) === JSON.stringify(currentSettings));
+  /*
+  console.log("newAvatar", newAvatar);
+  console.log("newAvatarPreview", newAvatarPreview);
+  */
+  function handleSave() {
+    updateProfileMutation.mutate({ auth, profile: currentSettings });
+  }
+
+  function resetSettings() {
+    setCurrentSettings(user);
+    setNewAvatar("");
+    setNewAvatarPreview(user.image);
+  }
+
+  function handleAvatarChange(e: any) {
+    const file = e.target.files[0];
+    setNewAvatar(file);
+    setNewAvatarPreview(URL.createObjectURL(file));
+  }
+
+  function handleAvatarUpload() {
+    const res = updateAvatarMutation.mutateAsync({
+      auth,
+      avatar: newAvatar,
+    });
+    res.then((value) => {
+      setUser(value.data);
+      setCurrentSettings({ ...currentSettings, image: value.data.image });
+    });
+  }
 
   return (
-    <Container maxW="1200px">
+    <Container maxW="1200px" pb="5rem">
       <Heading mb="5">User settings</Heading>
       <Tabs variant="enclosed">
         <TabList>
@@ -40,6 +94,7 @@ function UserSettings() {
         <TabPanels>
           {/* General Settings */}
           <TabPanel>
+            {/*Main settings*/}
             <Stack spacing="5" mx="-4">
               <Box borderWidth="1px" borderRadius="lg" padding="5">
                 <Stack spacing="4">
@@ -47,14 +102,23 @@ function UserSettings() {
                     <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""}>
                       Full Name
                     </Heading>
-                    <Input placeholder={user.name} maxW="400px"></Input>
+                    <Input
+                      value={currentSettings.name}
+                      maxW="400px"
+                      onChange={(e) => setCurrentSettings({ ...currentSettings, name: e.target.value })}
+                    ></Input>
                   </Flex>
                   <Divider />
                   <Flex gap="4">
                     <Heading size="sm" alignSelf="center">
                       Change Avatar
                     </Heading>
-                    <Avatar src={user.image}/>
+                    <UploadImage handleImageSelection={handleAvatarChange}>
+                      <Avatar src={newAvatarPreview ?? user.image} />
+                    </UploadImage>
+                    <Button isDisabled={!newAvatar} onClick={handleAvatarUpload}>
+                      Upload and save
+                    </Button>
                   </Flex>
                   <Divider />
                   <Box>
@@ -64,11 +128,15 @@ function UserSettings() {
                     <Text size="sm" color="gray.600">
                       Tell us a little about yourself
                     </Text>
-                    <Textarea />
+                    <Textarea
+                      value={currentSettings.bio ?? ""}
+                      onChange={(e) => setCurrentSettings({ ...currentSettings, bio: e.target.value })}
+                    />
                   </Box>
                 </Stack>
               </Box>
 
+              {/*Contact Information*/}
               <Box borderWidth="1px" borderRadius="lg" padding="5">
                 <Stack spacing="5">
                   <Heading>Contact Information</Heading>
@@ -87,11 +155,20 @@ function UserSettings() {
                       </Box>
                       <Divider />
                       <Box>
-                        <Flex gap="4">
-                          <Heading size="sm" alignSelf="center">
+                        <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
+                          <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""}>
                             Phone number
                           </Heading>
-                          <Input maxW="400px"></Input>
+                          <Input
+                            value={currentSettings.phone ?? ""}
+                            maxW="400px"
+                            onChange={(e) =>
+                              setCurrentSettings({
+                                ...currentSettings,
+                                phone: e.target.value === "" ? null : e.target.value,
+                              })
+                            }
+                          ></Input>
                         </Flex>
                       </Box>
                     </Stack>
@@ -99,6 +176,70 @@ function UserSettings() {
                 </Stack>
               </Box>
 
+              {/*Additional Information*/}
+              <Box borderWidth="1px" borderRadius="lg" padding="5">
+                <Stack spacing="5">
+                  <Heading>Additional Information</Heading>
+                  <Stack spacing="5">
+                    <Divider />
+                    <Box>
+                      <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
+                        <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""} w="100px">
+                          Company
+                        </Heading>
+                        <Input
+                          value={currentSettings.company ?? ""}
+                          maxW="400px"
+                          onChange={(e) =>
+                            setCurrentSettings({
+                              ...currentSettings,
+                              company: e.target.value === "" ? null : e.target.value,
+                            })
+                          }
+                        ></Input>
+                      </Flex>
+                    </Box>
+                    <Divider />
+                    <Box>
+                      <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
+                        <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""} w="100px">
+                          Location
+                        </Heading>
+                        <Input
+                          value={currentSettings.location ?? ""}
+                          maxW="400px"
+                          onChange={(e) =>
+                            setCurrentSettings({
+                              ...currentSettings,
+                              location: e.target.value === "" ? null : e.target.value,
+                            })
+                          }
+                        ></Input>
+                      </Flex>
+                    </Box>
+                    <Divider />
+                    <Box>
+                      <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
+                        <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""} w="100px">
+                          Country
+                        </Heading>
+                        <Input
+                          value={currentSettings.country ?? ""}
+                          maxW="400px"
+                          onChange={(e) =>
+                            setCurrentSettings({
+                              ...currentSettings,
+                              country: e.target.value === "" ? null : e.target.value,
+                            })
+                          }
+                        ></Input>
+                      </Flex>
+                    </Box>
+                  </Stack>
+                </Stack>
+              </Box>
+
+              {/*Link*/}
               <Box borderWidth="1px" borderRadius="lg" padding="5">
                 <Stack spacing="5">
                   <Heading>Link</Heading>
@@ -129,6 +270,7 @@ function UserSettings() {
           </TabPanel>
         </TabPanels>
       </Tabs>
+      <SaveSettingsPrompt handleSave={handleSave} handleReset={resetSettings} isOpen={settingsHaveChanged} />
     </Container>
   );
 }

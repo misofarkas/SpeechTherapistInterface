@@ -10,6 +10,8 @@ export type Tag = {
   user: string;
 };
 
+// CHOICES
+
 export type BasicChoice = {
   id: string;
   text: string;
@@ -24,11 +26,23 @@ export type CustomChoice = {
   tags: Tag[];
 };
 
-export type Question = {
+// QUESTIONS
+
+export type ConnectPairCustomQuestion = {
+  id: string;
+  heading: string;
+  choices: CustomChoice[];
+};
+
+export type BasicQuestion = {
   id: string;
   heading: string;
   choices: BasicChoice[];
 };
+
+export type Question = BasicQuestion | ConnectPairCustomQuestion;
+
+// TASKS
 
 export type GeneratedTask = {
   id: string;
@@ -56,16 +70,6 @@ export type TaskExtended = {
   created_by: string;
   tags: Tag[];
   questions: Question[];
-};
-
-export type TaskExtended2 = {
-  id: string;
-  name: string;
-  type: number;
-  difficulty: string;
-  created_by: string;
-  tags: Tag[];
-  questions: Question;
 };
 
 export type AnswerChoice = {
@@ -108,11 +112,12 @@ export type User = {
   name: string;
   password: string;
   confirm_password: string;
-  image?: string;
-  phone?: string;
-  location?: string;
-  country?: string;
-  company?: string;
+  image?: string | null;
+  phone?: string | null;
+  location?: string | null;
+  country?: string | null;
+  company?: string | null;
+  bio?: string | null;
 };
 
 export type LinkRequest = {
@@ -123,7 +128,6 @@ export type LinkRequest = {
   assigned_to: number;
   assigment_active: boolean;
 };
-
 
 export type Event = {
   id: string;

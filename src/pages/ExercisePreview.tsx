@@ -62,11 +62,12 @@ function ExercisePreview() {
     assignTask({ auth, patientId: selectedPatient, taskId: task?.id ?? "" })
   );
 
-  const { isLoading: isDeleting, mutate: deleteTaskMutation } = useMutation(() =>
-    deleteTask({ auth, id: task?.id ?? "" }), {
+  const { isLoading: isDeleting, mutate: deleteTaskMutation } = useMutation(
+    () => deleteTask({ auth, id: task?.id ?? "" }),
+    {
       onSuccess: () => {
         navigate("/Exercises");
-      }
+      },
     }
   );
 
@@ -110,7 +111,11 @@ function ExercisePreview() {
                 placeholder="Select patient"
               >
                 {patients?.map((patient) => {
-                  return <option value={patient.email}>{patient.name}</option>;
+                  return (
+                    <option key={patient.id} value={patient.email}>
+                      {patient.name}
+                    </option>
+                  );
                 })}
               </Select>
             </ModalBody>
