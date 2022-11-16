@@ -1,3 +1,5 @@
+import { TaskType } from "./enums";
+
 export type Auth = {
   email: string;
   password: string;
@@ -12,11 +14,13 @@ export type Tag = {
 
 // CHOICES
 
-export type BasicChoice = {
+export type FourChoicesChoice = {
   id: string;
-  text: string;
-  image: string;
-  tags: Tag[];
+  question_data: string;
+  correct_option: string;
+  incorrect_option1: string;
+  incorrect_option2: string;
+  incorrect_option3: string;
 };
 
 export type CustomChoice = {
@@ -34,20 +38,20 @@ export type ConnectPairCustomQuestion = {
   choices: CustomChoice[];
 };
 
-export type BasicQuestion = {
+export type FourChoicesQuestion = {
   id: string;
   heading: string;
-  choices: BasicChoice[];
+  choices: FourChoicesChoice[];
 };
 
-export type Question = BasicQuestion | ConnectPairCustomQuestion;
+export type Question = FourChoicesQuestion | ConnectPairCustomQuestion;
 
 // TASKS
 
 export type GeneratedTask = {
   id: string;
   name: string;
-  type: number;
+  type: TaskType;
   difficulty: string;
   created_by: string;
   questions: Question[];
@@ -56,7 +60,7 @@ export type GeneratedTask = {
 export type Task = {
   id: string;
   name: string;
-  type: number;
+  type: TaskType;
   difficulty: string;
   created_by: string;
   tags: Tag[];
@@ -65,11 +69,20 @@ export type Task = {
 export type TaskExtended = {
   id: string;
   name: string;
-  type: number;
+  type: TaskType;
   difficulty: string;
   created_by: string;
   tags: Tag[];
   questions: Question[];
+};
+
+export type AnswerFourChoicesChoice = {
+  id: string;
+  question_data: string;
+  correct_option: string;
+  incorrect_option1: string;
+  incorrect_option2: string;
+  incorrect_option3: string;
 };
 
 export type AnswerChoice = {
@@ -94,8 +107,13 @@ export type Patient = {
   id: string;
   email: string;
   name: string;
+  image: string
   is_therapist: boolean;
+  my_meetings: string;
   assigned_tasks: Task[];
+  assigned_to: string;
+  assignment_active: boolean;
+  notes: string;
 };
 
 export type Meeting = {

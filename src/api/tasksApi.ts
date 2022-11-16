@@ -1,12 +1,13 @@
 import { Task, Question, TaskExtended, TaskResult, Tag } from "../types/commonTypes";
+import { Difficulties, TaskType } from "../types/enums";
 import axios from "./axios";
 
 export async function getTasks({ auth }: { auth: any }) {
   return await axios.get<Task[]>("/task/tasks/", { headers: { Authorization: `Token ${auth?.accessToken}` } });
 }
 
-export async function getTask({ auth, id }: { auth: any; id: string }) {
-  return await axios.get<TaskExtended>(`/task/tasks/${id}/`, {
+export async function getTask({ auth, id, type }: { auth: any; id: string, type: string }) {
+  return await axios.get<TaskExtended>(`/task/tasks/${id}/?task_type=${type}`, {
     headers: { Authorization: `Token ${auth?.accessToken}` },
   });
 }
@@ -20,13 +21,14 @@ export async function postTask({
 }: {
   auth: any;
   name: string;
-  type: number;
+  type: string;
   tags: Tag[];
   questions: Question[];
 }) {
+  console.log("postType:", type)
   return await axios.post(
-    "/task/custom_task/",
-    { name, type, difficulty: "hard", tags, custom_questions: questions },
+    `/task/tasks/?task_type=${type}`,
+    { name, type, difficulty: Difficulties.Hard, tags, questions: questions },
     { headers: { Authorization: `Token ${auth?.accessToken}` } }
   );
 }
@@ -56,12 +58,14 @@ export async function generateTask({
 }: {
   auth: any;
   name: string;
-  type: number;
+  type: TaskType;
   difficulty: string;
   selectedTags: string[];
 }) {
+
+  console.log("post type", type)
   return await axios.post(
-    "/task/tasks/",
+    `/task/tasks/?task_type=${type}`,
     {
       name: name,
       type: type,

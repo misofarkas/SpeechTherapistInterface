@@ -23,6 +23,7 @@ import {
 import { useState } from "react";
 import { useMutation } from "react-query";
 import { updateAvatar, updateProfile } from "../api/userProfileApi";
+import ChangePasswordModal from "../components/ChangePasswordModal";
 import SaveSettingsPrompt from "../components/SaveSettingsPrompt";
 import UploadImage from "../components/UploadImage";
 import { useAuth } from "../contexts/AuthContext";
@@ -35,6 +36,7 @@ function UserSettings() {
   const [newAvatar, setNewAvatar] = useState("");
   const [newAvatarPreview, setNewAvatarPreview] = useState<string | null>(user.image);
   const settingsHaveChanged = JSON.stringify(user) !== JSON.stringify(currentSettings);
+  const [emailError, setEmailError] = useState("");
 
   const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
@@ -45,23 +47,21 @@ function UserSettings() {
 
   const updateAvatarMutation = useMutation(updateAvatar);
 
-  
-  console.log("currentSettigns", currentSettings);
-  console.log("user", user);
-  
-  console.log("user === currentSettings", JSON.stringify(user) === JSON.stringify(currentSettings));
-  /*
-  console.log("newAvatar", newAvatar);
-  console.log("newAvatarPreview", newAvatarPreview);
-  */
   function handleSave() {
-    updateProfileMutation.mutate({ auth, profile: currentSettings });
+    if (currentSettings.email.length < 5 || !currentSettings.email.includes("@") || !currentSettings.email) {
+      setEmailError("email is invalid");
+    } else {
+      console.log("updating")
+      updateProfileMutation.mutate({ auth, profile: currentSettings });
+      setEmailError("");
+    }
   }
 
   function resetSettings() {
     setCurrentSettings(user);
     setNewAvatar("");
     setNewAvatarPreview(user.image);
+    setEmailError("");
   }
 
   function handleAvatarChange(e: any) {
@@ -133,6 +133,7 @@ function UserSettings() {
                       onChange={(e) => setCurrentSettings({ ...currentSettings, bio: e.target.value })}
                     />
                   </Box>
+                  <ChangePasswordModal/>
                 </Stack>
               </Box>
 
@@ -145,13 +146,19 @@ function UserSettings() {
                       <Divider />
                       <Box>
                         <Heading size="sm">Email</Heading>
-                        <Flex gap="4">
-                          <Text fontSize="sm" alignSelf="center">
-                            some_email@gmail.com
-                          </Text>
-                          <Button size="sm">Change Email</Button>
-                        </Flex>
-                        <FormHelperText>You can change your email only once per week.</FormHelperText>
+                        <Input
+                          value={currentSettings.email ?? ""}
+                          maxW="400px"
+                          borderColor={emailError ? "red.500" : "gray.300"}
+                          onChange={(e) =>
+                            setCurrentSettings({
+                              ...currentSettings,
+                              email: e.target.value,
+                            })
+                          }
+                        ></Input>
+                        <FormHelperText>This email will be used when logging in.</FormHelperText>
+                        {emailError && <FormHelperText color={"red.500"}>{emailError}</FormHelperText>}
                       </Box>
                       <Divider />
                       <Box>

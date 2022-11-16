@@ -29,16 +29,23 @@ import { assignTask } from "../api/tasksApi";
 import { deleteTask } from "../api/tasksApi";
 import { useQuery, useMutation } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { getImages } from "../api/imageApi";
 
 function ExercisePreview() {
-  const { id } = useParams();
+  const { id, type } = useParams();
   const navigate = useNavigate();
   const { auth, user } = useAuth();
   const { isOpen: isAssignOpen, onOpen: onAssignOpen, onClose: onAssignClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [selectedPatient, setSelectedPatient] = useState("");
   //const [isDeleting, setIsDeleting] = useState(false);
-  const { isLoading, isSuccess, error, data: taskData } = useQuery("task", () => getTask({ auth, id: id ?? "" }));
+
+  const { isLoading, isSuccess, error, data: taskData } = useQuery("task", () => getTask({ auth, id: id ?? "", type: type ?? ""}));
+  const {
+    isLoading: isLoadingImages,
+    error: imageError,
+    data: imageData,
+  } = useQuery("images", () => getImages({ auth }));
 
   let task: TaskExtended | undefined = undefined;
   if (isSuccess) {
@@ -74,16 +81,16 @@ function ExercisePreview() {
   //console.log("created_by:", task?.created_by);
   //console.log("user id: ", user.id);
 
-  if (error !== null || errorPatients !== null || task === undefined) {
+  if (error !== null || errorPatients !== null || task === undefined || task.questions.length === 0) {
     console.log("error:", error);
     return (
-      <>
-        <Text>There has been an error</Text>
-      </>
+      <Center mt="10">
+        <Heading fontSize={"4xl"}>Task not found</Heading>
+      </Center>
     );
   }
 
-  if (isLoading || isLoadingPatients) {
+  if (isLoading || isLoadingPatients || isLoadingImages || !imageData) {
     return <LoadingSpinner />;
   }
 
@@ -170,7 +177,7 @@ function ExercisePreview() {
         </Modal>
       </Stack>
 
-      <QuestionList questions={task.questions} type={task.type} difficulty={task.difficulty} />
+      <QuestionList questions={task.questions} type={task.type} difficulty={task.difficulty} imageData={imageData.data}/>
     </Container>
   );
 }

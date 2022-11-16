@@ -8,10 +8,11 @@ import { PatientExercisesData, Exercise } from "../data/PatientExercisesData";
 import { Task } from "../types/commonTypes";
 import { getTasks } from "../api/tasksApi";
 import { useQuery } from "react-query";
+import { TaskType } from "../types/enums";
 
 function Exercises() {
   const [filterNameValue, setFilterNameValue] = useState("");
-  const [filterTypeValue, setFilterTypeValue] = useState<number>(0);
+  const [filterTypeValue, setFilterTypeValue] = useState<TaskType | undefined>(undefined);
   const [filterDifficultyValue, setFilterDifficultyValue] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [createdByUser, setCreatedByUser] = useState(false);
@@ -28,7 +29,7 @@ function Exercises() {
     filteredTaskData = taskResponse.data.filter(
       (task) =>
         task.name.toLowerCase().includes(filterNameValue.toLowerCase()) &&
-        (filterTypeValue === 0 || filterTypeValue === task.type) &&
+        (filterTypeValue === undefined || filterTypeValue === task.type) &&
         (filterDifficultyValue === "" || filterDifficultyValue === task.difficulty) &&
         (!createdByUser || user.id === task.created_by)
     );
@@ -92,13 +93,13 @@ function Exercises() {
         <Flex mb="2" gap="3">
           <Select
             value={filterTypeValue}
-            onChange={(e) => setFilterTypeValue(Number(e.target.value))}
+            onChange={(e) => setFilterTypeValue(e.target.value as TaskType)}
             maxW="400px"
             placeholder="All types"
           >
-            <option value={1}>Connect Images</option>
-            <option value={2}>Connect Text</option>
-            <option value={3}>Name Images</option>
+            <option value={TaskType.ConnectPairsTextImage}>Connect Images</option>
+            <option value={TaskType.ConnectPairsTextText}>Connect Text</option>
+            <option value={TaskType.FourChoicesImage}>Name Images</option>
           </Select>
           <Select
             value={filterDifficultyValue}

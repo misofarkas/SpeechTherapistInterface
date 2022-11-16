@@ -47,8 +47,8 @@ export const App = () => {
                     <Route path="/patient-profile/:id" element={<PatientProfile />} />
                     <Route path="/CreateExercise" element={<CreateExercisePage />} />
                     <Route path="/CreateGeneratedExercise" element={<CreateGeneratedExercisePage />} />
-                    <Route path="/ExerciseResults/:id" element={<ExerciseResults />} />
-                    <Route path="/ExercisePreview/:id" element={<ExercisePreview />} />
+                    <Route path="/ExerciseResults/:type/:id" element={<ExerciseResults />} />
+                    <Route path="/ExercisePreview/:type/:id" element={<ExercisePreview />} />
                     <Route path="/UserSettings" element={<UserSettings />} />
                   </Route>
 

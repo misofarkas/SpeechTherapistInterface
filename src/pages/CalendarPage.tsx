@@ -15,6 +15,7 @@ import {
   Stack,
   Divider,
   Select,
+  Text,
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import FullCalendar from "@fullcalendar/react";
@@ -45,7 +46,7 @@ function CalendarPage() {
   const queryClient = useQueryClient();
   const { data: patientData } = useQuery("patients", () => getPatients({ auth }));
   const { isLoading, isError, error, data: meetings } = useQuery("meetings", () => getMeetings({ auth }));
-  
+
   const addMeetingMutation = useMutation(postMeeting, {
     onSuccess: () => {
       queryClient.invalidateQueries("meetings");
@@ -159,6 +160,7 @@ function CalendarPage() {
                 onChange={(e) => setCurrentEvent({ ...currentEvent, end: new Date(e.target.value) })}
                 type="datetime-local"
               />
+              {currentEvent.start > currentEvent.end && <Text color={"red.500"}>Invalid date</Text>}
             </Stack>
           </ModalBody>
 
@@ -193,7 +195,13 @@ function CalendarPage() {
               </>
             )}
             <Button
-              isDisabled={currentEvent.title === "" || !currentEvent.assignedPatient}
+              isDisabled={
+                currentEvent.title === "" ||
+                !currentEvent.assignedPatient ||
+                currentEvent.start > currentEvent.end ||
+                currentEvent.start.toString() === "Invalid Date" ||
+                currentEvent.end.toString() === "Invalid Date"
+              }
               colorScheme="blue"
               onClick={() => {
                 onClose();

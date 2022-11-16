@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Grid, GridItem, Text, Image, useMediaQuery, Center, Input, CloseButton } from "@chakra-ui/react";
 import { ImageData } from "../../data/ImageData";
 import SelectImageModal from "../SelectImageModal";
-import { CustomChoice, BasicQuestion, Question } from "../../types/commonTypes";
+import { CustomChoice, FourChoicesQuestion, Question } from "../../types/commonTypes";
 
 function NIQuestionCard({
   isEditable,
@@ -12,8 +12,8 @@ function NIQuestionCard({
   imageData = undefined,
 }: {
   isEditable: boolean;
-  question: BasicQuestion;
-  handleUpdateChoice?: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
+  question: FourChoicesQuestion;
+  handleUpdateChoice?: ((a: string, b: string, c: string, d: number) => void) | undefined;
   handleDeleteQuestion?: ((a: string) => void) | undefined;
   imageData?: CustomChoice[] | undefined;
 }) {
@@ -34,6 +34,8 @@ function NIQuestionCard({
 
   const templateRowsSm = "1fr repeat(5, 0.3fr)";
   const templateColumnsSm = "1fr";
+
+  console.log("imageData:", imageData)
   return (
     <Box w="full" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">
       {isEditable && <CloseButton ml="95%" mb="2" onClick={() => handleDeleteQuestion!(question.id)}></CloseButton>}
@@ -54,21 +56,26 @@ function NIQuestionCard({
           w="150px"
           mx="auto"
         >
-          <SelectImageModal
-            selectedImageUrl={question.choices[0].image ?? ""}
-            handleUpdateChoice={handleUpdateChoice}
-            boxSize={"150px"}
-            imageData={imageData ?? []}
-            questionId={question.id}
-            choiceId={question.choices[0].id}
-          />
+          {isEditable ? (
+            <SelectImageModal
+              selectedImageUrl={question.choices[0].question_data ?? ""}
+              handleUpdateChoice={handleUpdateChoice}
+              boxSize={"150px"}
+              imageData={imageData ?? []}
+              questionId={question.id}
+              choiceId={question.choices[0].id}
+              changeIndex={0}
+            />
+          ) : (
+            <Image src={question.choices[0].question_data} boxSize={"150px"} objectFit="cover" borderRadius="lg" />
+          )}
         </GridItem>
         <GridItem colSpan={1}>
           <Input
-            value={question.choices[0].text}
+            value={question.choices[0].correct_option}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[0].id, e.target.value, true);
+                handleUpdateChoice(question.id, question.choices[0].id, e.target.value, 1);
             }}
             maxW="400px"
             borderWidth="2px"
@@ -80,10 +87,10 @@ function NIQuestionCard({
             maxW="400px"
             borderWidth="1px"
             borderColor="gray.200"
-            value={question.choices[1].text}
+            value={question.choices[0].incorrect_option1}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[1].id, e.target.value, true);
+                handleUpdateChoice(question.id, question.choices[0].id, e.target.value, 2);
             }}
           />
         </GridItem>
@@ -92,10 +99,10 @@ function NIQuestionCard({
             maxW="400px"
             borderWidth="1px"
             borderColor="gray.200"
-            value={question.choices[2].text}
+            value={question.choices[0].incorrect_option2}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[2].id, e.target.value, true);
+                handleUpdateChoice(question.id, question.choices[0].id, e.target.value, 3);
             }}
           />
         </GridItem>
@@ -104,10 +111,10 @@ function NIQuestionCard({
             maxW="400px"
             borderWidth="1px"
             borderColor="gray.200"
-            value={question.choices[3].text}
+            value={question.choices[0].incorrect_option3}
             onChange={(e) => {
               handleUpdateChoice !== undefined &&
-                handleUpdateChoice(question.id, question.choices[3].id, e.target.value, true);
+                handleUpdateChoice(question.id, question.choices[0].id, e.target.value, 4);
             }}
           />
         </GridItem>

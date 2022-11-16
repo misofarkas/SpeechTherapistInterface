@@ -6,6 +6,7 @@ import { BsArrowRight } from "react-icons/bs";
 import { IconType } from "react-icons/lib";
 import { ImageData } from "../../data/ImageData";
 import { CustomChoice, ConnectPairCustomQuestion } from "../../types/commonTypes";
+import { TaskType } from "../../types/enums";
 
 type ImageId = string | undefined;
 
@@ -19,16 +20,16 @@ function CPQuestionCard({
   handleDeleteQuestion = undefined,
   imageData = undefined,
 }: {
-  type: string;
+  type: TaskType;
   isEditable: boolean;
   question: ConnectPairCustomQuestion;
-  handleUpdateChoice?: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
+  handleUpdateChoice?: ((a: string, b: string, c: string, d: number) => void) | undefined;
   handleDeleteQuestion?: ((a: string) => void) | undefined;
   imageData?: CustomChoice[] | undefined;
 }) {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const gridItemWidth = isLargerThan768 ? "150px" : "75px";
-  const gridItemHeight = type === "image" ? (isLargerThan768 ? "150px" : "75px") : "40px";
+  const gridItemHeight = type === TaskType.ConnectPairsTextImage ? (isLargerThan768 ? "150px" : "75px") : "40px";
   const iconSize = isLargerThan768 ? "75px" : "50px";
   const indexes = [0, 1, 2];
 
@@ -46,7 +47,7 @@ function CPQuestionCard({
                 value={question.choices[i].data1}
                 itemHeight={gridItemHeight}
                 onChange={(e) => {
-                  handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[i].id, e, true);
+                  handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[i].id, e, 0);
                 }}
               />
 
@@ -57,7 +58,7 @@ function CPQuestionCard({
                 iconSize={iconSize}
               />
 
-              {type === "image" ? (
+              {type === TaskType.ConnectPairsTextImage ? (
                 isEditable ? (
                   <ImageGridItem
                     selectedImageUrl={question.choices[i].data2 ?? ""}
@@ -82,7 +83,7 @@ function CPQuestionCard({
                   itemHeight={gridItemHeight}
                   onChange={(e) => {
                     handleUpdateChoice !== undefined &&
-                      handleUpdateChoice(question.id, question.choices[i].id, e, false);
+                      handleUpdateChoice(question.id, question.choices[i].id, e, 1);
                   }}
                 />
               )}
@@ -96,7 +97,7 @@ function CPQuestionCard({
 
 type ImageGridItemArgs = {
   selectedImageUrl: string | undefined;
-  handleUpdateChoice: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
+  handleUpdateChoice: ((a: string, b: string, c: string, d: number) => void) | undefined;
   itemWidth: string;
   itemHeight: string;
   imageData: CustomChoice[];
@@ -122,6 +123,7 @@ function ImageGridItem({
         imageData={imageData}
         questionId={questionId}
         choiceId={choiceId}
+        changeIndex={1}
       />
     </GridItem>
   );

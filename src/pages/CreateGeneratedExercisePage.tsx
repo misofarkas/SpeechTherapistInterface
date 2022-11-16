@@ -22,16 +22,17 @@ import { useAuth } from "../contexts/AuthContext";
 import SelectTags from "../components/SelectTags";
 import { generateTask } from "../api/tasksApi";
 import { useMutation } from "react-query";
+import { Difficulties, TaskType } from "../types/enums";
 
 function CreateGeneratedExercisePage() {
   const [name, setName] = useState("");
-  const [type, setType] = useState(1);
+  const [type, setType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
   const { selectedTags } = useTagContext();
   const { auth } = useAuth();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const returnRef = useRef<HTMLButtonElement>(null);
-  const difficulty = "easy";
+  const difficulty = Difficulties.Easy;
 
   const {
     mutate: generateTaskMutation,
@@ -40,7 +41,7 @@ function CreateGeneratedExercisePage() {
   } = useMutation(() => generateTask({ auth, name, type, difficulty, selectedTags }));
 
   if (generatedTask !== undefined) {
-    navigate(`/ExercisePreview/${generatedTask.data.id}`);
+    navigate(`/ExercisePreview/${generatedTask.data.type}/${generatedTask.data.id}`);
   }
 
   return (
@@ -56,9 +57,9 @@ function CreateGeneratedExercisePage() {
             <Text>Name</Text>
             <Input value={name} onChange={(e) => setName(e.target.value)}></Input>
             <Text>Type</Text>
-            <Select value={type} onChange={(e) => setType(Number(e.target.value))}>
-              <option value={1}>Connect Pairs (Text - Image)</option>
-              <option value={2}>Name Images</option>
+            <Select value={type} onChange={(e) => setType(e.target.value as TaskType)}>
+              <option value={TaskType.ConnectPairsTextImage}>Connect Pairs (Text - Image)</option>
+              <option value={TaskType.FourChoicesImage}>Name Images</option>
             </Select>
             <SelectTags withFilter={true} />
 

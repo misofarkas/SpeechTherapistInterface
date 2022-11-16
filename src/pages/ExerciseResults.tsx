@@ -9,7 +9,7 @@ import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function ExerciseResults() {
-  const { id } = useParams();
+  const { id, type } = useParams();
   const { auth } = useAuth();
   //const [exerciseResult, setExerciseResult] = useState<TaskResult>();
   //const [task, setTask] = useState<TaskExtended>();
@@ -20,7 +20,7 @@ function ExerciseResults() {
   //exerciseResult?.answers.map((ans) => (total += ans.answer.length));
 
   const { isLoading: isLoadingResults, error, data: taskResultData } = useQuery("taskResult", () => getTaskResult({ auth, id: id ?? "" }));
-  const { isLoading, data: taskData } = useQuery("task", () => getTask({ auth, id: id ?? "" }), {
+  const { isLoading, data: taskData } = useQuery("task", () => getTask({ auth, id: id ?? "", type: type ?? "" }), {
     enabled: !!taskResultData,
   });
 

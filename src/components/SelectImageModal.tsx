@@ -24,11 +24,12 @@ import { intersection } from "lodash";
 
 type ImageModalArgs = {
   selectedImageUrl: string | undefined;
-  handleUpdateChoice: ((a: string, b: string, c: string, d: boolean) => void) | undefined;
+  handleUpdateChoice: ((a: string, b: string, c: string, d: number) => void) | undefined;
   boxSize: string;
   imageData: CustomChoice[];
   questionId: string;
   choiceId: string;
+  changeIndex: number
 };
 
 function SelectImageModal({
@@ -38,6 +39,7 @@ function SelectImageModal({
   imageData,
   questionId,
   choiceId,
+  changeIndex,
 }: ImageModalArgs) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [previewImageUrl, setPreviewImageUrl] = useState<string | undefined>();
@@ -106,7 +108,7 @@ function SelectImageModal({
             <Button
               colorScheme="blue"
               onClick={() => {
-                handleUpdateChoice!(questionId, choiceId, previewImageUrl ?? "", false);
+                handleUpdateChoice!(questionId, choiceId, previewImageUrl ?? "", changeIndex);
                 onClose();
               }}
             >

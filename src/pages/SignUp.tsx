@@ -15,7 +15,7 @@ import { useMutation } from "react-query";
 import { register } from "../api/register";
 
 function SignUp() {
-  const { isLoading, isError, error, mutate: registerMutation } = useMutation(register);
+  const { isLoading, isError, error: apiError, mutate: registerMutation } = useMutation(register);
 
   function validateName(value: string) {
     let error;
@@ -125,11 +125,11 @@ function SignUp() {
                   </FormControl>
                 )}
               </Field>
-              <Button mt={4} colorScheme="teal" isLoading={props.isSubmitting} type="submit">
+              <Button mt={4} colorScheme="teal" isLoading={isLoading} type="submit">
                 Submit
               </Button>
               <Box>
-                <>{error && <Text>There has been an error</Text>}</>
+                <>{apiError && <Text>There has been an error</Text>}</>
               </Box>
             </Form>
           )}

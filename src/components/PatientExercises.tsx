@@ -13,7 +13,7 @@ function PatientExercises({ assignedTasks }: { assignedTasks: Task[] }) {
       {assignedTasks.map((exercise) => {
         return (
           <Box mb="4">
-            <LinkBox as={RouterLink} to={`/ExerciseResults/${exercise.id}`}>
+            <LinkBox as={RouterLink} to={`/ExerciseResults/${exercise.type}/${exercise.id}`}>
               <ExerciseResultCard
                 name={exercise.name}
                 type={exercise.type}

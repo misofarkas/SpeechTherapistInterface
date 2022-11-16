@@ -1,11 +1,12 @@
 import { Box, Grid, GridItem, Center, Text, Icon, Image, useMediaQuery } from "@chakra-ui/react";
 import { BsArrowRight } from "react-icons/bs";
 import { TaskResult, AnswerChoice, Answer } from "../../types/commonTypes";
+import { TaskType } from "../../types/enums";
 
-function CPImageAnswerCard({ answer, type }: { answer: Answer; type: string }) {
+function CPImageAnswerCard({ answer, type }: { answer: Answer; type: TaskType }) {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const gridItemWidth = isLargerThan768 ? "150px" : "75px";
-  const gridItemHeight = type === "image" ? (isLargerThan768 ? "150px" : "75px") : "40px";
+  const gridItemHeight = type === TaskType.ConnectPairsTextImage ? (isLargerThan768 ? "150px" : "75px") : "40px";
   const iconSize = isLargerThan768 ? "75px" : "50px";
 
   return (
@@ -29,7 +30,7 @@ function CPImageAnswerCard({ answer, type }: { answer: Answer; type: string }) {
 
         <GridItem>
           <Center h={gridItemHeight}>
-            {type === "image" ? (
+            {type === TaskType.ConnectPairsTextImage ? (
               <Image src={answer.answer[0].data2 ?? ""} objectFit="cover" boxSize={gridItemWidth} borderRadius="lg" />
             ) : (
               <Text>{answer.answer[0].data2}</Text>
@@ -55,7 +56,7 @@ function CPImageAnswerCard({ answer, type }: { answer: Answer; type: string }) {
 
         <GridItem>
           <Center h={gridItemHeight}>
-            {type === "image" ? (
+            {type === TaskType.ConnectPairsTextImage ? (
               <Image src={answer.answer[1].data2 ?? ""} objectFit="cover" boxSize={gridItemWidth} borderRadius="lg" />
             ) : (
               <Text>{answer.answer[1].data2}</Text>
@@ -81,7 +82,7 @@ function CPImageAnswerCard({ answer, type }: { answer: Answer; type: string }) {
 
         <GridItem>
           <Center h={gridItemHeight}>
-            {type === "image" ? (
+            {type === TaskType.ConnectPairsTextImage ? (
               <Image src={answer.answer[2].data2 ?? ""} objectFit="cover" boxSize={gridItemWidth} borderRadius="lg" />
             ) : (
               <Text>{answer.answer[2].data2}</Text>

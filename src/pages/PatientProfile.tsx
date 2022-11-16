@@ -9,13 +9,13 @@ import { Link as RouterLink } from "react-router-dom";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getTaskResults } from "../api/tasksApi";
+import UnlinkPatientModal from "../components/UnlinkPatientModal";
 
 function PatientProfile() {
   const { id } = useParams();
   const { auth } = useAuth();
   const [isLargerThan992] = useMediaQuery("(min-width: 768px)");
 
-  
   const {
     isLoading,
     isSuccess,
@@ -23,7 +23,7 @@ function PatientProfile() {
     data: patientData,
   } = useQuery("patient", () => getPatient({ auth, id: id ?? "" }));
   const patient = isSuccess ? patientData.data : undefined;
-  
+
   const {
     isLoading: isLoadingResults,
     isSuccess: resultsIsSuccess,
@@ -31,14 +31,11 @@ function PatientProfile() {
     data: taskResultsData,
   } = useQuery("results", () => getTaskResults({ auth }));
 
-  
-
   let finishedTaskIds: string[] = [];
   if (resultsIsSuccess && patient !== undefined) {
     finishedTaskIds = patient.assigned_tasks.map((task) => task.id);
     //imageData.filter((image) => intersection(image.tags.map((tag) => tag.name), selectedTags).length !== 0);
   }
-  
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -50,33 +47,26 @@ function PatientProfile() {
 
   return (
     <Container centerContent>
-      <Flex gap="6" flexDirection={isLargerThan992 ? "row" : "column"}>
+      <Flex gap="4rem" flexDirection={isLargerThan992 ? "row" : "column"}>
         <Box maxW="30rem">
-          <PatientCard
-            name={patient.name}
-            avatarUrl="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg"
-          />
+          <PatientCard name={patient.name} avatarUrl={patient.image} />
 
           <Box mb="5">
             <Heading>Diagnosis</Heading>
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum.
-            </Text>
+            <Textarea rows={10} overflow="hidden" />
+            <Button>save diagnosis</Button>
           </Box>
           <div>
             <Heading>Exercises</Heading>
             <PatientExercises assignedTasks={patient.assigned_tasks} />
           </div>
         </Box>
-        <Box>
+        <Box minW="400px">
           <Box>
             <Link as={RouterLink} to="/Exercises">
               <Button mr="1">Asign new exercise</Button>
             </Link>
+            <UnlinkPatientModal patientName={patient.name} patientId={patient.id} />
           </Box>
           <div>
             <Heading>Notes</Heading>
@@ -84,9 +74,6 @@ function PatientProfile() {
           </div>
         </Box>
       </Flex>
-      <Box>
-        <Heading>Meetings</Heading>
-      </Box>
     </Container>
   );
 }

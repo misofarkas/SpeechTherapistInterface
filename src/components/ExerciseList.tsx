@@ -11,7 +11,7 @@ function ExerciseList({ taskData }: { taskData: Task[]}) {
     <Flex flexDirection="column" gap="2">
       {taskData.map((task) => {
         return (
-          <LinkBox as={RouterLink} key={task.id} to={`/ExercisePreview/${task.id}`}>
+          <LinkBox as={RouterLink} key={task.id} to={`/ExercisePreview/${task.type}/${task.id}`}>
             <ExerciseCard
               name={task.name}
               favs={20}

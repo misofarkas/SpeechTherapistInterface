@@ -24,15 +24,23 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { useAuth } from "../contexts/AuthContext";
-import { Question, BasicChoice, CustomChoice, BasicQuestion, ConnectPairCustomQuestion } from "../types/commonTypes";
 import {
-  isBasicChoice,
+  Question,
+  FourChoicesChoice,
+  CustomChoice,
+  FourChoicesQuestion,
+  ConnectPairCustomQuestion,
+  Task,
+} from "../types/commonTypes";
+import {
+  isFourChoiceChoice,
   isCustomChoice,
-  isBasicQuestion,
+  isFourChoiceQuestion,
   isCustomQuestion,
-  isBasicQuestions,
+  isFourChoiceQuestions,
   isCustomQuestions,
 } from "../types/typeGuards";
+import { TaskType, Difficulties } from "../types/enums";
 import UploadImageChoice from "../components/UploadImageChoice";
 import { postTask } from "../api/tasksApi";
 import { cloneDeep } from "lodash";
@@ -43,13 +51,14 @@ import { useQuery, useMutation } from "react-query";
 function CreateExercisePage() {
   const { auth } = useAuth();
   const [name, setName] = useState("");
-  const [type, setType] = useState(1);
-  const [savedType, setSavedType] = useState(1);
-  const difficulty = "hard";
-  const [questions, setQuestions] = useState<BasicQuestion[] | ConnectPairCustomQuestion[]>([]);
+  const [type, setType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
+  const [savedType, setSavedType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
+  const difficulty = Difficulties.Hard;
+  const [questions, setQuestions] = useState<FourChoicesQuestion[] | ConnectPairCustomQuestion[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [error, setError] = useState("");
 
+  console.log("selectedType:", type, type === TaskType.ConnectPairsTextImage);
   const {
     isLoading: isLoadingImages,
     error: imageError,
@@ -61,23 +70,21 @@ function CreateExercisePage() {
     mutate: postTaskMutation,
   } = useMutation(() => postTask({ auth, name, type: savedType, tags: [], questions }));
 
-  function handleAddQuestion(questions: BasicQuestion[] | ConnectPairCustomQuestion[]) {
-    if (savedType === 3 && isBasicQuestions(questions, savedType)) {
+  function handleAddQuestion(questions: FourChoicesQuestion[] | ConnectPairCustomQuestion[]) {
+    if (savedType === TaskType.FourChoicesImage && isFourChoiceQuestions(questions, savedType)) {
       setQuestions([
         ...questions,
         {
           id: uuidv4(),
           heading: "placeholder",
-          choices: [
-            { id: uuidv4(), text: "", image: "", tags: [] },
-            { id: uuidv4(), text: "", image: "", tags: [] },
-            { id: uuidv4(), text: "", image: "", tags: [] },
-            { id: uuidv4(), text: "", image: "", tags: [] },
-          ],
+          choices: [{ id: uuidv4(), question_data: "", correct_option: "", incorrect_option1: "", incorrect_option2: "", incorrect_option3: "" }],
         },
       ]);
     }
-    if ((savedType === 1 || savedType === 2) && isCustomQuestions(questions, savedType)) {
+    if (
+      (savedType === TaskType.ConnectPairsTextText || savedType === TaskType.ConnectPairsTextImage) &&
+      isCustomQuestions(questions, savedType)
+    ) {
       setQuestions([
         ...questions,
         {
@@ -94,7 +101,7 @@ function CreateExercisePage() {
   }
 
   function handleDeleteQuestion(questionId: string) {
-    if (isBasicQuestions(questions, savedType)) {
+    if (isFourChoiceQuestions(questions, savedType)) {
       setQuestions(questions.filter((q) => q.id !== questionId));
     }
     if (isCustomQuestions(questions, savedType)) {
@@ -118,7 +125,12 @@ function CreateExercisePage() {
     questions.forEach((question) => {
       question.choices.forEach((choice) => {
         if (
-          (isBasicChoice(choice, savedType) && !choice.text && !choice.image) ||
+          (isFourChoiceChoice(choice, savedType) &&
+            !choice.question_data &&
+            !choice.correct_option &&
+            !choice.incorrect_option1 &&
+            !choice.incorrect_option2 &&
+            !choice.incorrect_option3) ||
           (isCustomChoice(choice, savedType) && !choice.data1 && !choice.data2)
         ) {
           isValid = false;
@@ -135,9 +147,9 @@ function CreateExercisePage() {
     }
   }
 
-  function handleUpdateChoice(questionId: string, choiceId: string, input: string, changeFirst: boolean) {
+  function handleUpdateChoice(questionId: string, choiceId: string, input: string, index: number) {
     let newQuestions = cloneDeep(questions);
-    let question = isBasicQuestions(newQuestions, type)
+    let question = isFourChoiceQuestions(newQuestions, type)
       ? newQuestions.find((q) => q.id === questionId)
       : newQuestions.find((q) => q.id === questionId);
 
@@ -146,14 +158,30 @@ function CreateExercisePage() {
       return;
     }
 
-    let choice = isBasicQuestion(question, savedType)
+    let choice = isFourChoiceQuestion(question, savedType)
       ? question.choices.find((c) => c.id === choiceId)
       : question.choices.find((c) => c.id === choiceId);
-    if (choice && isBasicChoice(choice, savedType)) {
-      changeFirst ? (choice.text = input) : (choice.image = input);
+    if (choice && isFourChoiceChoice(choice, savedType)) {
+      switch (index) {
+        case 0:
+          choice.question_data = input;
+          break;
+        case 1:
+          choice.correct_option = input;
+          break;
+        case 2:
+          choice.incorrect_option1 = input;
+          break;
+        case 3:
+          choice.incorrect_option2 = input;
+          break;
+        case 4:
+          choice.incorrect_option3 = input;
+          break;
+      }
     }
     if (choice && isCustomChoice(choice, savedType)) {
-      changeFirst ? (choice.data1 = input) : (choice.data2 = input);
+      index === 0 ? (choice.data1 = input) : (choice.data2 = input);
     }
 
     setQuestions(newQuestions);
@@ -176,10 +204,10 @@ function CreateExercisePage() {
               <Text>Name</Text>
               <Input value={name} onChange={(e) => setName(e.target.value)}></Input>
               <Text>Type</Text>
-              <Select value={type} onChange={(e) => setType(Number(e.target.value))}>
-                <option value={1}>Connect Pairs (Text - Image)</option>
-                <option value={2}>Connect Pairs (Text - Text)</option>
-                <option value={3}>Name Images</option>
+              <Select value={type} onChange={(e) => setType(e.target.value as TaskType)}>
+                <option value={TaskType.ConnectPairsTextImage}>Connect Pairs (Text - Image)</option>
+                <option value={TaskType.ConnectPairsTextText}>Connect Pairs (Text - Text)</option>
+                <option value={TaskType.FourChoicesImage}>Name Images</option>
               </Select>
               <Text>Difficulty</Text>
               <Select>

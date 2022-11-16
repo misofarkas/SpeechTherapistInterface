@@ -1,9 +1,10 @@
 import { Box, Flex, Heading, Icon, Tag } from "@chakra-ui/react";
 import { AiOutlinePicture, AiFillStar } from "react-icons/ai";
+import { TaskType } from "../types/enums";
 
 type ExerciseResultCardArgs = {
   name: string;
-  type: number;
+  type: TaskType;
   difficulty: string;
 };
 
