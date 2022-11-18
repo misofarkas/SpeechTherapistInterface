@@ -42,48 +42,86 @@ import {
 } from "../types/typeGuards";
 import { TaskType, Difficulties } from "../types/enums";
 import UploadImageChoice from "../components/UploadImageChoice";
-import { postTask } from "../api/tasksApi";
+import { getTask, patchTask, postTask } from "../api/tasksApi";
 import { cloneDeep } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { getImages } from "../api/imageApi";
 import { useQuery, useMutation } from "react-query";
+import { taskTypeName } from "../common/typeNameConversion";
+import { useParams } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function CreateExercisePage() {
+  const { id, type } = useParams();
   const { auth } = useAuth();
   const [name, setName] = useState("");
-  const [type, setType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
-  const [savedType, setSavedType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
+  const [taskType, setTaskType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
+  const [savedTaskType, setSavedTaskType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
   const difficulty = Difficulties.Hard;
   const [questions, setQuestions] = useState<FourChoicesQuestion[] | ConnectPairCustomQuestion[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [error, setError] = useState("");
 
-  console.log("selectedType:", type, type === TaskType.ConnectPairsTextImage);
   const {
     isLoading: isLoadingImages,
     error: imageError,
     data: imageData,
   } = useQuery("images", () => getImages({ auth }));
+
+  console.log("id type", id, type);
+  const { isLoading: isLoadingTask, error: taskError } = useQuery(
+    "task",
+    () => getTask({ auth, id: id ?? "", type: type ?? "" }),
+    {
+      enabled: !!id && !!taskType,
+      onSuccess: (res) => {
+        setName(res.data.name);
+        setTaskType(res.data.type);
+        setSavedTaskType(res.data.type);
+        setQuestions(res.data.questions);
+      },
+    }
+  );
+
+  console.log("states", name, taskType, savedTaskType);
   const {
     isLoading: isSubmitting,
     error: postingError,
     mutate: postTaskMutation,
-  } = useMutation(() => postTask({ auth, name, type: savedType, tags: [], questions }));
+  } = useMutation(() => postTask({ auth, name, type: savedTaskType, tags: [], questions }));
+
+  const {
+    isLoading: isSubmittingEdit,
+    error: postingErrorEdit,
+    mutate: updateTaskMutation,
+  } = useMutation(() => patchTask({ auth, id: id ?? "", name, type: savedTaskType, tags: [], questions }));
 
   function handleAddQuestion(questions: FourChoicesQuestion[] | ConnectPairCustomQuestion[]) {
-    if (savedType === TaskType.FourChoicesImage && isFourChoiceQuestions(questions, savedType)) {
+    if (
+      (savedTaskType === TaskType.FourChoicesImage || savedTaskType === TaskType.FourChoicesText) &&
+      isFourChoiceQuestions(questions, savedTaskType)
+    ) {
       setQuestions([
         ...questions,
         {
           id: uuidv4(),
           heading: "placeholder",
-          choices: [{ id: uuidv4(), question_data: "", correct_option: "", incorrect_option1: "", incorrect_option2: "", incorrect_option3: "" }],
+          choices: [
+            {
+              id: uuidv4(),
+              question_data: "",
+              correct_option: "",
+              incorrect_option1: "",
+              incorrect_option2: "",
+              incorrect_option3: "",
+            },
+          ],
         },
       ]);
     }
     if (
-      (savedType === TaskType.ConnectPairsTextText || savedType === TaskType.ConnectPairsTextImage) &&
-      isCustomQuestions(questions, savedType)
+      (savedTaskType === TaskType.ConnectPairsTextText || savedTaskType === TaskType.ConnectPairsTextImage) &&
+      isCustomQuestions(questions, savedTaskType)
     ) {
       setQuestions([
         ...questions,
@@ -101,17 +139,15 @@ function CreateExercisePage() {
   }
 
   function handleDeleteQuestion(questionId: string) {
-    if (isFourChoiceQuestions(questions, savedType)) {
+    if (isFourChoiceQuestions(questions, savedTaskType)) {
       setQuestions(questions.filter((q) => q.id !== questionId));
     }
-    if (isCustomQuestions(questions, savedType)) {
+    if (isCustomQuestions(questions, savedTaskType)) {
       setQuestions(questions.filter((q) => q.id !== questionId));
     }
   }
 
   function handlePostTask(questions: Question[]) {
-    console.log("questions", questions);
-    console.log("length", questions.length);
     if (questions.length === 0) {
       return;
     }
@@ -125,23 +161,25 @@ function CreateExercisePage() {
     questions.forEach((question) => {
       question.choices.forEach((choice) => {
         if (
-          (isFourChoiceChoice(choice, savedType) &&
+          (isFourChoiceChoice(choice, savedTaskType) &&
             !choice.question_data &&
             !choice.correct_option &&
             !choice.incorrect_option1 &&
             !choice.incorrect_option2 &&
             !choice.incorrect_option3) ||
-          (isCustomChoice(choice, savedType) && !choice.data1 && !choice.data2)
+          (isCustomChoice(choice, savedTaskType) && !choice.data1 && !choice.data2)
         ) {
           isValid = false;
         }
       });
     });
 
-    console.log("valid?", isValid);
-
     if (isValid) {
-      postTaskMutation();
+      if (!id && !type) {
+        postTaskMutation();
+      } else {
+        updateTaskMutation();
+      }
     } else {
       setError("not all question are fully filled out");
     }
@@ -149,7 +187,7 @@ function CreateExercisePage() {
 
   function handleUpdateChoice(questionId: string, choiceId: string, input: string, index: number) {
     let newQuestions = cloneDeep(questions);
-    let question = isFourChoiceQuestions(newQuestions, type)
+    let question = isFourChoiceQuestions(newQuestions, taskType)
       ? newQuestions.find((q) => q.id === questionId)
       : newQuestions.find((q) => q.id === questionId);
 
@@ -158,10 +196,10 @@ function CreateExercisePage() {
       return;
     }
 
-    let choice = isFourChoiceQuestion(question, savedType)
+    let choice = isFourChoiceQuestion(question, savedTaskType)
       ? question.choices.find((c) => c.id === choiceId)
       : question.choices.find((c) => c.id === choiceId);
-    if (choice && isFourChoiceChoice(choice, savedType)) {
+    if (choice && isFourChoiceChoice(choice, savedTaskType)) {
       switch (index) {
         case 0:
           choice.question_data = input;
@@ -180,11 +218,15 @@ function CreateExercisePage() {
           break;
       }
     }
-    if (choice && isCustomChoice(choice, savedType)) {
+    if (choice && isCustomChoice(choice, savedTaskType)) {
       index === 0 ? (choice.data1 = input) : (choice.data2 = input);
     }
 
     setQuestions(newQuestions);
+  }
+
+  if (isLoadingImages || isLoadingTask) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -194,7 +236,6 @@ function CreateExercisePage() {
           <Tab>Settings</Tab>
           <Tab>Questions</Tab>
           <Tab>Upload Custom Image</Tab>
-          <Tab>Finalize</Tab>
         </TabList>
 
         <TabPanels>
@@ -204,10 +245,17 @@ function CreateExercisePage() {
               <Text>Name</Text>
               <Input value={name} onChange={(e) => setName(e.target.value)}></Input>
               <Text>Type</Text>
-              <Select value={type} onChange={(e) => setType(e.target.value as TaskType)}>
-                <option value={TaskType.ConnectPairsTextImage}>Connect Pairs (Text - Image)</option>
-                <option value={TaskType.ConnectPairsTextText}>Connect Pairs (Text - Text)</option>
-                <option value={TaskType.FourChoicesImage}>Name Images</option>
+              <Select value={taskType} onChange={(e) => setTaskType(e.target.value as TaskType)}>
+                <option value={TaskType.ConnectPairsTextImage}>
+                  {taskTypeName({ taskType: TaskType.ConnectPairsTextImage })}
+                </option>
+                <option value={TaskType.ConnectPairsTextText}>
+                  {taskTypeName({ taskType: TaskType.ConnectPairsTextText })}
+                </option>
+                <option value={TaskType.FourChoicesImage}>
+                  {taskTypeName({ taskType: TaskType.FourChoicesImage })}
+                </option>
+                <option value={TaskType.FourChoicesText}>{taskTypeName({ taskType: TaskType.FourChoicesText })}</option>
               </Select>
               <Text>Difficulty</Text>
               <Select>
@@ -216,14 +264,14 @@ function CreateExercisePage() {
               </Select>
               <Button
                 onClick={
-                  type !== savedType && questions.length !== 0
+                  taskType !== savedTaskType && questions.length !== 0
                     ? onOpen
                     : () => {
-                        setSavedType(type);
+                        setSavedTaskType(taskType);
                       }
                 }
               >
-                Apply
+                Apply settings
               </Button>
               <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -237,7 +285,7 @@ function CreateExercisePage() {
                       colorScheme="blue"
                       mr={3}
                       onClick={() => {
-                        setSavedType(type);
+                        setSavedTaskType(taskType);
                         setQuestions([]);
                         onClose();
                       }}
@@ -250,6 +298,17 @@ function CreateExercisePage() {
                   </ModalBody>
                 </ModalContent>
               </Modal>
+              <Button
+                isLoading={isSubmitting}
+                loadingText={"sumbitting"}
+                onClick={() => {
+                  handlePostTask(questions);
+                }}
+              >
+                Save
+              </Button>
+              {error && <Text color="red.400">{error}</Text>}
+              {postingError !== null && <Text color="red.400">failed to save task</Text>}
             </Stack>
           </TabPanel>
 
@@ -261,8 +320,8 @@ function CreateExercisePage() {
               <>
                 <QuestionList
                   questions={questions}
-                  type={savedType}
-                  difficulty={difficulty}
+                  type={savedTaskType}
+                  isEditable={true}
                   handleUpdateChoice={handleUpdateChoice}
                   handleDeleteQuestion={handleDeleteQuestion}
                   imageData={imageData.data}
@@ -286,20 +345,6 @@ function CreateExercisePage() {
           <TabPanel>
             <UploadImageChoice />
           </TabPanel>
-          {/* Finalize tab */}
-          <TabPanel>
-            <Button
-              isLoading={isSubmitting}
-              loadingText={"sumbitting"}
-              onClick={() => {
-                handlePostTask(questions);
-              }}
-            >
-              Save
-            </Button>
-            {error && <Text color="red.400">{error}</Text>}
-            {postingError !== null && <Text color="red.400">failed to save task</Text>}
-          </TabPanel>
         </TabPanels>
       </Tabs>
     </Container>
@@ -307,3 +352,6 @@ function CreateExercisePage() {
 }
 
 export default CreateExercisePage;
+function typeNameConversions(): import("react").ReactNode {
+  throw new Error("Function not implemented.");
+}

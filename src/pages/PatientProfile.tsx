@@ -4,39 +4,45 @@ import { Button, Container, Textarea, Text, Heading, Flex, Box, Link, useMediaQu
 import PatientExercises from "../components/PatientExercises";
 import PatientCard from "../components/PatientCard";
 import { useAuth } from "../contexts/AuthContext";
-import { getPatient } from "../api/patientsApi";
+import { getPatient, postNotes } from "../api/patientsApi";
 import { Link as RouterLink } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getTaskResults } from "../api/tasksApi";
 import UnlinkPatientModal from "../components/UnlinkPatientModal";
+import { Patient, TaskResult } from "../types/commonTypes";
+import { intersection } from "lodash";
 
 function PatientProfile() {
   const { id } = useParams();
   const { auth } = useAuth();
   const [isLargerThan992] = useMediaQuery("(min-width: 768px)");
+  const [patient, setPatient] = useState<Patient | undefined>(undefined);
+  const [taskResults, setTaskResults] = useState<TaskResult[]>([]);
+  const { isLoading, isSuccess, error } = useQuery("patient", () => getPatient({ auth, id: id ?? "" }), {
+    onSuccess: (res) => {
+      setPatient(res.data);
+    },
+  });
 
-  const {
-    isLoading,
-    isSuccess,
-    error,
-    data: patientData,
-  } = useQuery("patient", () => getPatient({ auth, id: id ?? "" }));
-  const patient = isSuccess ? patientData.data : undefined;
+  const { isLoading: isSavingNotes, mutate: notesMutation } = useMutation(postNotes);
 
   const {
     isLoading: isLoadingResults,
     isSuccess: resultsIsSuccess,
     error: resultsError,
-    data: taskResultsData,
-  } = useQuery("results", () => getTaskResults({ auth }));
+  } = useQuery("results", () => getTaskResults({ auth }), {
+    enabled: !!patient,
+    onSuccess: (res) => {
+      if (patient) {
+        setTaskResults(
+          res.data.filter((result) => result.answered_by === patient.id)
+        );
+      }
+    },
+  });
 
-  let finishedTaskIds: string[] = [];
-  if (resultsIsSuccess && patient !== undefined) {
-    finishedTaskIds = patient.assigned_tasks.map((task) => task.id);
-    //imageData.filter((image) => intersection(image.tags.map((tag) => tag.name), selectedTags).length !== 0);
-  }
-
+  console.log("finishedTasksIds", taskResults);
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -54,12 +60,12 @@ function PatientProfile() {
           <Box mb="5">
             <Heading>Diagnosis</Heading>
             <Textarea rows={10} overflow="hidden" />
-            <Button>save diagnosis</Button>
+            <Button>Save diagnosis</Button>
           </Box>
-          <div>
-            <Heading>Exercises</Heading>
-            <PatientExercises assignedTasks={patient.assigned_tasks} />
-          </div>
+          <Box>
+            <Heading>Assigned exercises</Heading>
+            <PatientExercises assignedTasks={patient.assigned_tasks} patientTaskResults={taskResults} />
+          </Box>
         </Box>
         <Box minW="400px">
           <Box>
@@ -68,10 +74,21 @@ function PatientProfile() {
             </Link>
             <UnlinkPatientModal patientName={patient.name} patientId={patient.id} />
           </Box>
-          <div>
+          <Box>
             <Heading>Notes</Heading>
-            <Textarea rows={10} overflow="hidden" value={"Some notes"} />
-          </div>
+            <Textarea
+              rows={10}
+              overflow="hidden"
+              value={patient.notes}
+              onChange={(e) => setPatient({ ...patient, notes: e.target.value })}
+            />
+            <Button
+              isLoading={isSavingNotes}
+              onClick={() => notesMutation({ auth, notes: patient.notes, id: patient.id })}
+            >
+              Save notes
+            </Button>
+          </Box>
         </Box>
       </Flex>
     </Container>

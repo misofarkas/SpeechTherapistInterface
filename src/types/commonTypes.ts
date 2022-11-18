@@ -73,7 +73,7 @@ export type TaskExtended = {
   difficulty: string;
   created_by: string;
   tags: Tag[];
-  questions: Question[];
+  questions: FourChoicesQuestion[] | ConnectPairCustomQuestion[];
 };
 
 export type AnswerFourChoicesChoice = {

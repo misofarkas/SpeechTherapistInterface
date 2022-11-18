@@ -46,8 +46,9 @@ export const App = () => {
                     <Route path="/Exercises" element={<Exercises />} />
                     <Route path="/patient-profile/:id" element={<PatientProfile />} />
                     <Route path="/CreateExercise" element={<CreateExercisePage />} />
+                    <Route path="/CreateExercise/:type/:id" element={<CreateExercisePage />} />
                     <Route path="/CreateGeneratedExercise" element={<CreateGeneratedExercisePage />} />
-                    <Route path="/ExerciseResults/:type/:id" element={<ExerciseResults />} />
+                    <Route path="/ExerciseResults/:type/:taskId/:id" element={<ExerciseResults />} />
                     <Route path="/ExercisePreview/:type/:id" element={<ExercisePreview />} />
                     <Route path="/UserSettings" element={<UserSettings />} />
                   </Route>

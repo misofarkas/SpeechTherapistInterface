@@ -18,7 +18,10 @@ import {
   Input,
   Center,
   Spinner,
+  LinkBox,
+  useMediaQuery,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
 import QuestionList from "../components/QuestionList";
 import { Patient, TaskExtended } from "../types/commonTypes";
@@ -38,9 +41,14 @@ function ExercisePreview() {
   const { isOpen: isAssignOpen, onOpen: onAssignOpen, onClose: onAssignClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [selectedPatient, setSelectedPatient] = useState("");
-  //const [isDeleting, setIsDeleting] = useState(false);
+  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
 
-  const { isLoading, isSuccess, error, data: taskData } = useQuery("task", () => getTask({ auth, id: id ?? "", type: type ?? ""}));
+  const {
+    isLoading,
+    isSuccess,
+    error,
+    data: taskData,
+  } = useQuery("task", () => getTask({ auth, id: id ?? "", type: type ?? "" }));
   const {
     isLoading: isLoadingImages,
     error: imageError,
@@ -78,11 +86,7 @@ function ExercisePreview() {
     }
   );
 
-  //console.log("created_by:", task?.created_by);
-  //console.log("user id: ", user.id);
-
   if (error !== null || errorPatients !== null || task === undefined || task.questions.length === 0) {
-    console.log("error:", error);
     return (
       <Center mt="10">
         <Heading fontSize={"4xl"}>Task not found</Heading>
@@ -99,85 +103,92 @@ function ExercisePreview() {
       <Stack mb="2">
         <Flex gap="2">
           <Heading>{task.name}</Heading>
-          <Tag>Favorited: {15}</Tag>
         </Flex>
         <Text>Created by: {task.created_by}</Text>
         <Text>Difficulty: {task.difficulty}</Text>
-        <Button maxW="200px" onClick={onAssignOpen}>
-          Assign to patient
-        </Button>
-
-        <Modal isOpen={isAssignOpen} onClose={onAssignClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Assing exercise</ModalHeader>
-            <ModalBody>
-              <Select
-                value={selectedPatient}
-                onChange={(e) => setSelectedPatient(e.target.value)}
-                placeholder="Select patient"
-              >
-                {patients?.map((patient) => {
-                  return (
-                    <option key={patient.id} value={patient.email}>
-                      {patient.name}
-                    </option>
-                  );
-                })}
-              </Select>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onAssignClose}>
-                Cancel
-              </Button>
-              <Button
-                colorScheme="blue"
-                onClick={() => {
-                  onAssignClose();
-                  assignTaskMutation();
-                }}
-              >
-                Assign
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-        {isEditable && (
-          <Button isLoading={isDeleting} loadingText="Deleting..." maxW="200px" onClick={onDeleteOpen}>
-            Delete task
+        <Flex gap="2" direction={isLargerThan768 ? "row" : "column"} justifyContent={"space-around"}>
+          <Button w="200px" onClick={onAssignOpen}>
+            Assign to patient
           </Button>
-        )}
 
-        <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Delete exercise</ModalHeader>
-            <ModalBody>
-              <Text>Are you sure you want to delete task {task.name}?</Text>
-              <Text>This action cannot be undone</Text>
-            </ModalBody>
+          <Modal isOpen={isAssignOpen} onClose={onAssignClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Assing exercise</ModalHeader>
+              <ModalBody>
+                <Select
+                  value={selectedPatient}
+                  onChange={(e) => setSelectedPatient(e.target.value)}
+                  placeholder="Select patient"
+                >
+                  {patients?.map((patient) => {
+                    return (
+                      <option key={patient.id} value={patient.email}>
+                        {patient.name}
+                      </option>
+                    );
+                  })}
+                </Select>
+              </ModalBody>
 
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onDeleteClose}>
-                Cancel
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => {
-                  onDeleteClose();
-                  deleteTaskMutation();
-                }}
-              >
-                Delete
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+              <ModalFooter>
+                <Button variant="ghost" mr={3} onClick={onAssignClose}>
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme="blue"
+                  onClick={() => {
+                    onAssignClose();
+                    assignTaskMutation();
+                  }}
+                >
+                  Assign
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          {isEditable && (
+            <LinkBox as={RouterLink} to={`/CreateExercise/${type}/${id}`}>
+              <Button w="200px">Edit task</Button>
+            </LinkBox>
+          )}
+
+          {isEditable && (
+            <Button isLoading={isDeleting} loadingText="Deleting..." w="200px" onClick={onDeleteOpen}>
+              Delete task
+            </Button>
+          )}
+
+          <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Delete exercise</ModalHeader>
+              <ModalBody>
+                <Text>Are you sure you want to delete task {task.name}?</Text>
+                <Text>This action cannot be undone</Text>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button variant="ghost" mr={3} onClick={onDeleteClose}>
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onClick={() => {
+                    onDeleteClose();
+                    deleteTaskMutation();
+                  }}
+                >
+                  Delete
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </Flex>
       </Stack>
 
-      <QuestionList questions={task.questions} type={task.type} difficulty={task.difficulty} imageData={imageData.data}/>
+      <QuestionList questions={task.questions} type={task.type} isEditable={false} imageData={imageData.data} />
     </Container>
   );
 }

@@ -6,7 +6,7 @@ export async function getTasks({ auth }: { auth: any }) {
   return await axios.get<Task[]>("/task/tasks/", { headers: { Authorization: `Token ${auth?.accessToken}` } });
 }
 
-export async function getTask({ auth, id, type }: { auth: any; id: string, type: string }) {
+export async function getTask({ auth, id, type }: { auth: any; id: string; type: string }) {
   return await axios.get<TaskExtended>(`/task/tasks/${id}/?task_type=${type}`, {
     headers: { Authorization: `Token ${auth?.accessToken}` },
   });
@@ -25,7 +25,6 @@ export async function postTask({
   tags: Tag[];
   questions: Question[];
 }) {
-  console.log("postType:", type)
   return await axios.post(
     `/task/tasks/?task_type=${type}`,
     { name, type, difficulty: Difficulties.Hard, tags, questions: questions },
@@ -33,8 +32,28 @@ export async function postTask({
   );
 }
 
-export async function patchTask({ auth, questions }: { auth: any; questions: Question[] }) {
-  // TODO
+export async function patchTask({
+  auth,
+  id,
+  name,
+  type,
+  tags,
+  questions,
+}: {
+  auth: any;
+  id: string;
+  name: string;
+  type: string;
+  tags: Tag[];
+  questions: Question[];
+}) {
+  return await axios.patch(
+    `/task/tasks/${id}/`,
+    { name, type, difficulty: Difficulties.Hard, tags, questions: questions },
+    {
+      headers: { Authorization: `Token ${auth?.accessToken}` },
+    }
+  );
 }
 
 export async function deleteTask({ auth, id }: { auth: any; id: string }) {
@@ -62,8 +81,6 @@ export async function generateTask({
   difficulty: string;
   selectedTags: string[];
 }) {
-
-  console.log("post type", type)
   return await axios.post(
     `/task/tasks/?task_type=${type}`,
     {
@@ -84,8 +101,8 @@ export async function getTaskResults({ auth }: { auth: any }) {
   });
 }
 
-export async function getTaskResult({ auth, id }: { auth: any; id: string }) {
-  return await axios.get<TaskResult>(`/task/results/${id}/`, {
+export async function getTaskResult({ auth, id, taskType }: { auth: any; id: string; taskType: string }) {
+  return await axios.get<TaskResult>(`/task/results/${id}/?task_type=${taskType}`, {
     headers: { Authorization: `Token ${auth?.accessToken}` },
   });
 }

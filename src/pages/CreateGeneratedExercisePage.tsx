@@ -23,6 +23,7 @@ import SelectTags from "../components/SelectTags";
 import { generateTask } from "../api/tasksApi";
 import { useMutation } from "react-query";
 import { Difficulties, TaskType } from "../types/enums";
+import { taskTypeName } from "../common/typeNameConversion";
 
 function CreateGeneratedExercisePage() {
   const [name, setName] = useState("");
@@ -58,8 +59,9 @@ function CreateGeneratedExercisePage() {
             <Input value={name} onChange={(e) => setName(e.target.value)}></Input>
             <Text>Type</Text>
             <Select value={type} onChange={(e) => setType(e.target.value as TaskType)}>
-              <option value={TaskType.ConnectPairsTextImage}>Connect Pairs (Text - Image)</option>
-              <option value={TaskType.FourChoicesImage}>Name Images</option>
+              <option value={TaskType.ConnectPairsTextImage}>{taskTypeName({taskType: TaskType.ConnectPairsTextImage})}</option>
+              <option value={TaskType.FourChoicesImage}>{taskTypeName({taskType: TaskType.FourChoicesImage})}</option>
+              <option value={TaskType.FourChoicesText}>{taskTypeName({taskType: TaskType.FourChoicesText})}</option>
             </Select>
             <SelectTags withFilter={true} />
 

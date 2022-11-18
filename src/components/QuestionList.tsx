@@ -1,36 +1,44 @@
 import { Box } from "@chakra-ui/react";
-import NIQuestionCard from "./CreateQuestionCards/NIQuestionCard";
+import FCTextQuestionCard from "./CreateQuestionCards/FCTextQuestionCard";
 import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard";
 import { CustomChoice, Question } from "../types/commonTypes";
 import { isFourChoiceQuestion, isCustomQuestion } from "../types/typeGuards";
 import { TaskType } from "../types/enums";
+import FCImageQuestionCard from "./CreateQuestionCards/FCImageQuestionCard";
 
 function QuestionList({
   questions,
   type,
-  difficulty,
+  isEditable,
   handleUpdateChoice = undefined,
   handleDeleteQuestion = undefined,
   imageData = undefined,
 }: {
   questions: Question[];
   type: TaskType;
-  difficulty: string;
+  isEditable: boolean;
   handleUpdateChoice?: ((a: string, b: string, c: string, d: number) => void) | undefined;
   handleDeleteQuestion?: ((a: string) => void) | undefined;
   imageData?: CustomChoice[] | undefined;
 }) {
 
-
   return (
     <>
       {questions.map((q) => {
-        console.log("is custom", isCustomQuestion(q, type), isFourChoiceQuestion(q, type))
         return (
           <Box mb="5" key={q.id}>
             {type === TaskType.FourChoicesImage && isFourChoiceQuestion(q, type) && (
-              <NIQuestionCard
-                isEditable={difficulty === "Hard"}
+              <FCImageQuestionCard
+                isEditable={isEditable}
+                question={q}
+                handleUpdateChoice={handleUpdateChoice}
+                handleDeleteQuestion={handleDeleteQuestion}
+                imageData={imageData}
+              />
+            )}
+            {type === TaskType.FourChoicesText && isFourChoiceQuestion(q, type) && (
+              <FCTextQuestionCard
+                isEditable={isEditable}
                 question={q}
                 handleUpdateChoice={handleUpdateChoice}
                 handleDeleteQuestion={handleDeleteQuestion}
@@ -40,7 +48,7 @@ function QuestionList({
             {type === TaskType.ConnectPairsTextImage && isCustomQuestion(q, type) && (
               <CPQuestionCard
                 type={type}
-                isEditable={difficulty === "Hard"}
+                isEditable={isEditable}
                 question={q}
                 handleUpdateChoice={handleUpdateChoice}
                 handleDeleteQuestion={handleDeleteQuestion}
@@ -50,7 +58,7 @@ function QuestionList({
             {type === TaskType.ConnectPairsTextText && isCustomQuestion(q, type) && (
               <CPQuestionCard
                 type={type}
-                isEditable={difficulty === "Hard"}
+                isEditable={isEditable}
                 question={q}
                 handleUpdateChoice={handleUpdateChoice}
                 handleDeleteQuestion={handleDeleteQuestion}

@@ -8,9 +8,7 @@ import { ImageData } from "../../data/ImageData";
 import { CustomChoice, ConnectPairCustomQuestion } from "../../types/commonTypes";
 import { TaskType } from "../../types/enums";
 
-type ImageId = string | undefined;
 
-type CPSelectedImageIds = [ImageId, ImageId, ImageId];
 
 function CPQuestionCard({
   type,
@@ -33,8 +31,6 @@ function CPQuestionCard({
   const iconSize = isLargerThan768 ? "75px" : "50px";
   const indexes = [0, 1, 2];
 
-  console.log("rendering")
-  console.log("question", question)
 
   return (
     <Box maxW="800px" mx="auto" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">

@@ -1,14 +1,16 @@
 import { Box, Flex, Heading, Icon, Tag } from "@chakra-ui/react";
 import { AiOutlinePicture, AiFillStar } from "react-icons/ai";
+import { taskTypeName } from "../common/typeNameConversion";
 import { TaskType } from "../types/enums";
 
 type ExerciseResultCardArgs = {
   name: string;
   type: TaskType;
   difficulty: string;
+  isFinished: boolean;
 };
 
-function ExerciseResultCard({ name, type, difficulty }: ExerciseResultCardArgs) {
+function ExerciseResultCard({ name, type, difficulty, isFinished }: ExerciseResultCardArgs) {
   return (
     <Box
       w="full"
@@ -26,8 +28,9 @@ function ExerciseResultCard({ name, type, difficulty }: ExerciseResultCardArgs) 
             {name}
           </Heading>
           <Flex gap="2">
-            <Tag>{type}</Tag>
+            <Tag>{taskTypeName({taskType: type})}</Tag>
             <Tag backgroundColor="green.400">{difficulty}</Tag>
+            {isFinished && <Tag>Finished</Tag>}
           </Flex>
         </div>
       </Flex>

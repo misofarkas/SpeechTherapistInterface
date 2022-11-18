@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { Box, Grid, GridItem, Text, Image, useMediaQuery, Center, Input, CloseButton } from "@chakra-ui/react";
-import { ImageData } from "../../data/ImageData";
+import { CustomChoice, FourChoicesQuestion } from "../../types/commonTypes";
+import {Box, CloseButton, Grid, GridItem, Input, useMediaQuery, Image } from "@chakra-ui/react"
 import SelectImageModal from "../SelectImageModal";
-import { CustomChoice, FourChoicesQuestion, Question } from "../../types/commonTypes";
+import { useState } from "react";
 
-function NIQuestionCard({
+function FCImageQuestionCard({
   isEditable,
   question,
   handleUpdateChoice = undefined,
@@ -17,15 +16,10 @@ function NIQuestionCard({
   handleDeleteQuestion?: ((a: string) => void) | undefined;
   imageData?: CustomChoice[] | undefined;
 }) {
-  const [selectedInputId, setSelectedInputId] = useState(1);
+
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>();
 
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
-
-  const selectedImage = ImageData.find((image) => image.id === selectedImageId);
-  function handleImageSelection(id: string, index: number) {
-    setSelectedImageId(id);
-  }
 
   const templateRowsLg = "repeat(2, 1fr)";
   const templateColumnsLg = "0.5fr repeat(2, 1fr)";
@@ -34,8 +28,6 @@ function NIQuestionCard({
 
   const templateRowsSm = "1fr repeat(5, 0.3fr)";
   const templateColumnsSm = "1fr";
-
-  console.log("imageData:", imageData)
   return (
     <Box w="full" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">
       {isEditable && <CloseButton ml="95%" mb="2" onClick={() => handleDeleteQuestion!(question.id)}></CloseButton>}
@@ -123,4 +115,4 @@ function NIQuestionCard({
   );
 }
 
-export default NIQuestionCard;
+export default FCImageQuestionCard;

@@ -18,7 +18,7 @@ export async function postDiagnosts({ auth, text, id }: { auth: any; text: strin
 }
 
 export async function postNotes({ auth, notes, id }: { auth: any; notes: string; id: string }) {
-  return await axios.patch(`/user/therapist/${id}/note/`, notes, {
+  return await axios.patch(`/user/therapist/${id}/note/`, {notes}, {
     headers: { Authorization: `Token ${auth?.accessToken}` },
   });
 }

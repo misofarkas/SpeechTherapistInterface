@@ -40,7 +40,7 @@ function Notifications() {
     <Popover>
       <PopoverTrigger>
         <Button>
-          {notificationsData && (
+          {!!notificationsData?.data.length && (
             <Badge position="absolute" variant="solid" colorScheme="red" mr="5" mt="4" fontSize="2xs">
               {notificationsData.data.length}
             </Badge>
@@ -55,7 +55,7 @@ function Notifications() {
             {notificationsData?.data.map((request) => {
               return (
                 <Box key={request.id}>
-                  <Divider mb="2"/>
+                  <Divider mb="2" />
                   <Flex gap="2">
                     <Avatar src={request.image} boxSize="3rem" alignSelf="center" />
                     <Stack spacing="0">

@@ -9,7 +9,7 @@ import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function ExerciseResults() {
-  const { id, type } = useParams();
+  const { id, taskId, type } = useParams();
   const { auth } = useAuth();
   //const [exerciseResult, setExerciseResult] = useState<TaskResult>();
   //const [task, setTask] = useState<TaskExtended>();
@@ -19,28 +19,18 @@ function ExerciseResults() {
   //exerciseResult?.answers.map((ans) => ans.answer.map((choice) => (choice.is_correct ? correct++ : undefined)));
   //exerciseResult?.answers.map((ans) => (total += ans.answer.length));
 
-  const { isLoading: isLoadingResults, error, data: taskResultData } = useQuery("taskResult", () => getTaskResult({ auth, id: id ?? "" }));
-  const { isLoading, data: taskData } = useQuery("task", () => getTask({ auth, id: id ?? "", type: type ?? "" }), {
+  const {
+    isLoading: isLoadingResults,
+    error,
+    data: taskResultData,
+  } = useQuery("taskResult", () => getTaskResult({ auth, id: id ?? "", taskType: type ?? "" }));
+  const { isLoading, data: taskData } = useQuery("task", () => getTask({ auth, id: taskId ?? "", type: type ?? "" }), {
     enabled: !!taskResultData,
   });
 
-  /*
-  console.log(exerciseResult);
-  useEffect(() => {
-    if (id !== undefined) {
-      getTaskResults({ auth, setError, id }).then((value) => {
-        setExerciseResult(value);
-        getTasks({ auth: auth, setError: setError, id: value?.task }).then((value) => {
-          setTask(value);
-        });
-      });
-    }
-  }, []);
-  */
-
   if (isLoading || isLoadingResults) {
-    return <LoadingSpinner/>
-  } 
+    return <LoadingSpinner />;
+  }
 
   if (taskResultData === undefined || taskData === undefined || error !== null) {
     return <Text>There has been an error</Text>;
