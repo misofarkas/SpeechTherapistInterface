@@ -1,22 +1,56 @@
-import { useState, useContext, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Input, Button, Text, Box, Heading, Container, Link } from "@chakra-ui/react";
+import { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Input, Button, Text, Box, Heading, Container, Link, useToast } from "@chakra-ui/react";
 import { useAuth } from "../contexts/AuthContext";
 
-import axios from "../api/axios";
-import login from "../api/login";
-import getProfile from "../api/getProfile";
+import { login } from "../api/login";
+import { getProfile } from "../api/getProfile";
+import { useMutation, useQuery } from "react-query";
 
 function Login() {
-  const LOGIN_URL = "/user/login/";
   const { auth, setAuth, setUser } = useAuth();
   const [email, setEmail] = useState<string>("example@example.com");
   const [password, setPassword] = useState<string>("123456789");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const toast = useToast();
 
+  const { mutate: loginMutation } = useMutation(login, {
+    onSuccess: (res) => {
+      setAuth({ accessToken: res.data.token });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "There has been an error",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
+
+  const { data: profileData } = useQuery("profile", () => getProfile({ auth }), {
+    enabled: !!auth,
+    onSuccess: (res) => {
+      console.log("Success", res);
+      setUser({ ...res.data });
+      navigate(`/`);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "There has been an error",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  });
+
+  /*
   async function handleLogin(e: any) {
     e.preventDefault();
-    login({ setError, email, password }).then((accessToken) => {
+    login({ email, password }).then((accessToken) => {
       setAuth({ accessToken });
     });
     setEmail("");
@@ -24,15 +58,18 @@ function Login() {
   }
 
   useEffect(() => {
-    console.log("auth: ",auth)
-
     if (auth !== undefined) {
       getProfile({ auth, setError }).then((value) => {
-        console.log("user value:", value)
         setUser({ ...value });
       });
     }
   }, [auth]);
+*/
+
+  function handleLogin(e: any) {
+    e.preventDefault();
+    loginMutation({ email, password });
+  }
 
   return (
     <Container>

@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Box, Grid, GridItem, Text, Image, useMediaQuery, Center, Input, CloseButton } from "@chakra-ui/react";
-import { ImageData } from "../../data/ImageData";
+import { Box, Grid, GridItem, Image, useMediaQuery, Input, CloseButton } from "@chakra-ui/react";
 import SelectImageModal from "../SelectImageModal";
-import { CustomChoice, FourChoicesQuestion, Question } from "../../types/commonTypes";
+import { CustomChoice, FourChoicesQuestion } from "../../types/questionTypes";
 
 function FCTextQuestionCard({
   isEditable,
@@ -17,7 +16,7 @@ function FCTextQuestionCard({
   handleDeleteQuestion?: ((a: string) => void) | undefined;
   imageData?: CustomChoice[] | undefined;
 }) {
-  //const [selectedInputId, setSelectedInputId] = useState(1);
+
   const [selectedImageId, setSelectedImageId] = useState<string | undefined>();
 
   const [isLargerThan600] = useMediaQuery("(min-width: 600px)");
@@ -27,19 +26,14 @@ function FCTextQuestionCard({
     question.choices[0].incorrect_option2,
     question.choices[0].incorrect_option3,
   ];
-  /*
-  const selectedImage = ImageData.find((image) => image.id === selectedImageId);
-  function handleImageSelection(id: string, index: number) {
-    setSelectedImageId(id);
-  }
-  */
 
-  const templateRowsLg = "3 0.5fr 0.5fr"; //"repeat(2, 1fr)";
-  const templateColumnsLg = "0.5fr 0.5fr"; //"0.5fr repeat(2, 1fr)";
+
+  const templateRowsLg = "3 0.5fr 0.5fr";
+  const templateColumnsLg = "0.5fr 0.5fr";
 
   const imageSelected = selectedImageId !== undefined;
 
-  const templateRowsSm = "3 repeat(4, 0.25fr)"; //"1fr repeat(5, 0.3fr)";
+  const templateRowsSm = "3 repeat(4, 0.25fr)";
   const templateColumnsSm = "1fr";
   console.log("ed ?",isEditable)
   return (
@@ -66,6 +60,7 @@ function FCTextQuestionCard({
         {selectedImages.map((selectedImage, index) => {
           return (
             <GridItem
+              key={index}
               rowSpan={1}
               colSpan={1}
               borderWidth={imageSelected ? "0" : "2px"}

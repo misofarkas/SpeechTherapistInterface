@@ -19,7 +19,7 @@ import UserSettings from "./pages/UserSettings";
 import RequireAuth from "./components/RequireAuth";
 import ExercisePreview from "./pages/ExercisePreview";
 import PageNotFound from "./pages/PageNotFound";
-import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTop from "./common/ScrollToTop";
 import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();

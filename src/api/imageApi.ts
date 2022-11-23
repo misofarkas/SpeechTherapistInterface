@@ -1,4 +1,5 @@
-import { CustomChoice, Tag } from "../types/commonTypes";
+import { Tag } from "../types/commonTypes";
+import { CustomChoice } from "../types/questionTypes";
 import axios from "./axios";
 
 export async function getImages({ auth }: { auth: any }) {

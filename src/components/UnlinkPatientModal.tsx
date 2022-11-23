@@ -30,7 +30,7 @@ function UnlinkPatientModal({ patientName, patientId }: { patientName: string; p
   });
   return (
     <>
-      <Button onClick={onOpen}>Unlink patient</Button>
+      <Button w="10rem" onClick={onOpen}>Unlink patient</Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

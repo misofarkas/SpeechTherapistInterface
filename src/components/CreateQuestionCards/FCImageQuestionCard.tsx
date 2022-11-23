@@ -1,4 +1,4 @@
-import { CustomChoice, FourChoicesQuestion } from "../../types/commonTypes";
+import { CustomChoice, FourChoicesQuestion } from "../../types/questionTypes";
 import {Box, CloseButton, Grid, GridItem, Input, useMediaQuery, Image } from "@chakra-ui/react"
 import SelectImageModal from "../SelectImageModal";
 import { useState } from "react";

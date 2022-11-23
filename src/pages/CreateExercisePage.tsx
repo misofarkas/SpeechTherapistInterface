@@ -26,17 +26,13 @@ import { AddIcon } from "@chakra-ui/icons";
 import { useAuth } from "../contexts/AuthContext";
 import {
   Question,
-  FourChoicesChoice,
-  CustomChoice,
   FourChoicesQuestion,
   ConnectPairCustomQuestion,
-  Task,
-} from "../types/commonTypes";
+} from "../types/questionTypes";
 import {
   isFourChoiceChoice,
   isCustomChoice,
   isFourChoiceQuestion,
-  isCustomQuestion,
   isFourChoiceQuestions,
   isCustomQuestions,
 } from "../types/typeGuards";

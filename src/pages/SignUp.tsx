@@ -9,13 +9,36 @@ import {
   FormLabel,
   FormErrorMessage,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
 import { Formik, Field, ErrorMessage, useFormik, Form, FieldInputProps } from "formik";
 import { useMutation } from "react-query";
 import { register } from "../api/register";
 
 function SignUp() {
-  const { isLoading, isError, error: apiError, mutate: registerMutation } = useMutation(register);
+  const toast = useToast();
+  const {
+    isLoading,
+    mutate: registerMutation,
+  } = useMutation(register, {
+    onSuccess: () => {toast({
+      title: "Success",
+      description: "Account has been created",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });},
+    onError: (error) => {
+      console.log("error", error)
+      toast({
+        title: "Error",
+        description: "There has been an error",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
 
   function validateName(value: string) {
     let error;
@@ -36,7 +59,7 @@ function SignUp() {
     } else if (!value.includes("@")) {
       error = "Email is invalid";
     } else if (value.length < 5) {
-      error = "Email is too short"
+      error = "Email is too short";
     }
     return error;
   }
@@ -128,9 +151,6 @@ function SignUp() {
               <Button mt={4} colorScheme="teal" isLoading={isLoading} type="submit">
                 Submit
               </Button>
-              <Box>
-                <>{apiError && <Text>There has been an error</Text>}</>
-              </Box>
             </Form>
           )}
         </Formik>

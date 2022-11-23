@@ -17,7 +17,6 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-import { v4 as uuidv4 } from "uuid";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -27,7 +26,7 @@ import { useQuery, useQueryClient, useMutation } from "react-query";
 import { deleteMeeting, getMeetings, postMeeting, updateMeeting } from "../api/meetingsApi";
 import { useAuth } from "../contexts/AuthContext";
 import { getPatients } from "../api/patientsApi";
-import { Event } from "../types/commonTypes";
+import { Event } from "../types/meetingTypes";
 
 function CalendarPage() {
   const { auth, user } = useAuth();

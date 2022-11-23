@@ -40,7 +40,6 @@ function UserSettings() {
 
   const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
-      console.log("profile Updated");
       setUser(currentSettings);
     },
   });
@@ -51,7 +50,6 @@ function UserSettings() {
     if (currentSettings.email.length < 5 || !currentSettings.email.includes("@") || !currentSettings.email) {
       setEmailError("email is invalid");
     } else {
-      console.log("updating")
       updateProfileMutation.mutate({ auth, profile: currentSettings });
       setEmailError("");
     }
@@ -87,8 +85,6 @@ function UserSettings() {
       <Tabs variant="enclosed">
         <TabList>
           <Tab>General Settings</Tab>
-          <Tab>Privacy</Tab>
-          <Tab>...</Tab>
         </TabList>
 
         <TabPanels>
@@ -266,14 +262,6 @@ function UserSettings() {
                 </Stack>
               </Box>
             </Stack>
-          </TabPanel>
-          {/* Privacy */}
-          <TabPanel>
-            <p>two!</p>
-          </TabPanel>
-          {/* ... */}
-          <TabPanel>
-            <p>three!</p>
           </TabPanel>
         </TabPanels>
       </Tabs>

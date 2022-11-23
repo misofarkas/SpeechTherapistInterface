@@ -4,8 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 //import getTasks from "../api/getTasks";
 import ExerciseList from "../components/ExerciseList";
 import { useAuth } from "../contexts/AuthContext";
-import { PatientExercisesData, Exercise } from "../data/PatientExercisesData";
-import { Task } from "../types/commonTypes";
+import { Task } from "../types/taskTypes";
 import { getTasks } from "../api/tasksApi";
 import { useQuery } from "react-query";
 import { TaskType } from "../types/enums";
@@ -20,8 +19,6 @@ function Exercises() {
 
   const { isLoading, isSuccess, error, data: taskResponse } = useQuery("tasks", () => getTasks({ auth }));
 
-  console.log("loading...:", isLoading);
-  console.log("API error:", error);
 
   // Filter data
   let filteredTaskData: Task[] = [];

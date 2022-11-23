@@ -1,7 +1,8 @@
 import ExerciseResultCard from "./ExerciseResultCard";
 import { LinkBox, Box } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
-import { Task, TaskResult } from "../types/commonTypes";
+import { Task } from "../types/taskTypes";
+import { TaskResult } from "../types/taskResultTypes";
 
 function PatientExercises({
   assignedTasks,

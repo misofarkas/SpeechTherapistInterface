@@ -1,14 +1,9 @@
-import { useEffect, useState } from "react";
 import { Box, Grid, GridItem, Icon, Center, useMediaQuery, Input, Image, CloseButton } from "@chakra-ui/react";
-import { clone } from "lodash";
 import SelectImageModal from "../SelectImageModal";
 import { BsArrowRight } from "react-icons/bs";
 import { IconType } from "react-icons/lib";
-import { ImageData } from "../../data/ImageData";
-import { CustomChoice, ConnectPairCustomQuestion } from "../../types/commonTypes";
+import { CustomChoice, ConnectPairCustomQuestion } from "../../types/questionTypes";
 import { TaskType } from "../../types/enums";
-
-
 
 function CPQuestionCard({
   type,
@@ -31,7 +26,7 @@ function CPQuestionCard({
   const iconSize = isLargerThan768 ? "75px" : "50px";
   const indexes = [0, 1, 2];
 
-
+  console.log(type, isEditable);
   return (
     <Box maxW="800px" mx="auto" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">
       {isEditable && <CloseButton ml="95%" mb="2" onClick={() => handleDeleteQuestion!(question.id)}></CloseButton>}
@@ -78,8 +73,7 @@ function CPQuestionCard({
                   value={question.choices[i].data2}
                   itemHeight={gridItemHeight}
                   onChange={(e) => {
-                    handleUpdateChoice !== undefined &&
-                      handleUpdateChoice(question.id, question.choices[i].id, e, 1);
+                    handleUpdateChoice !== undefined && handleUpdateChoice(question.id, question.choices[i].id, e, 1);
                   }}
                 />
               )}

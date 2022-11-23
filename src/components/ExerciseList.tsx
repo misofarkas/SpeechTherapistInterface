@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Flex, LinkBox } from "@chakra-ui/react";
 import ExerciseCard from "./ExerciseCard";
-import { Task } from "../types/commonTypes";
+import { Task } from "../types/taskTypes";
 
 
 function ExerciseList({ taskData }: { taskData: Task[]}) {
@@ -14,7 +14,6 @@ function ExerciseList({ taskData }: { taskData: Task[]}) {
           <LinkBox as={RouterLink} key={task.id} to={`/ExercisePreview/${task.type}/${task.id}`}>
             <ExerciseCard
               name={task.name}
-              favs={20}
               type={task.type}
               difficulty={task.difficulty}
             />

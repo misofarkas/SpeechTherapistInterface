@@ -1,5 +1,8 @@
-import { Task, Question, TaskExtended, TaskResult, Tag } from "../types/commonTypes";
+import { Tag } from "../types/commonTypes";
 import { Difficulties, TaskType } from "../types/enums";
+import { Question } from "../types/questionTypes";
+import { TaskResult, TaskResultExtended } from "../types/taskResultTypes";
+import { Task, TaskExtended } from "../types/taskTypes";
 import axios from "./axios";
 
 export async function getTasks({ auth }: { auth: any }) {
@@ -102,7 +105,7 @@ export async function getTaskResults({ auth }: { auth: any }) {
 }
 
 export async function getTaskResult({ auth, id, taskType }: { auth: any; id: string; taskType: string }) {
-  return await axios.get<TaskResult>(`/task/results/${id}/?task_type=${taskType}`, {
+  return await axios.get<TaskResultExtended>(`/task/results/${id}/?task_type=${taskType}`, {
     headers: { Authorization: `Token ${auth?.accessToken}` },
   });
 }

@@ -18,7 +18,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import SelectTags from "./SelectTags";
-import { CustomChoice } from "../types/commonTypes";
+import { CustomChoice } from "../types/questionTypes";
 import { useTagContext } from "../contexts/TagContext";
 import { intersection } from "lodash";
 

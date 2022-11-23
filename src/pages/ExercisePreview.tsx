@@ -24,7 +24,7 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
 import QuestionList from "../components/QuestionList";
-import { Patient, TaskExtended } from "../types/commonTypes";
+import { Patient } from "../types/commonTypes";
 import { useAuth } from "../contexts/AuthContext";
 import { getTask } from "../api/tasksApi";
 import { getPatients } from "../api/patientsApi";
@@ -33,6 +33,7 @@ import { deleteTask } from "../api/tasksApi";
 import { useQuery, useMutation } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getImages } from "../api/imageApi";
+import { TaskExtended } from "../types/taskTypes";
 
 function ExercisePreview() {
   const { id, type } = useParams();
@@ -106,7 +107,7 @@ function ExercisePreview() {
         </Flex>
         <Text>Created by: {task.created_by}</Text>
         <Text>Difficulty: {task.difficulty}</Text>
-        <Flex gap="2" direction={isLargerThan768 ? "row" : "column"} justifyContent={"space-around"}>
+        <Flex gap="2" direction={isLargerThan768 ? "row" : "column"} justifyContent={isEditable ? "space-around" : "start"}>
           <Button w="200px" onClick={onAssignOpen}>
             Assign to patient
           </Button>

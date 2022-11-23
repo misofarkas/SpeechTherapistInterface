@@ -1,4 +1,4 @@
-import { Meeting } from "../types/commonTypes";
+import { Meeting } from "../types/meetingTypes";
 import axios from "./axios";
 
 export async function getMeetings({ auth }: { auth: any }) {

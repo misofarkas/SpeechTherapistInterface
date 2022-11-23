@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import FCTextQuestionCard from "./CreateQuestionCards/FCTextQuestionCard";
 import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard";
-import { CustomChoice, Question } from "../types/commonTypes";
+import { CustomChoice, Question } from "../types/questionTypes";
 import { isFourChoiceQuestion, isCustomQuestion } from "../types/typeGuards";
 import { TaskType } from "../types/enums";
 import FCImageQuestionCard from "./CreateQuestionCards/FCImageQuestionCard";
@@ -25,6 +25,7 @@ function QuestionList({
   return (
     <>
       {questions.map((q) => {
+        console.log("type: ", type)
         return (
           <Box mb="5" key={q.id}>
             {type === TaskType.FourChoicesImage && isFourChoiceQuestion(q, type) && (

@@ -1,9 +1,9 @@
 import { Box, Grid, GridItem, Center, Text, Icon, Image, useMediaQuery } from "@chakra-ui/react";
 import { BsArrowRight } from "react-icons/bs";
-import { TaskResult, AnswerChoice, Answer } from "../../types/commonTypes";
+import { ConnectPairsAnswer  } from "../../types/taskResultTypes";
 import { TaskType } from "../../types/enums";
 
-function CPImageAnswerCard({ answer, type }: { answer: Answer; type: TaskType }) {
+function CPImageAnswerCard({ answer, type }: { answer: ConnectPairsAnswer; type: TaskType }) {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const gridItemWidth = isLargerThan768 ? "150px" : "75px";
   const gridItemHeight = type === TaskType.ConnectPairsTextImage ? (isLargerThan768 ? "150px" : "75px") : "40px";
