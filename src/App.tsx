@@ -21,6 +21,7 @@ import ExercisePreview from "./pages/ExercisePreview";
 import PageNotFound from "./pages/PageNotFound";
 import ScrollToTop from "./common/ScrollToTop";
 import Dashboard from "./pages/Dashboard";
+import RequirePatientAccess from "./components/RequirePatientAccess";
 
 const queryClient = new QueryClient();
 
@@ -31,9 +32,8 @@ export const App = () => {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <TagProvider>
-              
               <Router>
-              <ScrollToTop />
+                <ScrollToTop />
                 <Sidebar />
                 <Routes>
                   <Route path="/Login" element={<Login />} />
@@ -44,7 +44,9 @@ export const App = () => {
                     <Route path="/Patients" element={<Patients />} />
                     <Route path="/Calendar" element={<CalendarPage />} />
                     <Route path="/Exercises" element={<Exercises />} />
-                    <Route path="/patient-profile/:id" element={<PatientProfile />} />
+                    <Route element={<RequirePatientAccess />}>
+                      <Route path="/patient-profile/:id" element={<PatientProfile />} />
+                    </Route>
                     <Route path="/CreateExercise" element={<CreateExercisePage />} />
                     <Route path="/CreateExercise/:type/:id" element={<CreateExercisePage />} />
                     <Route path="/CreateGeneratedExercise" element={<CreateGeneratedExercisePage />} />

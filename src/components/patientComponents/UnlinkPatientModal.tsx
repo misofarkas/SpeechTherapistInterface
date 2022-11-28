@@ -11,8 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { unlinkPatient } from "../api/patientsApi";
-import { useAuth } from "../contexts/AuthContext";
+import { unlinkPatient } from "../../api/patientsApi";
+import { useAuth } from "../../contexts/AuthContext";
 
 function UnlinkPatientModal({ patientName, patientId }: { patientName: string; patientId: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();

@@ -1,10 +1,10 @@
 import { Box } from "@chakra-ui/react";
-import FCTextQuestionCard from "./CreateQuestionCards/FCTextQuestionCard";
-import CPQuestionCard from "./CreateQuestionCards/CPQuestionCard";
-import { CustomChoice, Question } from "../types/questionTypes";
-import { isFourChoiceQuestion, isCustomQuestion } from "../types/typeGuards";
-import { TaskType } from "../types/enums";
-import FCImageQuestionCard from "./CreateQuestionCards/FCImageQuestionCard";
+import FCTextQuestionCard from "../CreateQuestionCards/FCTextQuestionCard";
+import CPQuestionCard from "../CreateQuestionCards/CPQuestionCard";
+import { CustomChoice, Question } from "../../types/questionTypes";
+import { isFourChoiceQuestion, isCustomQuestion } from "../../types/typeGuards";
+import { TaskType } from "../../types/enums";
+import FCImageQuestionCard from "../CreateQuestionCards/FCImageQuestionCard";
 
 function QuestionList({
   questions,

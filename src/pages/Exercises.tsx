@@ -2,7 +2,7 @@ import { Container, Select, Flex, Input, Box, Link, Button, Switch, Text } from 
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 //import getTasks from "../api/getTasks";
-import ExerciseList from "../components/ExerciseList";
+import ExerciseList from "../components/exerciseComponents/ExerciseList";
 import { useAuth } from "../contexts/AuthContext";
 import { Task } from "../types/taskTypes";
 import { getTasks } from "../api/tasksApi";

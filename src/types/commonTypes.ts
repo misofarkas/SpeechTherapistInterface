@@ -22,6 +22,7 @@ export type Patient = {
   assigned_tasks: Task[];
   assigned_to: string;
   assignment_active: boolean;
+  diagnosis: string;
   notes: string;
 };
 

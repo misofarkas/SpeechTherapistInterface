@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { Container, Heading, Stack, Text } from "@chakra-ui/react";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { isConnectPairsAnswers } from "../types/typeGuards";
+import { isConnectPairsAnswers, isFourChoiceAnswers } from "../types/typeGuards";
 import { TaskType } from "../types/enums";
 
 function ExerciseResults() {
@@ -24,6 +24,10 @@ function ExerciseResults() {
     let total = 0
     if (isConnectPairsAnswers(res.data.answers, type as TaskType)) {
       res.data.answers.map((ans) => ans.answer.map((choice) => (choice.is_correct ? correct++ : undefined)));
+      res.data.answers.map((ans) => (total += ans.answer.length));
+    }
+    if (isFourChoiceAnswers(res.data.answers, type as TaskType)) {
+      res.data.answers.map((ans) => ans.answer[0].is_correct ? correct++ : undefined);
       res.data.answers.map((ans) => (total += ans.answer.length));
     }
     setCorrect(correct);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import QuestionList from "../components/QuestionList";
+import QuestionList from "../components/exerciseComponents/QuestionList";
 import {
   Tabs,
   TabList,

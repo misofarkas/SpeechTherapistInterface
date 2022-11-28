@@ -6,6 +6,8 @@ export type AnswerFourChoicesChoice = {
     incorrect_option1: string;
     incorrect_option2: string;
     incorrect_option3: string;
+    chosen_option: string;
+    is_correct: boolean;
   };
   
   export type AnswerConnectPairsChoice = {
@@ -27,11 +29,13 @@ export type AnswerFourChoicesChoice = {
     id: string;
     answered_by: string;
     task: string;
+    date_created: string;
   };
   
   export type TaskResultExtended = {
     id: string;
     answered_by: string;
     task: string;
+    date_created: string;
     answers: ConnectPairsAnswer[] | FourChoicesAnswer[];
   };

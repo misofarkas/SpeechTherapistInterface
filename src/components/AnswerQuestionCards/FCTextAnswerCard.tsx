@@ -38,7 +38,7 @@ function FCTextAnswerCard({ answer, type }: { answer: AnswerFourChoicesChoice; t
               colSpan={1}
               borderWidth={"2px"}
               borderRadius="lg"
-              borderColor={"green.400"}
+              borderColor={index === 0 ? "green.400" : index === 1 && !answer.is_correct ? "red.400" : "gray.300"}
               h="150px"
               textAlign="center"
               w="150px"

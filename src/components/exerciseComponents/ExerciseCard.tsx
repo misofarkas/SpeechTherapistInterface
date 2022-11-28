@@ -1,7 +1,8 @@
 import { Box, Flex, Heading, Icon, Tag } from "@chakra-ui/react";
 import { AiOutlinePicture, AiFillStar } from "react-icons/ai";
-import { taskTypeName } from "../common/typeNameConversion";
-import { TaskType } from "../types/enums";
+import { BiGridAlt } from "react-icons/bi";
+import { taskTypeName } from "../../common/typeNameConversion";
+import { TaskType } from "../../types/enums";
 
 type ExerciseCardInfo = {
   name: string;
@@ -21,13 +22,21 @@ function ExerciseCard({ name, type, difficulty }: ExerciseCardInfo) {
       _hover={{ boxShadow: "lg", cursor: "pointer" }}
     >
       <Flex h="full" px="4" gap="4" alignItems="center">
-        <Icon w="12" h="12" as={AiOutlinePicture} />
+        <Icon
+          w="12"
+          h="12"
+          as={
+            type === TaskType.ConnectPairsTextImage || type === TaskType.ConnectPairsTextText
+              ? AiOutlinePicture
+              : BiGridAlt
+          }
+        />
         <div>
           <Heading size="sm" mb="2">
             {name}
           </Heading>
           <Flex gap="2">
-            <Tag>{taskTypeName({taskType: type})}</Tag>
+            <Tag>{taskTypeName({ taskType: type })}</Tag>
             <Tag backgroundColor="green.400">{difficulty}</Tag>
           </Flex>
         </div>

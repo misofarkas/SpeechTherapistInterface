@@ -20,7 +20,7 @@ function MeetingCard({ meeting, displayName }: { meeting: Meeting; displayName: 
       </Flex>
       <Flex gap="2">
         <Text as="b">Start time:</Text>
-        <Text>{new Date(meeting.start_time).toLocaleTimeString("sv")}</Text>
+        <Text>{new Date(meeting.start_time).toString().substring(0, 24)}</Text>
       </Flex>
       {displayName && (
         <Flex gap="2">

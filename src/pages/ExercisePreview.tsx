@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
-import QuestionList from "../components/QuestionList";
+import QuestionList from "../components/exerciseComponents/QuestionList";
 import { Patient } from "../types/commonTypes";
 import { useAuth } from "../contexts/AuthContext";
 import { getTask } from "../api/tasksApi";
@@ -87,16 +87,16 @@ function ExercisePreview() {
     }
   );
 
+  if (isLoading || isLoadingPatients || isLoadingImages || !imageData) {
+    return <LoadingSpinner />;
+  }
+
   if (error !== null || errorPatients !== null || task === undefined || task.questions.length === 0) {
     return (
       <Center mt="10">
         <Heading fontSize={"4xl"}>Task not found</Heading>
       </Center>
     );
-  }
-
-  if (isLoading || isLoadingPatients || isLoadingImages || !imageData) {
-    return <LoadingSpinner />;
   }
 
   return (

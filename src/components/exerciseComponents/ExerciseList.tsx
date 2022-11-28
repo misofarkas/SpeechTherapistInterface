@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Flex, LinkBox } from "@chakra-ui/react";
 import ExerciseCard from "./ExerciseCard";
-import { Task } from "../types/taskTypes";
+import { Task } from "../../types/taskTypes";
 
 
 function ExerciseList({ taskData }: { taskData: Task[]}) {

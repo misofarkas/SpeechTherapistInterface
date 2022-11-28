@@ -13,15 +13,15 @@ import {
   Avatar,
   Stack,
 } from "@chakra-ui/react";
-import PatientExercises from "../components/PatientExercises";
-import PatientCard from "../components/PatientCard";
+import PatientExercises from "../components/patientComponents/PatientExercises";
+import PatientCard from "../components/patientComponents/PatientCard";
 import { useAuth } from "../contexts/AuthContext";
-import { getPatient, postNotes } from "../api/patientsApi";
+import { getPatient, postDiagnosis, postNotes } from "../api/patientsApi";
 import { Link as RouterLink } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getTaskResults } from "../api/tasksApi";
-import UnlinkPatientModal from "../components/UnlinkPatientModal";
+import UnlinkPatientModal from "../components/patientComponents/UnlinkPatientModal";
 import { Patient } from "../types/commonTypes";
 import { TaskResult } from "../types/taskResultTypes";
 import { getMeetings } from "../api/meetingsApi";
@@ -52,6 +52,7 @@ function PatientProfile() {
   });
 
   const { isLoading: isSavingNotes, mutate: notesMutation } = useMutation(postNotes);
+  const { isLoading: isSavingDiagnosis, mutate: diagnosisMutation } = useMutation(postDiagnosis);
 
   const { isLoading: isLoadingResults, error: resultsError } = useQuery("results", () => getTaskResults({ auth }), {
     enabled: !!patient,
@@ -88,8 +89,19 @@ function PatientProfile() {
           <PatientCard>
             <Stack>
               <Heading>Diagnosis</Heading>
-              <Textarea rows={5} overflow="hidden" placeholder="Patient's diagnosis goes here" />
-              <Button>Save diagnosis</Button>
+              <Textarea
+                rows={5}
+                overflow="hidden"
+                placeholder="Patient's diagnosis goes here"
+                value={patient.diagnosis}
+                onChange={(e) => setPatient({ ...patient, diagnosis: e.target.value })}
+              />
+              <Button
+                isLoading={isSavingDiagnosis}
+                onClick={() => diagnosisMutation({ auth, diagnosis: patient.diagnosis, id: patient.id })}
+              >
+                Save diagnosis
+              </Button>
             </Stack>
           </PatientCard>
           <PatientCard>
@@ -113,7 +125,7 @@ function PatientProfile() {
             <Stack>
               <Heading>Meetings</Heading>
               {meetings.map((meeting) => {
-                return <MeetingCard key={meeting.id} meeting={meeting} displayName={false}/>;
+                return <MeetingCard key={meeting.id} meeting={meeting} displayName={false} />;
               })}
             </Stack>
           </PatientCard>

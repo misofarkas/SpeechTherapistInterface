@@ -13,8 +13,10 @@ export async function getPatient({ auth, id }: { auth: any; id: string }) {
   });
 }
 
-export async function postDiagnosts({ auth, text, id }: { auth: any; text: string; id: string }) {
-  // todo, waiting for API
+export async function postDiagnosis({ auth, diagnosis, id }: { auth: any; diagnosis: string; id: string }) {
+  return await axios.patch(`/user/therapist/${id}/diagnosis/`, {diagnosis}, {
+    headers: { Authorization: `Token ${auth?.accessToken}` },
+  });
 }
 
 export async function postNotes({ auth, notes, id }: { auth: any; notes: string; id: string }) {
