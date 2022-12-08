@@ -24,14 +24,22 @@ import { getLinkRequests, acceptLinkRequest, rejectLinkRequest } from "../api/no
 function Notifications() {
   const { auth } = useAuth();
   const queryClient = useQueryClient();
+
+  // fetch notifications
   const { data: notificationsData } = useQuery("linkRequests", () => getLinkRequests({ auth }));
+
+  // mutation for accepting a patient link request from notifications
   const acceptRequestMutation = useMutation(acceptLinkRequest, {
     onSuccess: () => {
+      // Invalidate the "linkRequests" query when the mutation is successful.
       queryClient.invalidateQueries("linkRequests");
     },
   });
+
+  // mutation for declining a patient link request from notifications
   const rejectRequestMutation = useMutation(rejectLinkRequest, {
     onSuccess: () => {
+      // Invalidate the "linkRequests" query when the mutation is successful.
       queryClient.invalidateQueries("linkRequests");
     },
   });
@@ -40,6 +48,7 @@ function Notifications() {
     <Popover>
       <PopoverTrigger>
         <Button>
+          {/** display red circle with the number of notifications */}
           {!!notificationsData?.data.length && (
             <Badge position="absolute" variant="solid" colorScheme="red" mr="5" mt="4" fontSize="2xs">
               {notificationsData.data.length}
@@ -52,6 +61,7 @@ function Notifications() {
         <PopoverArrow />
         <PopoverBody>
           <Stack>
+            {/** display each notification individually */}
             {notificationsData?.data.map((request) => {
               return (
                 <Box key={request.id}>
@@ -64,12 +74,15 @@ function Notifications() {
                     </Stack>
 
                     <Flex alignSelf="center">
+                      {/** accept button */}
                       <Button
                         backgroundColor={"transparent"}
                         onClick={() => acceptRequestMutation.mutate({ auth, id: request.id })}
                       >
                         <Icon as={FcCheckmark} />
                       </Button>
+
+                      {/** decline button */}
                       <Button
                         backgroundColor={"transparent"}
                         color={"red"}

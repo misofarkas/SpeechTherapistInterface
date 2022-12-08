@@ -10,6 +10,9 @@ type ExerciseCardInfo = {
   difficulty: string;
 };
 
+/**This function renders an ExerciseCard component that
+ * shows basic information about an exercise. It displays the
+ * name of the exercise, its type and difficulty */
 function ExerciseCard({ name, type, difficulty }: ExerciseCardInfo) {
   return (
     <Box

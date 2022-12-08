@@ -35,12 +35,14 @@ function CreateGeneratedExercisePage() {
   const returnRef = useRef<HTMLButtonElement>(null);
   const difficulty = Difficulties.Easy;
 
+  // Mutation used for generating exercises
   const {
     mutate: generateTaskMutation,
     isLoading: isGenerating,
     data: generatedTask,
   } = useMutation(() => generateTask({ auth, name, type, difficulty, selectedTags }));
 
+  // Redirect the user to the generated exercise preview after it has finished generating
   if (generatedTask !== undefined) {
     navigate(`/ExercisePreview/${generatedTask.data.type}/${generatedTask.data.id}`);
   }
@@ -55,17 +57,24 @@ function CreateGeneratedExercisePage() {
       ) : (
         <>
           <Stack minW="300px" maxW="600px" mx="auto" spacing="0.5rem">
+            {/* Task name */}
             <Text>Name</Text>
             <Input value={name} onChange={(e) => setName(e.target.value)}></Input>
+
+            {/* Task type */}
             <Text>Type</Text>
             <Select value={type} onChange={(e) => setType(e.target.value as TaskType)}>
               <option value={TaskType.ConnectPairsTextImage}>{taskTypeName({taskType: TaskType.ConnectPairsTextImage})}</option>
               <option value={TaskType.FourChoicesImage}>{taskTypeName({taskType: TaskType.FourChoicesImage})}</option>
               <option value={TaskType.FourChoicesText}>{taskTypeName({taskType: TaskType.FourChoicesText})}</option>
             </Select>
+
+            {/* Task tags with filter */}
             <SelectTags withFilter={true} />
 
             <Button onClick={onOpen}>Generate</Button>
+
+            {/* Alert dialog confirming the user's actions */}
             <AlertDialog isOpen={isOpen} leastDestructiveRef={returnRef} onClose={onClose}>
               <AlertDialogOverlay>
                 <AlertDialogContent>

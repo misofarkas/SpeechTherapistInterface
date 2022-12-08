@@ -19,14 +19,15 @@ import { useAuth } from "../contexts/AuthContext";
 import { getPatients } from "../api/patientsApi";
 import { Patient } from "../types/commonTypes";
 import { useQuery } from "react-query";
+import { adjustStringLength } from "../common/textFormatting";
 
 function Patients() {
   const [filterValue, setFilterValue] = useState("");
-  const [isLargerThan992] = useMediaQuery("(min-width: 992px)");
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const { auth } = useAuth();
 
-  const { isLoading, isSuccess, error, data: patientsData } = useQuery("patients", () => getPatients({ auth }));
+  // Fetch linked patients
+  const { isSuccess, error, data: patientsData } = useQuery("patients", () => getPatients({ auth }));
 
   function handleFilterChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFilterValue(e.target.value);
@@ -34,9 +35,11 @@ function Patients() {
 
   let filteredPatientData: Patient[] = [];
   if (isSuccess) {
-    filteredPatientData = patientsData.data.filter((patient) =>
-      patient.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-      patient.email.toLowerCase().includes(filterValue.toLowerCase())
+    // Filter patients by name or email
+    filteredPatientData = patientsData.data.filter(
+      (patient) =>
+        patient.name.toLowerCase().includes(filterValue.toLowerCase()) ||
+        patient.email.toLowerCase().includes(filterValue.toLowerCase())
     );
   }
 
@@ -69,13 +72,17 @@ function Patients() {
             {filteredPatientData.map((patient) => {
               return (
                 <Tr key={patient.id} transition="0.2s" _hover={{ background: "gray.100" }}>
+                  {/* Patient avatar */}
                   <Td maxW="2rem">
-                    <Avatar src={patient.image} size={"sm"}   />
+                    <Avatar src={patient.image} size={"sm"} />
                   </Td>
                   <Td>
+                    {/* Patient name with link to profile */}
                     <Link to={`/patient-profile/${patient.id}`}>{adjustStringLength(patient.name, 15)}</Link>
                   </Td>
+                  {/* Patient email */}
                   <Td> {adjustStringLength(patient.email, 20)} </Td>
+                  {/* Number of assigned tasks */}
                   {isLargerThan768 && <Td>{patient.assigned_tasks.length}</Td>}
                 </Tr>
               );
@@ -87,11 +94,4 @@ function Patients() {
   );
 }
 
-function adjustStringLength(text: string, maxLength: number) {
-  if (text.length <= maxLength) {
-    return text;
-  }
-
-  return text.slice(0, maxLength) + "...";
-}
 export default Patients;

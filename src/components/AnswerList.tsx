@@ -6,6 +6,8 @@ import { isConnectPairsAnswer, isFourChoiceAnswer } from "../types/typeGuards";
 import FCImageAnswerCard from "./AnswerQuestionCards/FCImageAnswerCard";
 import FCTextAnswerCard from "./AnswerQuestionCards/FCTextAnswerCard";
 
+/**Component used for deciding which Answer card template to use
+ * depending on the type of the task */
 function AnswerList({ answers, type }: { answers: ConnectPairsAnswer[] | FourChoicesAnswer[]; type: TaskType }) {
   return (
     <>

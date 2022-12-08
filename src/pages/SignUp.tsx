@@ -1,17 +1,15 @@
 import {
   Input,
   Button,
-  Text,
   Box,
   Heading,
   Container,
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Stack,
   useToast,
 } from "@chakra-ui/react";
-import { Formik, Field, ErrorMessage, useFormik, Form, FieldInputProps } from "formik";
+import { Formik, Field, Form } from "formik";
 import { useMutation } from "react-query";
 import { register } from "../api/register";
 

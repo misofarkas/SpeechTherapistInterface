@@ -21,7 +21,6 @@ import ExercisePreview from "./pages/ExercisePreview";
 import PageNotFound from "./pages/PageNotFound";
 import ScrollToTop from "./common/ScrollToTop";
 import Dashboard from "./pages/Dashboard";
-import RequirePatientAccess from "./components/RequirePatientAccess";
 
 const queryClient = new QueryClient();
 
@@ -39,14 +38,14 @@ export const App = () => {
                   <Route path="/Login" element={<Login />} />
                   <Route path="/SignUp" element={<SignUp />} />
 
+
+                  {/*Routes wrapped in RequireAuth are accessible only when logged in*/}
                   <Route element={<RequireAuth />}>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/Patients" element={<Patients />} />
                     <Route path="/Calendar" element={<CalendarPage />} />
                     <Route path="/Exercises" element={<Exercises />} />
-                    <Route element={<RequirePatientAccess />}>
-                      <Route path="/patient-profile/:id" element={<PatientProfile />} />
-                    </Route>
+                    <Route path="/patient-profile/:id" element={<PatientProfile />} />
                     <Route path="/CreateExercise" element={<CreateExercisePage />} />
                     <Route path="/CreateExercise/:type/:id" element={<CreateExercisePage />} />
                     <Route path="/CreateGeneratedExercise" element={<CreateGeneratedExercisePage />} />

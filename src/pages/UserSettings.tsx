@@ -35,8 +35,10 @@ function UserSettings() {
   const [currentSettings, setCurrentSettings] = useState<User>(user);
   const [newAvatar, setNewAvatar] = useState("");
   const [newAvatarPreview, setNewAvatarPreview] = useState<string | null>(user.image);
-  const settingsHaveChanged = JSON.stringify(user) !== JSON.stringify(currentSettings);
   const [emailError, setEmailError] = useState("");
+
+  // variable for checking if current settings differ from saved settings
+  const settingsHaveChanged = JSON.stringify(user) !== JSON.stringify(currentSettings);
 
   const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
@@ -55,6 +57,7 @@ function UserSettings() {
     }
   }
 
+  // resets the settings to saved settings
   function resetSettings() {
     setCurrentSettings(user);
     setNewAvatar("");
@@ -95,6 +98,7 @@ function UserSettings() {
               <Box borderWidth="1px" borderRadius="lg" padding="5">
                 <Stack spacing="4">
                   <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
+                    {/* Full Name */}
                     <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""}>
                       Full Name
                     </Heading>
@@ -106,6 +110,7 @@ function UserSettings() {
                   </Flex>
                   <Divider />
                   <Flex gap="4">
+                    {/* User avatar */}
                     <Heading size="sm" alignSelf="center">
                       Change Avatar
                     </Heading>
@@ -118,6 +123,7 @@ function UserSettings() {
                   </Flex>
                   <Divider />
                   <Box>
+                    {/* Bio */}
                     <Heading size="sm" mb="2">
                       Bio
                     </Heading>
@@ -129,7 +135,7 @@ function UserSettings() {
                       onChange={(e) => setCurrentSettings({ ...currentSettings, bio: e.target.value })}
                     />
                   </Box>
-                  <ChangePasswordModal/>
+                  <ChangePasswordModal />
                 </Stack>
               </Box>
 
@@ -141,6 +147,7 @@ function UserSettings() {
                     <Stack spacing="5">
                       <Divider />
                       <Box>
+                        {/* Email */}
                         <Heading size="sm">Email</Heading>
                         <Input
                           value={currentSettings.email ?? ""}
@@ -158,6 +165,7 @@ function UserSettings() {
                       </Box>
                       <Divider />
                       <Box>
+                        {/* Phone number */}
                         <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
                           <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""}>
                             Phone number
@@ -186,6 +194,7 @@ function UserSettings() {
                   <Stack spacing="5">
                     <Divider />
                     <Box>
+                      {/* Company */}
                       <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
                         <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""} w="100px">
                           Company
@@ -204,6 +213,7 @@ function UserSettings() {
                     </Box>
                     <Divider />
                     <Box>
+                      {/* Location */}
                       <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
                         <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""} w="100px">
                           Location
@@ -222,6 +232,7 @@ function UserSettings() {
                     </Box>
                     <Divider />
                     <Box>
+                      {/* Country */}
                       <Flex gap="4" direction={isLargerThan768 ? "row" : "column"}>
                         <Heading size="sm" alignSelf={isLargerThan768 ? "center" : ""} w="100px">
                           Country

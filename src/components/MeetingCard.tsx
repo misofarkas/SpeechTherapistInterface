@@ -1,6 +1,9 @@
 import { Box, Flex, Heading, LinkBox, Stack, Text } from "@chakra-ui/react";
 import { Meeting } from "../types/meetingTypes";
 
+/**This component displays a card with details about a meeting.
+ * The card shows the meeting name, start time, and, if displayName is true,
+ * the name of the assigned patient. */
 function MeetingCard({ meeting, displayName }: { meeting: Meeting; displayName: boolean }) {
   return (
     <Box

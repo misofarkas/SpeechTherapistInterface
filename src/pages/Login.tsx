@@ -29,7 +29,7 @@ function Login() {
     },
   });
 
-  const { data: profileData } = useQuery("profile", () => getProfile({ auth }), {
+  const {} = useQuery("profile", () => getProfile({ auth }), {
     enabled: !!auth,
     onSuccess: (res) => {
       console.log("Success", res);
@@ -44,27 +44,8 @@ function Login() {
         duration: 5000,
         isClosable: true,
       });
-    }
+    },
   });
-
-  /*
-  async function handleLogin(e: any) {
-    e.preventDefault();
-    login({ email, password }).then((accessToken) => {
-      setAuth({ accessToken });
-    });
-    setEmail("");
-    setPassword("");
-  }
-
-  useEffect(() => {
-    if (auth !== undefined) {
-      getProfile({ auth, setError }).then((value) => {
-        setUser({ ...value });
-      });
-    }
-  }, [auth]);
-*/
 
   function handleLogin(e: any) {
     e.preventDefault();

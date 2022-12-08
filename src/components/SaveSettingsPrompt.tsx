@@ -1,5 +1,8 @@
 import { Box, Text, Flex, Button, Fade } from "@chakra-ui/react";
 
+/* A hovering prompt showing that the user has settings which are not saved.
+ * handleSave function saves the current settings
+ * handleReset function resets the current settings to saved settings. */
 function SaveSettingsPrompt({
   handleSave,
   handleReset,

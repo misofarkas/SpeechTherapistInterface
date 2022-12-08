@@ -44,7 +44,7 @@ function CalendarPage() {
 
   const queryClient = useQueryClient();
   const { data: patientData } = useQuery("patients", () => getPatients({ auth }));
-  const { isLoading, isError, error, data: meetings } = useQuery("meetings", () => getMeetings({ auth }));
+  const { data: meetings } = useQuery("meetings", () => getMeetings({ auth }));
 
   const addMeetingMutation = useMutation(postMeeting, {
     onSuccess: () => {
@@ -66,7 +66,7 @@ function CalendarPage() {
     setCurrentEvent({ id: "", title: "", assignedPatient: "", start: new Date(), end: new Date() });
   }
 
-  function handleAddEvent() {
+  function handleAddMeeting() {
     addMeetingMutation.mutate({
       auth,
       meeting: {
@@ -106,6 +106,7 @@ function CalendarPage() {
 
   return (
     <Container pb="5">
+      {/* Schedule new meeting button */}
       <Button
         onClick={() => {
           onOpen();
@@ -121,18 +122,21 @@ function CalendarPage() {
           resetEvent();
         }}
       >
+        {/* New meeting modal */}
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{isEditing ? "Edit meeting" : "Schedule meeting"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Stack>
+              {/* Meeting title */}
               <Input
                 value={currentEvent.title}
                 onChange={(title) => setCurrentEvent({ ...currentEvent, title: title.target.value })}
                 placeholder="event title"
                 size="md"
               />
+              {/* Assigned patient */}
               <Select
                 placeholder="Select a patient"
                 value={currentEvent.assignedPatient}
@@ -147,12 +151,14 @@ function CalendarPage() {
                 })}
               </Select>
               <Divider />
+              {/* Start time */}
               <Input
                 maxW="13rem"
                 value={currentEvent.start.toLocaleString("sv")}
                 onChange={(e) => setCurrentEvent({ ...currentEvent, start: new Date(e.target.value) })}
                 type="datetime-local"
               />
+              {/* End time */}
               <Input
                 maxW="13rem"
                 value={currentEvent.end.toLocaleString("sv")}
@@ -164,6 +170,7 @@ function CalendarPage() {
           </ModalBody>
 
           <ModalFooter>
+            {/* Delete button */}
             {isEditing && !isConfirmingDelete && (
               <Button
                 colorScheme="red"
@@ -175,6 +182,7 @@ function CalendarPage() {
               </Button>
             )}
 
+            {/* Confirm deletion button */}
             {isEditing && isConfirmingDelete && (
               <>
                 <Button mr="1rem" onClick={() => setIsConfirmingDelete(false)}>
@@ -193,6 +201,8 @@ function CalendarPage() {
                 </Button>
               </>
             )}
+
+            {/* Save button */}
             <Button
               isDisabled={
                 currentEvent.title === "" ||
@@ -204,7 +214,7 @@ function CalendarPage() {
               colorScheme="blue"
               onClick={() => {
                 onClose();
-                isEditing ? handleUpdateMeeting() : handleAddEvent();
+                isEditing ? handleUpdateMeeting() : handleAddMeeting();
               }}
             >
               Save

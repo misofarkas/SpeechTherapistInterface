@@ -14,11 +14,15 @@ import { useNavigate } from "react-router-dom";
 import { unlinkPatient } from "../../api/patientsApi";
 import { useAuth } from "../../contexts/AuthContext";
 
+
+// Modal component for unlinking patients
 function UnlinkPatientModal({ patientName, patientId }: { patientName: string; patientId: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { auth } = useAuth();
   const navigate = useNavigate();
 
+  // mutation used for unlinking the patient.
+  // After a successful unlink, the user is redirected to the patient list.
   const {
     isError,
     isLoading,

@@ -3,10 +3,8 @@ import { Flex, LinkBox } from "@chakra-ui/react";
 import ExerciseCard from "./ExerciseCard";
 import { Task } from "../../types/taskTypes";
 
-
+// This component displays exercises in a list
 function ExerciseList({ taskData }: { taskData: Task[]}) {
-
-
   return (
     <Flex flexDirection="column" gap="2">
       {taskData.map((task) => {

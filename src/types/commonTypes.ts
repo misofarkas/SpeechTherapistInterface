@@ -26,7 +26,6 @@ export type Patient = {
   notes: string;
 };
 
-
 export type User = {
   email: string;
   name: string;
@@ -48,4 +47,3 @@ export type LinkRequest = {
   assigned_to: number;
   assigment_active: boolean;
 };
-

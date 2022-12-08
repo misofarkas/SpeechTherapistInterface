@@ -1,5 +1,6 @@
 import { TaskType } from "../types/enums";
 
+// Converts task type enum values to their respective display name
 export function taskTypeName({ taskType }: { taskType: TaskType }) {
   switch (taskType) {
     case TaskType.ConnectPairsTextImage:
@@ -14,3 +15,5 @@ export function taskTypeName({ taskType }: { taskType: TaskType }) {
       return "Unknown type";
   }
 }
+
+

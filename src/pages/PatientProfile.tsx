@@ -36,12 +36,14 @@ function PatientProfile() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [taskResults, setTaskResults] = useState<TaskResult[]>([]);
 
+  // Fetch patient data
   const { isLoading, error } = useQuery("patient", () => getPatient({ auth, id: id ?? "" }), {
     onSuccess: (res) => {
       setPatient(res.data);
     },
   });
 
+  // Fetch meeting data
   const { isLoading: isLoadingMeetings, isError } = useQuery("meetings", () => getMeetings({ auth }), {
     enabled: !!patient,
     onSuccess: (res) => {
@@ -51,9 +53,11 @@ function PatientProfile() {
     },
   });
 
+  // Mutations for editing notes and diagnosis
   const { isLoading: isSavingNotes, mutate: notesMutation } = useMutation(postNotes);
   const { isLoading: isSavingDiagnosis, mutate: diagnosisMutation } = useMutation(postDiagnosis);
 
+  // Fetch task results
   const { isLoading: isLoadingResults, error: resultsError } = useQuery("results", () => getTaskResults({ auth }), {
     enabled: !!patient,
     onSuccess: (res) => {
@@ -76,6 +80,7 @@ function PatientProfile() {
     <Container centerContent>
       <Flex gap={isLargerThan1280 ? "4rem" : "0rem"} flexDirection={isLargerThan1280 ? "row" : "column"}>
         <Box minW="30rem">
+          {/* Patient header card */}
           <PatientCard>
             <Flex>
               <Avatar src={patient.image} m="2" />
@@ -86,6 +91,8 @@ function PatientProfile() {
               </Box>
             </Flex>
           </PatientCard>
+
+          {/* Diagnosis component */}
           <PatientCard>
             <Stack>
               <Heading>Diagnosis</Heading>
@@ -104,7 +111,9 @@ function PatientProfile() {
               </Button>
             </Stack>
           </PatientCard>
+
           <PatientCard>
+            {/* Notes component */}
             <Stack>
               <Heading>Notes</Heading>
               <Textarea
@@ -121,6 +130,8 @@ function PatientProfile() {
               </Button>
             </Stack>
           </PatientCard>
+
+          {/* Meetings component */}
           <PatientCard>
             <Stack>
               <Heading>Meetings</Heading>
@@ -130,15 +141,21 @@ function PatientProfile() {
             </Stack>
           </PatientCard>
         </Box>
+
         <Box minW="30rem">
+          {/* Buttons component */}
           <PatientCard>
+            {/* Assign new exercise button */}
             <Link as={RouterLink} to="/Exercises">
               <Button mr="1" w="11rem">
                 Asign new exercise
               </Button>
             </Link>
+            {/* Unlink patient button */}
             <UnlinkPatientModal patientName={patient.name} patientId={patient.id} />
           </PatientCard>
+
+          {/* Assigned exercise list */}
           <PatientCard>
             <Stack>
               <Heading>Assigned exercises</Heading>

@@ -33,7 +33,12 @@ function Dashboard() {
       enabled: !!patientData,
       onSuccess: (res) => {
         const taskResultsToday: Task[] = [];
+        // Filter task results which are submitted today
         const filteredResults = res.data.filter((result) => dateIsToday(result.date_created));
+
+        // Extracts tasks ids from all tasks which are assigned to a linked
+        // patient who has finished the exercise today and appends it to
+        // taskResultsToday array
         patientData?.data.map((patient) => {
           const filteredTasks = patient.assigned_tasks.filter((task) =>
             filteredResults
@@ -59,6 +64,8 @@ function Dashboard() {
         Dashboard
       </Heading>
       <Flex gap="4">
+
+        {/* Displays today's upcomming meetings */}
         <Box minW="25rem" borderWidth="1px" borderRadius="2xl" p="5">
           <Heading mb="4">Today's meetings</Heading>
           {meetings.length !== 0 ? (
@@ -69,6 +76,8 @@ function Dashboard() {
             <Text>You do not have any scheduled meetings</Text>
           )}
         </Box>
+
+        {/* Displays patient exercises which have been finished today */}
         <Box minW="25rem" borderWidth="1px" borderRadius="2xl" p="5">
           <Heading mb="4">Today's patient activity</Heading>
           {tasks.length !== 0 ? (

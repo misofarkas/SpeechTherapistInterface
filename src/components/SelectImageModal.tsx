@@ -32,6 +32,12 @@ type ImageModalArgs = {
   changeIndex: number
 };
 
+/**This component handles the image selection when creating an exercise.
+ * It displays the selected image in a box. If no image is selected, a
+ * "No image selected" text is displayed instead. Clicking on this box
+ * opens a modal windows where an image can be selected. Images can be
+ * filtered using tags.
+ */
 function SelectImageModal({
   selectedImageUrl,
   handleUpdateChoice,
@@ -121,6 +127,7 @@ function SelectImageModal({
   );
 }
 
+// Filters the images based on tags selected
 function filterImages(imageData: CustomChoice[], selectedTags: string[]) {
   if (selectedTags.length === 0) {
     return imageData;

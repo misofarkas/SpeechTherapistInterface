@@ -19,6 +19,7 @@ import { useMutation } from "react-query";
 import { updatePassword } from "../api/userProfileApi";
 import { useAuth } from "../contexts/AuthContext";
 
+// Modal component for handling password change used in user settings
 function ChangePasswordModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isLoading, isError, error: apiError, reset, mutate: updatePasswordMutation } = useMutation(updatePassword);
@@ -43,9 +44,16 @@ function ChangePasswordModal() {
     }
     return error;
   }
+
   return (
     <>
-      <Button onClick={() => {onOpen(); reset()} } maxW="200px">
+      <Button
+        onClick={() => {
+          onOpen();
+          reset();
+        }}
+        maxW="200px"
+      >
         Change password
       </Button>
 
@@ -72,6 +80,7 @@ function ChangePasswordModal() {
             >
               {(props) => (
                 <Form>
+                  {/** Field for password */}
                   <Field name="password" validate={validatePassword}>
                     {({ field, form }: any) => (
                       <FormControl isInvalid={form.errors.password && form.touched.password}>
@@ -81,6 +90,7 @@ function ChangePasswordModal() {
                       </FormControl>
                     )}
                   </Field>
+                  {/** Field for password confirmation*/}
                   <Field name="confirmPassword" validate={validateConfirmPassword}>
                     {({ field, form }: any) => (
                       <FormControl isInvalid={form.errors.confirmPassword && form.touched.confirmPassword}>

@@ -4,6 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { Task } from "../../types/taskTypes";
 import { TaskResult } from "../../types/taskResultTypes";
 
+// This component displays assigned exercises on the patient's profile page
 function PatientExercises({
   assignedTasks,
   patientTaskResults,
@@ -17,11 +18,14 @@ function PatientExercises({
   return (
     <>
       {assignedTasks.map((exercise) => {
-        const taskResult = patientTaskResults.find((result)=> result.task === exercise.id)
+        const taskResult = patientTaskResults.find((result) => result.task === exercise.id);
 
         return (
           <Box mb="4" key={exercise.id}>
-            <LinkBox as={RouterLink} to={taskResult ? `/ExerciseResults/${exercise.type}/${exercise.id}/${taskResult.id}` : "#"}>
+            <LinkBox
+              as={RouterLink}
+              to={taskResult ? `/ExerciseResults/${exercise.type}/${exercise.id}/${taskResult.id}` : "#"}
+            >
               <ExerciseResultCard
                 name={exercise.name}
                 type={exercise.type}

@@ -2,6 +2,9 @@ import { ConnectPairCustomQuestion, CustomChoice, FourChoicesChoice, FourChoices
 import { TaskType } from "./enums";
 import { ConnectPairsAnswer, FourChoicesAnswer } from "./taskResultTypes";
 
+/**This module contains a collection of type guard functions for testing the type of
+ * questions, choices, and answers for a given task type.*/
+
 export function isFourChoiceQuestion(question: Question, type: TaskType): question is FourChoicesQuestion {
   return type === TaskType.FourChoicesImage || type === TaskType.FourChoicesText;
 }

@@ -39,6 +39,7 @@ function Sidebar() {
   return (
     <>
       <Flex bg="gray.100" w="full" height="4rem" px="5" alignItems="center" gap="2">
+        {/* button for opening the sidebar */}
         <HamburgerIcon w={8} h={8} cursor="pointer" onClick={onOpen} />
         {isLargerThan992 && (
           <Heading size="lg" ml="5" mb="1">
@@ -47,6 +48,7 @@ function Sidebar() {
         )}
         <Spacer />
 
+        {/* display notification, avatar and user email if they are logged in */}
         {auth?.accessToken ? (
           <>
             <Notifications />
@@ -77,6 +79,7 @@ function Sidebar() {
           </>
         ) : (
           <>
+            {/* if not logged in, provide links for navigating to sign up and login page */}
             <Link as={RouterLink} to="/SignUp" color="blue.500">
               Sign up
             </Link>
@@ -87,15 +90,17 @@ function Sidebar() {
         )}
       </Flex>
 
+      {/* Sidebar */}
       <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerBody>
+            {/* this stack contains links to other pages */}
             <Stack mt="10">
               <Link as={RouterLink} to="/" onClick={onClose}>
                 <Button w="full" pr="10">
-                  <Icon mr="4" as={BsFillHouseFill}/>
+                  <Icon mr="4" as={BsFillHouseFill} />
                   Dashboard
                 </Button>
               </Link>

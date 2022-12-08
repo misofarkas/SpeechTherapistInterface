@@ -64,12 +64,12 @@ function CreateExercisePage() {
     data: imageData,
   } = useQuery("images", () => getImages({ auth }));
 
-  console.log("id type", id, type);
+  console.log("questions", questions);
   const { isLoading: isLoadingTask, error: taskError } = useQuery(
     "task",
     () => getTask({ auth, id: id ?? "", type: type ?? "" }),
     {
-      enabled: !!id && !!taskType,
+      enabled: !!id && !!taskType && questions.length === 0,
       onSuccess: (res) => {
         setName(res.data.name);
         setTaskType(res.data.type);
@@ -348,6 +348,3 @@ function CreateExercisePage() {
 }
 
 export default CreateExercisePage;
-function typeNameConversions(): import("react").ReactNode {
-  throw new Error("Function not implemented.");
-}

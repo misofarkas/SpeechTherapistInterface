@@ -26,7 +26,6 @@ function CPQuestionCard({
   const iconSize = isLargerThan768 ? "75px" : "50px";
   const indexes = [0, 1, 2];
 
-  console.log(type, isEditable);
   return (
     <Box maxW="800px" mx="auto" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">
       {isEditable && <CloseButton ml="95%" mb="2" onClick={() => handleDeleteQuestion!(question.id)}></CloseButton>}

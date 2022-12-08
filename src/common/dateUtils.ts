@@ -1,3 +1,5 @@
+
+// Checks wether the input date is the today's date
 export function dateIsToday(input: string) {
   const today = new Date();
   const date = new Date(input);

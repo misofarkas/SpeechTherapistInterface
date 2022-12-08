@@ -6,6 +6,9 @@ import { isFourChoiceQuestion, isCustomQuestion } from "../../types/typeGuards";
 import { TaskType } from "../../types/enums";
 import FCImageQuestionCard from "../CreateQuestionCards/FCImageQuestionCard";
 
+/**Component used for deciding which Question card template to use
+ * depending on the type of the task. */
+
 function QuestionList({
   questions,
   type,
@@ -21,11 +24,10 @@ function QuestionList({
   handleDeleteQuestion?: ((a: string) => void) | undefined;
   imageData?: CustomChoice[] | undefined;
 }) {
-
   return (
     <>
       {questions.map((q) => {
-        console.log("type: ", type)
+        console.log("type: ", type);
         return (
           <Box mb="5" key={q.id}>
             {type === TaskType.FourChoicesImage && isFourChoiceQuestion(q, type) && (

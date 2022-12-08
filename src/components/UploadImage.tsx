@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { useRef } from "react";
 
+// Component for uploading an image from device.
 function UploadImage({
   children,
   handleImageSelection,
