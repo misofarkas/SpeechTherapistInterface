@@ -27,7 +27,6 @@ function QuestionList({
   return (
     <>
       {questions.map((q) => {
-        console.log("type: ", type);
         return (
           <Box mb="5" key={q.id}>
             {type === TaskType.FourChoicesImage && isFourChoiceQuestion(q, type) && (

@@ -28,6 +28,7 @@ export async function postTask({
   tags: Tag[];
   questions: Question[];
 }) {
+
   return await axios.post(
     `/task/tasks/?task_type=${type}`,
     { name, type, difficulty: Difficulties.Hard, tags, questions: questions },
@@ -50,8 +51,9 @@ export async function patchTask({
   tags: Tag[];
   questions: Question[];
 }) {
+
   return await axios.patch(
-    `/task/tasks/${id}/`,
+    `/task/tasks/${id}/?task_type=${type}`,
     { name, type, difficulty: Difficulties.Hard, tags, questions: questions },
     {
       headers: { Authorization: `Token ${auth?.accessToken}` },

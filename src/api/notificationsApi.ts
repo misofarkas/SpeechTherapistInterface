@@ -8,7 +8,6 @@ export async function getLinkRequests({ auth }: { auth: any }) {
 }
 
 export async function acceptLinkRequest({ auth, id }: { auth: any; id: string }) {
-  console.log("auth accept", auth);
   return await axios.patch(
     `/user/therapist/link/${id}/accept/`,
     {},

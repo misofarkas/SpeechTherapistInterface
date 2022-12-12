@@ -35,7 +35,6 @@ function FCTextQuestionCard({
 
   const templateRowsSm = "3 repeat(4, 0.25fr)";
   const templateColumnsSm = "1fr";
-  console.log("ed ?",isEditable)
   return (
     <Box w="full" maxW="800px" mx="auto" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">
       {isEditable && <CloseButton ml="95%" mb="2" onClick={() => handleDeleteQuestion!(question.id)}></CloseButton>}

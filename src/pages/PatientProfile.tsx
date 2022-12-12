@@ -61,7 +61,6 @@ function PatientProfile() {
   const { isLoading: isLoadingResults, error: resultsError } = useQuery("results", () => getTaskResults({ auth }), {
     enabled: !!patient,
     onSuccess: (res) => {
-      console.log("res", res);
       if (patient) {
         setTaskResults(res.data.filter((result) => result.answered_by === patient.id));
       }

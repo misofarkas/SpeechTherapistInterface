@@ -4,7 +4,13 @@
 * [Node.js](#nodejs)
 * [Application](#application)
 
-Therapist Interface for Speech therapist app
+Therapist Interface for Speech therapist application, developed by Michal Farkaš
+
+For the purpose of trying out the application, a configured therapist account is provided:
+email: john.doe@example.com
+password: 123456789
+
+Setting up the application consists of three parts:
 
 # VPN
 in order to access APIs, which are hosted on the university network, a VPN must be used.

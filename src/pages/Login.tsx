@@ -9,8 +9,8 @@ import { useMutation, useQuery } from "react-query";
 
 function Login() {
   const { auth, setAuth, setUser } = useAuth();
-  const [email, setEmail] = useState<string>("example@example.com");
-  const [password, setPassword] = useState<string>("123456789");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -32,7 +32,6 @@ function Login() {
   const {} = useQuery("profile", () => getProfile({ auth }), {
     enabled: !!auth,
     onSuccess: (res) => {
-      console.log("Success", res);
       setUser({ ...res.data });
       navigate(`/`);
     },

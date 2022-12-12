@@ -44,7 +44,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getImages } from "../api/imageApi";
 import { useQuery, useMutation } from "react-query";
 import { taskTypeName } from "../common/typeNameConversion";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function CreateExercisePage() {
@@ -53,7 +53,7 @@ function CreateExercisePage() {
   const [name, setName] = useState("");
   const [taskType, setTaskType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
   const [savedTaskType, setSavedTaskType] = useState<TaskType>(TaskType.ConnectPairsTextImage);
-  const difficulty = Difficulties.Hard;
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState<FourChoicesQuestion[] | ConnectPairCustomQuestion[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [error, setError] = useState("");
@@ -64,7 +64,6 @@ function CreateExercisePage() {
     data: imageData,
   } = useQuery("images", () => getImages({ auth }));
 
-  console.log("questions", questions);
   const { isLoading: isLoadingTask, error: taskError } = useQuery(
     "task",
     () => getTask({ auth, id: id ?? "", type: type ?? "" }),
@@ -79,12 +78,13 @@ function CreateExercisePage() {
     }
   );
 
-  console.log("states", name, taskType, savedTaskType);
   const {
     isLoading: isSubmitting,
     error: postingError,
     mutate: postTaskMutation,
-  } = useMutation(() => postTask({ auth, name, type: savedTaskType, tags: [], questions }));
+  } = useMutation(() => postTask({ auth, name, type: savedTaskType, tags: [], questions }), {onSuccess: (res) => {
+    navigate(`/CreateExercise/${res.data.type}/${res.data.id}`);
+  }});
 
   const {
     isLoading: isSubmittingEdit,
@@ -101,7 +101,7 @@ function CreateExercisePage() {
         ...questions,
         {
           id: uuidv4(),
-          heading: "placeholder",
+          heading: "question",
           choices: [
             {
               id: uuidv4(),
@@ -123,7 +123,7 @@ function CreateExercisePage() {
         ...questions,
         {
           id: uuidv4(),
-          heading: "placeholder",
+          heading: "question",
           choices: [
             { id: uuidv4(), data1: "", data2: "", tags: [] },
             { id: uuidv4(), data1: "", data2: "", tags: [] },
@@ -157,16 +157,17 @@ function CreateExercisePage() {
     questions.forEach((question) => {
       question.choices.forEach((choice) => {
         if (
-          (isFourChoiceChoice(choice, savedTaskType) &&
-            !choice.question_data &&
-            !choice.correct_option &&
-            !choice.incorrect_option1 &&
-            !choice.incorrect_option2 &&
-            !choice.incorrect_option3) ||
-          (isCustomChoice(choice, savedTaskType) && !choice.data1 && !choice.data2)
+          !((isFourChoiceChoice(choice, savedTaskType) &&
+            (!!choice.question_data &&
+            !!choice.correct_option &&
+            !!choice.incorrect_option1 &&
+            !!choice.incorrect_option2 &&
+            !!choice.incorrect_option3)) ||
+          (isCustomChoice(choice, savedTaskType) &&  (!!choice.data1 && !!choice.data2)))
         ) {
           isValid = false;
         }
+        
       });
     });
 

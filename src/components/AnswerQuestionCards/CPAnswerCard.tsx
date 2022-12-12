@@ -9,8 +9,6 @@ function CPImageAnswerCard({ answer, type }: { answer: ConnectPairsAnswer; type:
   const gridItemHeight = type === TaskType.ConnectPairsTextImage ? (isLargerThan768 ? "150px" : "75px") : "40px";
   const iconSize = isLargerThan768 ? "75px" : "50px";
 
-  console.log("Answer", answer)
-
   return (
     <Box maxW="800px" mx="auto" p="1rem 2rem" borderWidth="1px" borderRadius="lg" boxShadow="md">
       <Grid templateRows="repeat(3, 1fr)" templateColumns="1fr 0.3fr 1fr" gap={4}>

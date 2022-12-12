@@ -19,7 +19,6 @@ function Exercises() {
 
   const { isLoading, isSuccess, error, data: taskResponse } = useQuery("tasks", () => getTasks({ auth }));
 
-
   // Filter data
   let filteredTaskData: Task[] = [];
   if (isSuccess) {
@@ -32,35 +31,33 @@ function Exercises() {
     );
   }
 
-  /*
   // Sort data
   switch (sortBy) {
-    case "fav-asc":
-      filteredTaskData.sort((a, b) => (a.favorited > b.favorited ? 1 : -1));
-      break;
-    case "fav-des":
-      filteredTaskData.sort((a, b) => (a.favorited < b.favorited ? 1 : -1));
-      break;
     case "diff-asc":
       filteredTaskData.sort((a, b) => compareDifficulties(a, b));
       break;
     case "diff-des":
       filteredTaskData.sort((a, b) => -compareDifficulties(a, b));
       break;
+    case "name-asc":
+      filteredTaskData.sort((a, b) => {return a.name.toLowerCase() >= b.name.toLowerCase() ? 1 : -1});
+      break;
+    case "name-des":
+      filteredTaskData.sort((a, b) => {return a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1});
+      break;
     default:
       break;
   }
-  
-  function compareDifficulties(a: Exercise, b: Exercise) {
-    if (a.difficutly === "Easy" && (b.difficutly === "Medium" || b.difficutly === "Hard")) {
+
+  function compareDifficulties(a: Task, b: Task) {
+    if (a.difficulty === "Easy" && (b.difficulty === "Medium" || b.difficulty === "Hard")) {
       return -1;
     }
-    if (a.difficutly === "Medium" && b.difficutly === "Hard") {
+    if (a.difficulty === "Medium" && b.difficulty === "Hard") {
       return -1;
     }
     return 1;
   }
-  */
 
   return (
     <Container>
@@ -109,8 +106,8 @@ function Exercises() {
           </Select>
         </Flex>
         <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} maxW="200px" placeholder="Sort by">
-          <option value="fav-des">Favorites desc</option>
-          <option value="fav-asc">Favorites asc</option>
+          <option value="name-des">Name desc</option>
+          <option value="name-asc">Name asc</option>
           <option value="diff-des">Difficulty desc</option>
           <option value="diff-asc">Difficulty asc</option>
         </Select>

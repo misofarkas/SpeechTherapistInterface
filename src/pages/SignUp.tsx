@@ -27,7 +27,6 @@ function SignUp() {
       isClosable: true,
     });},
     onError: (error) => {
-      console.log("error", error)
       toast({
         title: "Error",
         description: "There has been an error",
